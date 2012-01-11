@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<title>Flickr Masonry</title>
+	<link rel='stylesheet' type='text/css' href='/styles/external/jquery.qtip.css' />
+	<link rel='stylesheet' type='text/css' href='/styles/prettyPhoto.css' />
+	<link rel='stylesheet' type='text/css' href='stylesheets/flickr_masonry.css'/>
+</head>
+<body>
+	<div id="loader">
+		<img src='/images/ajax_loader_76.gif' width=76 height=76>
+	</div>
+		
+	<div id="todo">
+		<ul>
+			<li>error with qtip and/or prettyphoto while browsing tag result photos</li>
+			<li>non-rss feed access</li>
+			<li>put in iframe as post on telecommute</li>
+		</ul>
+	</div>
+	<header>
+		<!-- <a href='http://www.flickr.com/photos/dominicotine/favorites/'> -->
+			<span class='title'>my favorite items from flickr</span>
+			<span id='searchArea'>
+				<form name='tagForm' id='tagForm'>
+					<input type='text' placeholder='search by tag'>
+				</form>
+			</span>
+		<!-- </a> -->
+	</header>
+	
+	<div id="flickrFaves">
+		<ul></ul>
+	</div>
+	<div id="moreButton">More pics</div>
+	
+	<footer>built with <a href="http://jquery.com/" title="jQuery: The Write Less, Do More, JavaScript Library" target="_blank">jQuery</a> and some jQuery plugins: <a href="http://masonry.desandro.com/" title="jQuery Masonry" target="_blank">Masonry</a>, <a href="http://www.no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/" title="jQuery lightbox for images, videos, YouTube, iframes, ajax | Stéphane Caron – No Margin For Errors" target="_blank">PrettyPhoto</a>, <a href="http://craigsworks.com/projects/qtip2/" title="qTip2 - Pretty powerful tooltips" target="_blank">qtip2</a></footer>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+	<script src="/scripts/tele_utils.js"></script>
+	<script src="/scripts/external/jquery.masonry.min.js"></script>
+	<script src="/scripts/external/jquery.qtip.js"></script>
+	<script src='/scripts/external/jquery.prettyPhoto.js'></script>
+	<script src='/scripts/external/raphael-min.js'></script>
+	<script src='/misc/undulate_overlay_jquery/scripts/jquery.statick.js'></script>
+	<script src="javascripts/flickr_masonry.js"></script>
+	
+</body>
+</html>
