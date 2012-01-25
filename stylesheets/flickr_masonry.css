@@ -166,6 +166,7 @@ footer {
     margin: 0 auto; }
 
 #searchArea {
+  display: none;
   position: absolute;
   right: 83px; }
   #searchArea input {
