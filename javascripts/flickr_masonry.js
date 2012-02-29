@@ -3,7 +3,7 @@ var FLICKR_MASONRY = {
 	forcePatternAJAXGet : false,
 	maxPhotosToRequest : 500,
 	flickrPhotos: null,
-	photosAtATime: 37,
+	photosAtATime: 40,
 	photosLoaded: 0
 };
 
@@ -11,10 +11,10 @@ var FLICKR_MASONRY = {
 jQuery(function(){
 
 	jQuery.fn.center = function () {
-	    // this.css("position","absolute"); // assume center position
-	    this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
-	    this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
-	    return this;
+		// this.css("position","absolute"); // assume center position
+		this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
+		this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+		return this;
 	}
 
 	loadLocalStorage();
@@ -24,7 +24,7 @@ jQuery(function(){
 });
 
 function getPhotos(){
-		if( timeForFreshAJAXRequest() ){
+		if ( timeForFreshAJAXRequest() ){
 			console.log( 'using ajax call to flickr for photos retrieval' );
 
 			// var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
@@ -59,7 +59,6 @@ function getPhotosByTag(tag){
 			FLICKR_MASONRY.flickrPhotos = data;
 			
 			//TODO display message if no photos were found with the tag
-			
 			displayPhotos(data);
 		}
 	);
@@ -77,13 +76,13 @@ function displayPhotos(jsonData){
 			$photoLink,
 			$ajaxLoader = jQuery('#loader');
 
-	$ajaxLoader.center().fadeTo( 1, 1);
+	$ajaxLoader.center().fadeTo(1, 1);
 	$container.fadeTo(0, 0);
 	
 	jQuery.each(photos, function(i, item) {
 		
 		// if the photo's index is above the quoto per fetch, then return
-		if( i >= FLICKR_MASONRY.photosAtATime ){
+		if ( i >= FLICKR_MASONRY.photosAtATime ){
 			return;
 		}
 		newPhoto = new Image();
@@ -123,11 +122,11 @@ function displayPhotos(jsonData){
 		$photoLink.append(newPhoto);
 		$listItem.append($photoLink);
 		$container.append($listItem);
-		
 	});
 	
-	// TODO is this needed?
+	// needed for masonry layout to be recalculated properly
 	if( FLICKR_MASONRY.photosLoaded > 0 ){
+		debug_console( 'masonry reloadItems', "debug");
 		$container.masonry( 'reloadItems' );
 	}
 	
@@ -140,24 +139,26 @@ function displayPhotos(jsonData){
 			isFitWidth: true
 	  });
 
-		$ajaxLoader.fadeTo(230, 0, function(){
+		$ajaxLoader.fadeTo(200, 0, function(){
 	
-			$container.fadeTo(700, 1, function(){
+			$container.fadeTo(750, 1, function(){
 				
 				// try to set the height/width of each image (for better rendering performance/best practices)
 				jQuery('img').each( function(){
 					try{
-						if( jQuery(this)[0].width === 0 ){
+						if (jQuery(this)[0].width === 0 ){
 							throw new Error(jQuery(this)[0].src + " has a width of 0" );
 						}
-						jQuery(this).attr('width', jQuery(this)[0].width).attr('height', jQuery(this)[0].height);
-					}catch(e){
+						jQuery(this).attr('width', jQuery(this)[0].width)
+												.attr('height', jQuery(this)[0].height);
+					}
+					catch (e){
 						console.log( e.message );
 					}
 				});
 
 				// only fade the 'more' button back in if there are still images remaining to be shown
-				if( FLICKR_MASONRY.photosLoaded < FLICKR_MASONRY.flickrPhotos.photos.photo.length ){
+				if ( FLICKR_MASONRY.photosLoaded < FLICKR_MASONRY.flickrPhotos.photos.photo.length ){
 					jQuery('#moreButton').fadeTo( 650, 1, 'swing');
 				}
 				
@@ -184,7 +185,7 @@ function displayPhotos(jsonData){
 					ajax: {
 			         url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id="+userId+"&format=json&jsoncallback=?", 
 			         type: 'GET', // POST or GET,
-							dataType: "json",
+						 	 dataType: "json",
 			         success: function(data, status) {
 										// console.log(data);
 										var realname = fetchRealName(data);
@@ -194,7 +195,6 @@ function displayPhotos(jsonData){
 
 									// TODO: don't really like this, try and clean it up
 									jQuery(jQuery(this)[0].elements.content[0]).find('.loading').html(markup);
-			
 			         }
 			      },
 					},
@@ -231,12 +231,10 @@ function displayPhotos(jsonData){
 		// jQuery('img:even').statick({opacity: 0.06, timing:{baseTime: 140}});
 		
 		// console.log(photos);
-	
 	});
-	
-	return photos;
 }
 
+// return real name of the photo's owner if it exists
 function fetchRealName(data){
 	var realname;
 	try{
@@ -248,6 +246,7 @@ function fetchRealName(data){
 	return realname;
 }
 
+// return username of the photo's owner if it exists
 function fetchUserName(data){
 	var username;
 	try{
@@ -270,7 +269,7 @@ function hyperlinkAuthor(authorId, authorName){
 function hyperlinkTags(tags){
 	var tagsArray = tags.split(' '),
 			linkedTags = [];
-	for( var tag in tagsArray){
+	for (var tag in tagsArray){
 		linkedTags.push("<a class='tag' href='http://www.flickr.com/photos/tags/"+tagsArray[tag]+"' target='_blank'>"+tagsArray[tag]+"</span>");
 	}
 	return linkedTags.join(' ');
@@ -281,15 +280,13 @@ function setupMoreButton(){
 	$button.click( function(evt){
 		// console.log('more clicked');
 		$button.fadeTo(1, 0);
-		evt.preventDefault();
 		displayPhotos(FLICKR_MASONRY.flickrPhotos);
-		return false;
 	});
 }
 
 function loadLocalStorage(){
 	var milliseconds = localStorage.getItem('flickr_masonry_time_retrieved_at');
-	if(milliseconds){
+	if (milliseconds){
 		FLICKR_MASONRY.timeSinceLastPhotoGet = parseInt(milliseconds, 10);
 	}
 }
@@ -302,6 +299,7 @@ function timeForFreshAJAXRequest(){
 }
 
 
+// sets up the lightbox for images
 function setupPrettyPhoto(){
 	debug_console( "setting up prettyPhoto", "debug");
 	
@@ -309,15 +307,13 @@ function setupPrettyPhoto(){
 		overlay_gallery : false,
 		deeplinking: false,
 		social_tools: false
-		});
-	
+	});
 }
 
 // don't want the footer showing before other stuff is loaded b/c the reflow looks bad
 function delayFooterVisibility(){
-	var $footer = jQuery('footer');
 	// if this is our first load, then fade in the footer
-	if( FLICKR_MASONRY.photosLoaded === FLICKR_MASONRY.photosAtATime ){
+	if ( FLICKR_MASONRY.photosLoaded === FLICKR_MASONRY.photosAtATime ){
 		jQuery('footer').fadeTo(3000, 1);
 	}
 }
@@ -336,6 +332,7 @@ function updateTitleForTag(tag){
 	jQuery('header .title').html('photos tagged <span class="italic">' + tag + '</span>');
 }
 
+// clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 function clearPhotos(){
 	FLICKR_MASONRY.flickrPhotos = null;
 	FLICKR_MASONRY.photosLoaded = 0;
