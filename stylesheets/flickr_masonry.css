@@ -11,11 +11,13 @@ a:link, a:visited {
 
 #flickrFaves {
   margin: 0 auto; }
+  #flickrFaves ul.disabled {
+    pointer-events: none; }
 
 .italic {
   font-style: italic; }
 
-.headerText, header, header a, footer {
+.headerText, header, header a, #credits {
   color: #cfcfcf;
   font-family: "Lucida Grande", Helvetica, arial, sans-serif;
   text-shadow: 0px 1px 1px black;
@@ -39,7 +41,7 @@ header {
     text-decoration: underline;
     color: white; }
 
-footer {
+#credits {
   display: none;
   text-align: center;
   font-size: 1em;
@@ -166,11 +168,10 @@ footer {
     margin: 0 auto; }
 
 #searchArea {
-  display: none;
   position: absolute;
   right: 83px; }
   #searchArea input {
-    width: 8em;
+    width: 9em;
     padding: 3px 5px;
     background: #282828;
     border: 1px solid #525252;
@@ -186,10 +187,19 @@ footer {
       -ms-transition: background 260ms;
       transition: background 260ms; }
     #searchArea input:focus {
-      color: #eee;
-      width: 11em;
+      width: 15em;
       -moz-transition: width 300ms;
       -webkit-transition: width 300ms;
       -o-transition: width 300ms;
       -ms-transition: width 300ms;
       transition: width 300ms; }
+      #searchArea input:focus::-webkit-input-placeholder {
+        color: rgba(255, 255, 255, 0.3); }
+      #searchArea input:focus:-moz-placeholder {
+        color: rgba(255, 255, 255, 0.3); }
+
+#tagLimit {
+  display: none;
+  color: white;
+  margin: 0 auto;
+  width: 80%; }

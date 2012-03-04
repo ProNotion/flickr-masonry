@@ -18,38 +18,46 @@ jQuery(function(){
 	}
 
 	loadLocalStorage();
-	getPhotos();
+	// getPhotos(); // get the initial photos the first time the page loads
 	setupMoreButton();
 	setupTagForm();
 });
 
 function getPhotos(){
-		if ( timeForFreshAJAXRequest() ){
-			console.log( 'using ajax call to flickr for photos retrieval' );
+	
+	hideCommonElements();
+	
+	if ( timeForFreshAJAXRequest() ){
+		console.log( 'using ajax call to flickr for photos retrieval' );
 
-			// var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
-			var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page="+FLICKR_MASONRY.maxPhotosToRequest+"&format=json&jsoncallback=?";
-			
-			jQuery.getJSON( getURL, 
-				function(data) { 
-					// console.log(data);
-					localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
-					localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
-					FLICKR_MASONRY.flickrPhotos = data;
-					displayPhotos(data);
-				}
-			);
-		}
-		else{
-			console.log( 'using local storage for photos retrieval' );
-			FLICKR_MASONRY.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));	
-			displayPhotos(FLICKR_MASONRY.flickrPhotos);
-		}
+		// var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
+		var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page="+FLICKR_MASONRY.maxPhotosToRequest+"&format=json&jsoncallback=?";
+
+		jQuery.getJSON( getURL, 
+			function(data) { 
+				// console.log(data);
+				localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
+				localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
+				FLICKR_MASONRY.flickrPhotos = data;
+				displayPhotos(data);
+			}
+		);
+	}
+	else{
+		console.log( 'using local storage for photos retrieval' );
+		FLICKR_MASONRY.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));	
+		displayPhotos(FLICKR_MASONRY.flickrPhotos);
+	}
 }
 
 function getPhotosByTag(tag){
-	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getClusterPhotos&tag="+tag+"&cluster_id=&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page="+FLICKR_MASONRY.maxPhotosToRequest+"&format=json&jsoncallback=?";
+	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getClusterPhotos";
+	getURL += "&tag="+tag;
+	getURL += "&cluster_id=&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&extras=url_t,url_s,url_m,url_z,url_l,url_o";
+	getURL += "&per_page="+FLICKR_MASONRY.maxPhotosToRequest+"&format=json&jsoncallback=?";
 
+	hideCommonElements();
+	
 	jQuery.getJSON( getURL, 
 		function(data) { 
 			// console.log('got photos for tag: ' + tag );
@@ -59,13 +67,15 @@ function getPhotosByTag(tag){
 			FLICKR_MASONRY.flickrPhotos = data;
 			
 			//TODO display message if no photos were found with the tag
-			displayPhotos(data);
+			displayPhotos(data, {'taggedPhotos' : true });
 		}
 	);
 
 }
 
-function displayPhotos(jsonData){
+function displayPhotos(jsonData, options){
+	options = options || {};
+	
 	var $container = jQuery('#flickrFaves ul'),
 			// for RSS feed
 			// photos = jsonData.items.slice(FLICKR_MASONRY.photosLoaded, FLICKR_MASONRY.photosLoaded + FLICKR_MASONRY.photosAtATime ),
@@ -77,7 +87,7 @@ function displayPhotos(jsonData){
 			$ajaxLoader = jQuery('#loader');
 
 	$ajaxLoader.center().fadeTo(1, 1);
-	$container.fadeTo(0, 0);
+	$container.addClass('disabled').fadeTo(0, 0);
 	
 	jQuery.each(photos, function(i, item) {
 		
@@ -125,7 +135,7 @@ function displayPhotos(jsonData){
 	});
 	
 	// needed for masonry layout to be recalculated properly
-	if( FLICKR_MASONRY.photosLoaded > 0 ){
+	if ( FLICKR_MASONRY.photosLoaded > 0 ){
 		debug_console( 'masonry reloadItems', "debug");
 		$container.masonry( 'reloadItems' );
 	}
@@ -140,8 +150,8 @@ function displayPhotos(jsonData){
 	  });
 
 		$ajaxLoader.fadeTo(200, 0, function(){
-	
-			$container.fadeTo(750, 1, function(){
+			
+			$container.removeClass('disabled').fadeTo(750, 1, function(){
 				
 				// try to set the height/width of each image (for better rendering performance/best practices)
 				jQuery('img').each( function(){
@@ -158,80 +168,85 @@ function displayPhotos(jsonData){
 				});
 
 				// only fade the 'more' button back in if there are still images remaining to be shown
-				if ( FLICKR_MASONRY.photosLoaded < FLICKR_MASONRY.flickrPhotos.photos.photo.length ){
+				if ( !options['taggedPhotos'] && FLICKR_MASONRY.photosLoaded < FLICKR_MASONRY.flickrPhotos.photos.photo.length ){
 					jQuery('#moreButton').fadeTo( 650, 1, 'swing');
 				}
+				if( options['taggedPhotos'] ){
+					jQuery('#tagLimit').show();
+				}
+				
+				FLICKR_MASONRY.photosLoaded = FLICKR_MASONRY.photosLoaded + FLICKR_MASONRY.photosAtATime;
+				delayFooterVisibility();
+
+				// Setup tooltips for each image
+				setupImageTooltips();
+				// setup pretty photo gallery
+				setupPrettyPhoto();
+				// temp off
+				// jQuery('img:even').statick({opacity: 0.06, timing:{baseTime: 140}});
 				
 			});
 			
 		});
-
-		FLICKR_MASONRY.photosLoaded = FLICKR_MASONRY.photosLoaded + FLICKR_MASONRY.photosAtATime;
-		delayFooterVisibility();
-
-		// Setup tooltip for each image
-		// TODO might be able to optimize this; possible to only run qtip on the images that haven't had it run on yet?
-		jQuery('.flickrFaveItem img').each(function(){
-			
-			var $image = jQuery(this),
-					userId = $image.data('authorId'),
-					userUrl = $image.data('authorUrl'),
-					flickrUrl = $image.data('flickrUrl'),
-					title = $image.data('title');
-			
-			$image.qtip({
-				content: {
-					text: "<div class='loading'><span>loading...</span></div>",
-					ajax: {
-			         url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id="+userId+"&format=json&jsoncallback=?", 
-			         type: 'GET', // POST or GET,
-						 	 dataType: "json",
-			         success: function(data, status) {
-										// console.log(data);
-										var realname = fetchRealName(data);
-										var username = fetchUserName(data);
-										var markup =  "<p class='photoTitle'><a href='"+flickrUrl+"' target='_blank'>" + title + "</a></p>\
-														<p>by: <a class='authorName' href='http://www.flickr.com/photos/"+userId+"' target='_blank'>" + username + realname + "</a></p>";
-
-									// TODO: don't really like this, try and clean it up
-									jQuery(jQuery(this)[0].elements.content[0]).find('.loading').html(markup);
-			         }
-			      },
-					},
-					position:{
-						my: 'left center',
-						at: 'right center',
-						viewport: jQuery('#flickrFaves ul')
-					},
-					show: {
-						delay: 470,
-						effect: function(offset) {
-							jQuery(this).fadeIn(300); // "this" refers to the tooltip
-			      }
-					},
-					hide: { 
-						delay: 190,
-						fixed: true,  
-						effect: function(){
-							jQuery(this).fadeOut(289); // "this" refers to the tooltip
-						}
-					},
-					style: {
-						tip:{
-							width: 7,
-							height: 19
-						},
-						classes: "flickrTip"
-					}
-				});
-		});
-
-		setupPrettyPhoto();
-		// temp off
-		// jQuery('img:even').statick({opacity: 0.06, timing:{baseTime: 140}});
-		
-		// console.log(photos);
 	});
+}
+
+function setupImageTooltips(){
+	// TODO might be able to optimize this; possible to only run qtip on the images that haven't had it run on yet?
+	jQuery('.flickrFaveItem img').each(function(){
+		
+		var $image = jQuery(this),
+				userId = $image.data('authorId'),
+				userUrl = $image.data('authorUrl'),
+				flickrUrl = $image.data('flickrUrl'),
+				title = $image.data('title');
+		
+		$image.qtip({
+			content: {
+				text: "<div class='loading'><span>loading...</span></div>",
+				ajax: {
+		         url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id="+userId+"&format=json&jsoncallback=?", 
+		         type: 'GET', // POST or GET,
+					 	 dataType: "json",
+		         success: function(data, status) {
+									// console.log(data);
+									var realname = fetchRealName(data);
+									var username = fetchUserName(data);
+									var markup =  "<p class='photoTitle'><a href='"+flickrUrl+"' target='_blank'>" + title + "</a></p>\
+													<p>by: <a class='authorName' href='http://www.flickr.com/photos/"+userId+"' target='_blank'>" + username + realname + "</a></p>";
+
+								// TODO: don't really like this, try and clean it up
+								jQuery(jQuery(this)[0].elements.content[0]).find('.loading').html(markup);
+		         }
+		      },
+				},
+				position:{
+					my: 'left center',
+					at: 'right center',
+					viewport: jQuery('#flickrFaves ul')
+				},
+				show: {
+					delay: 470,
+					effect: function(offset) {
+						jQuery(this).fadeIn(300); // "this" refers to the tooltip
+		      }
+				},
+				hide: { 
+					delay: 190,
+					fixed: true,  
+					effect: function(){
+						jQuery(this).fadeOut(289); // "this" refers to the tooltip
+					}
+				},
+				style: {
+					tip:{
+						width: 7,
+						height: 19
+					},
+					classes: "flickrTip"
+				}
+			});
+	});	
 }
 
 // return real name of the photo's owner if it exists
@@ -312,10 +327,12 @@ function setupPrettyPhoto(){
 
 // don't want the footer showing before other stuff is loaded b/c the reflow looks bad
 function delayFooterVisibility(){
-	// if this is our first load, then fade in the footer
-	if ( FLICKR_MASONRY.photosLoaded === FLICKR_MASONRY.photosAtATime ){
-		jQuery('footer').fadeTo(3000, 1);
-	}
+	// // if this is our first load, then fade in the footer
+	// if ( FLICKR_MASONRY.photosLoaded === FLICKR_MASONRY.photosAtATime ){
+	// 	jQuery('#credits').fadeTo(3000, 1);
+	// }
+	
+	jQuery('#credits').fadeIn(2000);
 }
 
 function setupTagForm(){
@@ -329,13 +346,28 @@ function setupTagForm(){
 }
 
 function updateTitleForTag(tag){
-	jQuery('header .title').html('photos tagged <span class="italic">' + tag + '</span>');
+	jQuery('header .title').html('flickr photos tagged <span class="italic">' + tag + '</span>');
 }
 
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 function clearPhotos(){
-	FLICKR_MASONRY.flickrPhotos = null;
-	FLICKR_MASONRY.photosLoaded = 0;
-	var $container  = jQuery('#flickrFaves ul');
-	$container.masonry( 'destroy' ).empty();
+	try{
+		FLICKR_MASONRY.flickrPhotos = null;
+		FLICKR_MASONRY.photosLoaded = 0;
+		var $container  = jQuery('#flickrFaves ul');
+		$container.masonry( 'destroy' ).empty();
+	}catch(e){
+		debug_console( 'error in clearPhotos(): ' + e.message, "debug");
+	}
+}
+
+
+// for UX purposes
+function hideCommonElements(){
+	jQuery('#credits, #moreButton, #tagLimit').hide();
+}
+
+// might not be needed.
+function showCommonElements(){
+	jQuery('#credits, #moreButton').hide();	
 }

@@ -12,7 +12,10 @@ a:link, a:visited{
 }
 
 #todo{color: white; display: none;}
-#flickrFaves{margin: 0 auto;}
+#flickrFaves{
+	margin: 0 auto;
+	ul.disabled{pointer-events: none;}
+}
 
 .italic{font-style: italic;}
 
@@ -48,7 +51,7 @@ header{
 	}
 }
 
-footer{
+#credits{
 	display: none;
 	@extend .headerText;
 	text-align: center;
@@ -186,12 +189,13 @@ footer{
 
 
 #searchArea{
-	display: none;
+//	display: none;
 	$searchBackground: #282828;
 	position: absolute;
 	right: 83px;
+	
 	input{
-		width: 8em;
+		width: 9em;
 		padding: 3px 5px;
 		background: $searchBackground;
 		border: 1px solid #525252;
@@ -202,9 +206,22 @@ footer{
 			@include css3(transition, background 260ms );
 		}
 		&:focus{
-			color: #eee;
-			width: 11em;
+			&::-webkit-input-placeholder {
+			    color: rgba(255,255,255,0.3);
+			}
+			&:-moz-placeholder {
+		    color: rgba(255,255,255,0.3);
+			}
+			width: 15em;
 		  @include css3(transition, width 300ms );
 		}
 	}
+	
+}
+
+#tagLimit{
+	display:none;
+	color: white;
+	margin: 0 auto;
+	width: 80%;
 }
