@@ -18,7 +18,7 @@ jQuery(function(){
 	}
 
 	loadLocalStorage();
-	// getPhotos(); // get the initial photos the first time the page loads
+	getPhotos(); // get the initial photos the first time the page loads
 	setupMoreButton();
 	setupTagForm();
 });

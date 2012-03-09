@@ -93,7 +93,7 @@ header{
 	padding: 9px 12px;
 	color: black;
 	width: 260px;
-	margin: 19px auto 20px;
+	margin: 84px auto 20px;
 	cursor: pointer;
 	font-size: 28px;
 	text-align: center;
@@ -194,7 +194,7 @@ header{
 	right: 83px;
 	
 	input{
-		width: 9em;
+		width: 120px;
 		padding: 5px 7px;
 		background: $searchBackground;
 		border: 1px solid #525252;
@@ -206,15 +206,14 @@ header{
 			@include css3(transition, background 260ms );
 		}
 		&:focus{
+			width: 200px;
 			outline: 4px auto $link;
-			
 			&::-webkit-input-placeholder {
 				color: rgba(255,255,255,0.3);
 			}
 			&:-moz-placeholder {
 		    color: rgba(255,255,255,0.3);
 			}
-			width: 15em;
 		  @include css3(transition, width 300ms );
 		}
 	}
