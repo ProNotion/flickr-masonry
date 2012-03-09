@@ -224,9 +224,21 @@ header{
 	@extend .headerText;
 	display:none;
 	width: 65%;
-	margin: 82px auto 40px;
+	margin: 79px auto 40px;
 	text-align: center;
 	padding: 14px 18px;
 	font-size: 18px;
 	line-height: 1.3em;
+}
+
+#backToMine{
+	display: block;
+	display: none;
+	position: relative;
+	float: left;
+	font-size: 14px;
+	top: 8px;
+	left: 10px;
+	word-spacing: 0;
+	&:hover{cursor: pointer;}
 }

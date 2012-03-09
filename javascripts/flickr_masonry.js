@@ -17,6 +17,8 @@ jQuery(function(){
 		return this;
 	}
 
+	FLICKR_MASONRY.originalTitle = jQuery('header .title').text(); // TODO probably somewhere better to do this
+
 	loadLocalStorage();
 	getPhotos(); // get the initial photos the first time the page loads
 	setupMoreButton();
@@ -67,12 +69,16 @@ function getPhotosByTag(tag){
 			
 			//TODO display message if no photos were found with the tag
 			displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });
+			setupBackToMine();
 		}
 	);
 
 }
 
 function displayPhotos(jsonData, options){
+	
+	debug_console( jsonData, "debug");
+	
 	options = options || {};
 	
 	var $container = jQuery('#flickrFaves ul'),
@@ -113,7 +119,7 @@ function displayPhotos(jsonData, options){
 		$photoLink = jQuery('<a>', 
 										{ "target": "_blank", 
 											"class": "flickrFaveItem", 
-											"href" :  item.url_l, 
+											"href" :  getLargestImageSizeAvailable(item), 
 											"rel" : "lightbox['flickr']"
 											// "data-time": item.date_taken,
 											// "data-tags": hyperlinkTags(item.tags) 
@@ -193,6 +199,13 @@ function displayPhotos(jsonData, options){
 		});
 	});
 }
+
+
+// sometimes the large image size isn't available. fall back onto other versions.
+function getLargestImageSizeAvailable(item){
+	return item.url_l || item.url_m || item.url_s || item.url_t;
+}
+
 
 function setupImageTooltips(){
 	// TODO might be able to optimize this; possible to only run qtip on the images that haven't had it run on yet?
@@ -379,4 +392,15 @@ function hideCommonElements(){
 // might not be needed.
 function showCommonElements(){
 	jQuery('#credits, #moreButton').hide();	
+}
+
+function setupBackToMine(){
+	jQuery('#backToMine').fadeIn()
+		.click( function(event){
+			clearPhotos();
+			jQuery('header .title').text(FLICKR_MASONRY.originalTitle);
+			jQuery('#tagForm input').val('');
+			getPhotos();
+			// setupMoreButton()
+		});
 }
