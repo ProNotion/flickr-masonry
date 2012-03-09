@@ -1,6 +1,7 @@
 @import "../../../styles/mixins";
 
 $link: #CFF09E;
+$headerText: #cfcfcf;
 
 body{
 	background: black;
@@ -11,6 +12,10 @@ a:link, a:visited{
 	text-decoration: none;
 }
 
+.stealthLink{
+	color: $headerText !important;
+}
+
 #todo{color: white; display: none;}
 #flickrFaves{
 	margin: 0 auto;
@@ -18,12 +23,13 @@ a:link, a:visited{
 }
 
 .italic{font-style: italic;}
+.bold{font-weight: bold;}
 
 .headerText{
-	color: #cfcfcf;
+	color: $headerText;
 	font-family: "Lucida Grande", Helvetica, arial, sans-serif;
 	text-shadow: 0px 1px 1px black;
-	font-size: 1.2em;
+	font-size: 23px;
 	letter-spacing: 2px;
 	word-spacing: 11px;
 	text-decoration: none;
@@ -34,10 +40,8 @@ header{
 	text-align: center;
 	margin: 0 auto 11px;
 	width: 90%;
-//	background: rgba(255, 255, 255, 0.15);
 	@include background_gradient( rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
-//	@include background_gradient( lime, transparent);
-	padding: 7px 2px 9px;
+	padding: 7px 2px 14px;
 	border-radius: 1px;
 	border-width: 0 1px 1px 1px;
 	border-color: #2a2a2a;
@@ -56,7 +60,7 @@ header{
 	@extend .headerText;
 	text-align: center;
 	font-size: 1em;
-	padding-bottom: 8px;
+	padding-bottom: 20px;
 }
 
 .photo {
@@ -67,7 +71,6 @@ header{
 	text-align: center;
 	
 	img{
-//		display: block;
 		border: 1px solid rgba(255,255,255,0.2);
 		box-shadow: 0 0 7px rgba(255,255,255,0.24);
 		
@@ -76,7 +79,6 @@ header{
 			@include css3(transition, opacity 250ms);
 		}
 	}
-
 }	
 
 
@@ -125,8 +127,6 @@ header{
 .ui-tooltip-content{ 
 	padding: 8px;
 	width: 250px;
-//	min-height: 50px;
-//	text-align: center;
 	
 	font-size: 14px;
 	border-radius: 3px;
@@ -189,25 +189,27 @@ header{
 
 
 #searchArea{
-//	display: none;
 	$searchBackground: #282828;
 	position: absolute;
 	right: 83px;
 	
 	input{
 		width: 9em;
-		padding: 3px 5px;
+		padding: 5px 7px;
 		background: $searchBackground;
 		border: 1px solid #525252;
 		color: #eee;
+		
 		@include border-radius(2px);
 		&:hover{
 			background: lighten($searchBackground, 4%);
 			@include css3(transition, background 260ms );
 		}
 		&:focus{
+			outline: 4px auto $link;
+			
 			&::-webkit-input-placeholder {
-			    color: rgba(255,255,255,0.3);
+				color: rgba(255,255,255,0.3);
 			}
 			&:-moz-placeholder {
 		    color: rgba(255,255,255,0.3);
@@ -220,8 +222,12 @@ header{
 }
 
 #tagLimit{
+	@extend .headerText;
 	display:none;
-	color: white;
-	margin: 0 auto;
-	width: 80%;
+	width: 65%;
+	margin: 82px auto 40px;
+	text-align: center;
+	padding: 14px 18px;
+	font-size: 18px;
+	line-height: 1.3em;
 }

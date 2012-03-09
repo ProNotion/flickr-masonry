@@ -28,7 +28,7 @@ function getPhotos(){
 	hideCommonElements();
 	
 	if ( timeForFreshAJAXRequest() ){
-		console.log( 'using ajax call to flickr for photos retrieval' );
+		debug_console( 'using ajax call to flickr for photos retrieval', 'debug' );
 
 		// var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
 		var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page="+FLICKR_MASONRY.maxPhotosToRequest+"&format=json&jsoncallback=?";
@@ -60,14 +60,13 @@ function getPhotosByTag(tag){
 	
 	jQuery.getJSON( getURL, 
 		function(data) { 
-			// console.log('got photos for tag: ' + tag );
-			console.log(data);
+			// console.log(data);
 			// localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
 			// localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
 			FLICKR_MASONRY.flickrPhotos = data;
 			
 			//TODO display message if no photos were found with the tag
-			displayPhotos(data, {'taggedPhotos' : true });
+			displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });
 		}
 	);
 
@@ -163,7 +162,7 @@ function displayPhotos(jsonData, options){
 												.attr('height', jQuery(this)[0].height);
 					}
 					catch (e){
-						console.log( e.message );
+						debug_console( e.message, "error");
 					}
 				});
 
@@ -182,6 +181,10 @@ function displayPhotos(jsonData, options){
 				setupImageTooltips();
 				// setup pretty photo gallery
 				setupPrettyPhoto();
+				
+				if (options['taggedPhotos']){
+					updateCredits(options['searchedTag']);
+				}
 				// temp off
 				// jQuery('img:even').statick({opacity: 0.06, timing:{baseTime: 140}});
 				
@@ -209,7 +212,7 @@ function setupImageTooltips(){
 		         type: 'GET', // POST or GET,
 					 	 dataType: "json",
 		         success: function(data, status) {
-									// console.log(data);
+									// debug_console(data, 'log');
 									var realname = fetchRealName(data);
 									var username = fetchUserName(data);
 									var markup =  "<p class='photoTitle'><a href='"+flickrUrl+"' target='_blank'>" + title + "</a></p>\
@@ -293,7 +296,6 @@ function hyperlinkTags(tags){
 function setupMoreButton(){
 	var $button = jQuery('#moreButton');
 	$button.click( function(evt){
-		// console.log('more clicked');
 		$button.fadeTo(1, 0);
 		displayPhotos(FLICKR_MASONRY.flickrPhotos);
 	});
@@ -335,6 +337,12 @@ function delayFooterVisibility(){
 	jQuery('#credits').fadeIn(2000);
 }
 
+function updateCredits(tag){
+	jQuery('#seeTagsName').text(tag);
+	jQuery('#seeTagsLink').attr('href', 'http://www.flickr.com/photos/tags/'+tag+'/show/');
+}
+
+
 function setupTagForm(){
 	jQuery('#tagForm').submit( function(event){
 		var tag = jQuery(this).find('input').val();
@@ -346,7 +354,8 @@ function setupTagForm(){
 }
 
 function updateTitleForTag(tag){
-	jQuery('header .title').html('flickr photos tagged <span class="italic">' + tag + '</span>');
+	jQuery('header .title')
+		.html('<a href="http://www.flickr.com" class="stealthLink" target="_blank">flickr</a> photos tagged <a href="http://www.flickr.com/photos/tags/' + tag + '/show/" class="bold italic stealthLink" target="_blank">' + tag + '</span>');
 }
 
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
