@@ -68,12 +68,52 @@ function getPhotosByTag(tag){
 			FLICKR_MASONRY.flickrPhotos = data;
 			
 			//TODO display message if no photos were found with the tag
-			displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });
+			if (data.photos.photo.length > 0 ){
+				displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });	
+			}
+			else{
+				// todo - make sure to guard against security vulnerabilities here
+				noTaggedImagesResult(tag);
+			}
 			setupBackToMine();
 		}
 	);
 
 }
+
+// no images with the user-input tag were found; show something a message and some suggestions
+function noTaggedImagesResult(tag){
+	var tagsToFetch = 10,
+			getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getHotList";
+	
+	getURL += "&api_key=79f2e11b6b4e3213f8971bed7f17b4c4";
+	getURL += "&count="+ tagsToFetch;
+	getURL += "&format=json&jsoncallback=?";
+
+	jQuery.getJSON( getURL, 
+		function(data) { 
+			// console.log(data);
+				var hottags = data.hottags.tag,
+						markup = jQuery('<ul class="popularTags group" />'), hottag;
+						
+				for (var item in hottags ){
+					if (item >= tagsToFetch ){break;}
+					hottag = hottags[item]['_content'];
+					markup.append("<li class='popularTag'>"+hottag+"</li>");
+				}
+				
+				// debug_console( markup, "debug");
+				
+				jQuery('#tagLimit').html('no photos tagged <span class="bold italic">' + tag + "</span>").append(markup).fadeIn();
+				// jQuery('.popularTag').wrapAll('<ul>');
+				delayFooterVisibility();
+				setupPopularTags();
+		}
+	);
+}
+
+
+
 
 function displayPhotos(jsonData, options){
 	
@@ -91,7 +131,7 @@ function displayPhotos(jsonData, options){
 			$photoLink,
 			$ajaxLoader = jQuery('#loader');
 
-	$ajaxLoader.center().fadeTo(1, 1);
+	$ajaxLoader.center().show().fadeTo(1, 1);
 	$container.addClass('disabled').fadeTo(0, 0);
 	
 	jQuery.each(photos, function(i, item) {
@@ -155,7 +195,7 @@ function displayPhotos(jsonData, options){
 	  });
 
 		$ajaxLoader.fadeTo(200, 0, function(){
-			
+			$ajaxLoader.hide();
 			$container.removeClass('disabled').fadeTo(750, 1, function(){
 				
 				// try to set the height/width of each image (for better rendering performance/best practices)
@@ -374,6 +414,7 @@ function updateTitleForTag(tag){
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 function clearPhotos(){
 	try{
+		debug_console( 'clearing past photos', "debug");
 		FLICKR_MASONRY.flickrPhotos = null;
 		FLICKR_MASONRY.photosLoaded = 0;
 		var $container  = jQuery('#flickrFaves ul');
@@ -404,3 +445,14 @@ function setupBackToMine(){
 			// setupMoreButton()
 		});
 }
+
+function setupPopularTags(){
+	// jQuery(document).delegate( '.popularTag', 'click', function(event){
+	// 	jQuery('#tagForm').find('input').val(jQuery(this).text()).end().submit();
+	// });
+	
+	jQuery('.popularTag').click( function(event){
+		jQuery('#tagForm').find('input').val(jQuery(this).text()).end().submit();
+	});
+}
+

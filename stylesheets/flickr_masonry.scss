@@ -16,6 +16,21 @@ a:link, a:visited{
 	color: $headerText !important;
 }
 
+// ~~~ clearfix
+.group:before,
+.group:after {
+    content:"";
+    display:table;
+}
+.group:after {
+    clear:both;
+}
+.group {
+    zoom:1; /* For IE 6/7 (trigger hasLayout) */
+}
+// ~~~
+// end clearfix
+
 #todo{color: white; display: none;}
 #flickrFaves{
 	margin: 0 auto;
@@ -31,7 +46,7 @@ a:link, a:visited{
 	text-shadow: 0px 1px 1px black;
 	font-size: 23px;
 	letter-spacing: 2px;
-	word-spacing: 11px;
+	word-spacing: 9px;
 	text-decoration: none;
 }
 
@@ -93,7 +108,7 @@ header{
 	padding: 9px 12px;
 	color: black;
 	width: 260px;
-	margin: 84px auto 20px;
+	margin: 84px auto 46px;
 	cursor: pointer;
 	font-size: 28px;
 	text-align: center;
@@ -241,4 +256,13 @@ header{
 	left: 10px;
 	word-spacing: 0;
 	&:hover{cursor: pointer;}
+}
+
+.popularTags{
+	list-style: none;
+	line-height: 1.8em;
+	.popularTag{
+		float: left; margin-right: 15px;
+		&:hover{cursor: pointer;}
+	}
 }
