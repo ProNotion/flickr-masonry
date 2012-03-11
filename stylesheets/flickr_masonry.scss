@@ -246,6 +246,9 @@ header{
 	line-height: 1.3em;
 	p, ul{text-align: left;}
 	p{font-size: 86%;}
+	h3,h4{
+		margin-bottom: 50px;
+	}
 }
 
 
@@ -266,9 +269,19 @@ header{
 	line-height: 1.8em;
 	.suggestionTag{
 		float: left; margin-right: 15px;
+		&:after{
+			content: ' | ';
+		}
+		&:last-child:after{content: none;}
 		&:hover{
 			cursor: pointer;
-			text-decoration: underline;
+			color: #fcfcfc;
 		}
 	}
 }
+
+.ppt{
+	text-align: center;
+	text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+	font-size: 19px;	
+} 

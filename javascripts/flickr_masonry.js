@@ -4,7 +4,13 @@ var FLICKR_MASONRY = {
 	maxPhotosToRequest : 500,
 	flickrPhotos: null,
 	photosAtATime: 42,
-	photosLoaded: 0
+	photosLoaded: 0,
+	loadLocalStorage: function(){
+		var milliseconds = localStorage.getItem('flickr_masonry_time_retrieved_at');
+		if (milliseconds){
+			FLICKR_MASONRY.timeSinceLastPhotoGet = parseInt(milliseconds, 10);
+		}
+	}
 };
 
 
@@ -19,7 +25,7 @@ jQuery(function(){
 
 	FLICKR_MASONRY.originalTitle = jQuery('header .title').text(); // TODO probably somewhere better to do this
 
-	loadLocalStorage();
+	FLICKR_MASONRY.loadLocalStorage();
 	getPhotos(); // get the initial photos the first time the page loads
 	setupMoreButton();
 	setupTagForm();
@@ -84,10 +90,30 @@ function getPhotosByTag(tag){
 // no images with the user-input tag were found; show something a message and some suggestions
 function noTaggedImagesResult(tag){
 	var tagsToFetch = 10,
-			getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getHotList";
-	
+			$tagsILikeMarkup = jQuery('<ul class="suggestionTags tagsILike group" />'), 
+			tagsILike = "colors fractal grafitti skyline complex pattern texture cute repetition urban decay spiral mandala";
+
+	// todo use jQuery.tmpl for this
+	jQuery(tagsILike.split(' ')).each(function(item, elem){
+		$tagsILikeMarkup.append("<li class='suggestionTag tagsILikeTag'>"+elem+"</li>");
+	});
+			
+	jQuery('#noTagsFound')
+		.html('<h3>no photos tagged <span class="bold italic">' + tag + "</span></h3>")
+		.append($tagsILikeMarkup)
+		.fadeIn();
+		
+	$tagsILikeMarkup.before("<p>some tags i suggest:</p>");		
+			
+	delayFooterVisibility();
+	setupPopularTags();
+
+	// not happy with this, as the top tags don't always return photos when searched via flickr.tags.getClusterPhotos
+
+	/*
+	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getHotList";
 	getURL += "&api_key=79f2e11b6b4e3213f8971bed7f17b4c4";
-	getURL += "&count="+ tagsToFetch;
+	getURL += "&period=week&count="+ tagsToFetch;
 	getURL += "&format=json&jsoncallback=?";
 
 	jQuery.getJSON( getURL, 
@@ -95,14 +121,7 @@ function noTaggedImagesResult(tag){
 			// console.log(data);
 				var hottags = data.hottags.tag,
 						$markup = jQuery('<ul class="suggestionTags popularTags group" />'), 
-						$tagsILikeMarkup = jQuery('<ul class="suggestionTags tagsILike group" />'), 
-						hottag,
-						tagsILike = "colors fractal grafitti skyline complex pattern texture";
-				
-				// todo use jQuery.tmpl for this
-				jQuery(tagsILike.split(' ')).each(function(item, elem){
-					$tagsILikeMarkup.append("<li class='suggestionTag tagsILikeTag'>"+elem+"</li>");
-				});
+						hottag;
 				
 				for (var item in hottags ){
 					if (item >= tagsToFetch ){break;}
@@ -116,18 +135,11 @@ function noTaggedImagesResult(tag){
 					.html('no photos tagged <span class="bold italic">' + tag + "</span>")
 					.append($tagsILikeMarkup, $markup);
 					
-				$tagsILikeMarkup.before("<p>some tags i suggest:</p>");
 				$markup.before("<p>trending tags:</p>");
-				
-				jQuery('#noTagsFound').fadeIn();
-
-				delayFooterVisibility();
-				setupPopularTags();
 		}
 	);
+	*/
 }
-
-
 
 
 function displayPhotos(jsonData, options){
@@ -186,7 +198,8 @@ function displayPhotos(jsonData, options){
 				"data-flickr-url" : "http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/",
 				"data-author-url": hyperlinkAuthorREST(item.owner),
 				"data-author-id" : item.owner,
-				"data-title": item.title || "[untitled]"
+				"data-title": item.title || "[untitled]",
+				'alt' : item.title || "[untitled]"
 		});
 		
 		$photoLink.append(newPhoto);
@@ -297,7 +310,7 @@ function setupImageTooltips(){
 					viewport: jQuery('#flickrFaves ul')
 				},
 				show: {
-					delay: 390,
+					delay: 350,
 					effect: function(offset) {
 						jQuery(this).fadeIn(300); // "this" refers to the tooltip
 		      }
@@ -369,12 +382,6 @@ function setupMoreButton(){
 	});
 }
 
-function loadLocalStorage(){
-	var milliseconds = localStorage.getItem('flickr_masonry_time_retrieved_at');
-	if (milliseconds){
-		FLICKR_MASONRY.timeSinceLastPhotoGet = parseInt(milliseconds, 10);
-	}
-}
 
 // only make an ajax call to flickr if it's been over a day
 function timeForFreshAJAXRequest(){
@@ -386,22 +393,20 @@ function timeForFreshAJAXRequest(){
 
 // sets up the lightbox for images
 function setupPrettyPhoto(){
-	debug_console( "setting up prettyPhoto", "debug");
-	
+	// debug_console( "setting up prettyPhoto", "debug");
 	jQuery("a[rel^='lightbox']").prettyPhoto({
 		overlay_gallery : false,
 		deeplinking: false,
-		social_tools: false
+		social_tools: false,
+		changepicturecallback: function(){
+			// hide all image tooltips
+			jQuery('.flickrFaveItem img').qtip('hide');
+		}
 	});
 }
 
 // don't want the footer showing before other stuff is loaded b/c the reflow looks bad
 function delayFooterVisibility(){
-	// // if this is our first load, then fade in the footer
-	// if ( FLICKR_MASONRY.photosLoaded === FLICKR_MASONRY.photosAtATime ){
-	// 	jQuery('#credits').fadeTo(3000, 1);
-	// }
-	
 	jQuery('#credits').fadeIn(2000);
 }
 
@@ -409,7 +414,6 @@ function updateCredits(tag){
 	jQuery('#seeTagsName').text(tag);
 	jQuery('#seeTagsLink').attr('href', 'http://www.flickr.com/photos/tags/'+tag+'/show/');
 }
-
 
 function setupTagForm(){
 	jQuery('#tagForm').submit( function(event){
@@ -467,4 +471,3 @@ function setupPopularTags(){
 		jQuery('#tagForm').find('input').val(jQuery(this).text()).end().submit();
 	});
 }
-

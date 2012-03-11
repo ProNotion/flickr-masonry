@@ -229,6 +229,8 @@ header {
     text-align: left; }
   #tagLimit p, #noTagsFound p {
     font-size: 86%; }
+  #tagLimit h3, #tagLimit h4, #noTagsFound h3, #noTagsFound h4 {
+    margin-bottom: 50px; }
 
 #backToMine {
   display: block;
@@ -248,6 +250,15 @@ header {
   .suggestionTags .suggestionTag {
     float: left;
     margin-right: 15px; }
+    .suggestionTags .suggestionTag:after {
+      content: ' | '; }
+    .suggestionTags .suggestionTag:last-child:after {
+      content: none; }
     .suggestionTags .suggestionTag:hover {
       cursor: pointer;
-      text-decoration: underline; }
+      color: #fcfcfc; }
+
+.ppt {
+  text-align: center;
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
+  font-size: 19px; }
