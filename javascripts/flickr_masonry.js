@@ -3,7 +3,7 @@ var FLICKR_MASONRY = {
 	forcePatternAJAXGet : false,
 	maxPhotosToRequest : 500,
 	flickrPhotos: null,
-	photosAtATime: 40,
+	photosAtATime: 42,
 	photosLoaded: 0
 };
 
@@ -434,6 +434,7 @@ function clearPhotos(){
 		FLICKR_MASONRY.photosLoaded = 0;
 		var $container  = jQuery('#flickrFaves ul');
 		$container.masonry( 'destroy' ).empty();
+		jQuery('#noTagsFound').hide();
 	}catch(e){
 		debug_console( 'error in clearPhotos(): ' + e.message, "debug");
 	}
@@ -464,7 +465,6 @@ function setupBackToMine(){
 function setupPopularTags(){
 	jQuery('.suggestionTag').click( function(event){
 		jQuery('#tagForm').find('input').val(jQuery(this).text()).end().submit();
-		jQuery('#noTagsFound').hide();
 	});
 }
 
