@@ -235,16 +235,19 @@ header{
 	
 }
 
-#tagLimit{
+#tagLimit, #noTagsFound{
 	@extend .headerText;
-	display:none;
+	display: none;
 	width: 65%;
 	margin: 79px auto 40px;
 	text-align: center;
 	padding: 14px 18px;
 	font-size: 18px;
 	line-height: 1.3em;
+	p, ul{text-align: left;}
+	p{font-size: 86%;}
 }
+
 
 #backToMine{
 	display: block;
@@ -258,11 +261,14 @@ header{
 	&:hover{cursor: pointer;}
 }
 
-.popularTags{
+.suggestionTags{
 	list-style: none;
 	line-height: 1.8em;
-	.popularTag{
+	.suggestionTag{
 		float: left; margin-right: 15px;
-		&:hover{cursor: pointer;}
+		&:hover{
+			cursor: pointer;
+			text-decoration: underline;
+		}
 	}
 }

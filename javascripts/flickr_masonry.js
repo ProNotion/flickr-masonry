@@ -94,18 +94,33 @@ function noTaggedImagesResult(tag){
 		function(data) { 
 			// console.log(data);
 				var hottags = data.hottags.tag,
-						markup = jQuery('<ul class="popularTags group" />'), hottag;
-						
+						$markup = jQuery('<ul class="suggestionTags popularTags group" />'), 
+						$tagsILikeMarkup = jQuery('<ul class="suggestionTags tagsILike group" />'), 
+						hottag,
+						tagsILike = "colors fractal grafitti skyline complex pattern texture";
+				
+				// todo use jQuery.tmpl for this
+				jQuery(tagsILike.split(' ')).each(function(item, elem){
+					$tagsILikeMarkup.append("<li class='suggestionTag tagsILikeTag'>"+elem+"</li>");
+				});
+				
 				for (var item in hottags ){
 					if (item >= tagsToFetch ){break;}
 					hottag = hottags[item]['_content'];
-					markup.append("<li class='popularTag'>"+hottag+"</li>");
+					$markup.append("<li class='suggestionTag popularTag'>"+hottag+"</li>");
 				}
 				
 				// debug_console( markup, "debug");
+				jQuery('#tagLimit').hide();
+				jQuery('#noTagsFound')
+					.html('no photos tagged <span class="bold italic">' + tag + "</span>")
+					.append($tagsILikeMarkup, $markup);
+					
+				$tagsILikeMarkup.before("<p>some tags i suggest:</p>");
+				$markup.before("<p>trending tags:</p>");
 				
-				jQuery('#tagLimit').html('no photos tagged <span class="bold italic">' + tag + "</span>").append(markup).fadeIn();
-				// jQuery('.popularTag').wrapAll('<ul>');
+				jQuery('#noTagsFound').fadeIn();
+
 				delayFooterVisibility();
 				setupPopularTags();
 		}
@@ -171,7 +186,7 @@ function displayPhotos(jsonData, options){
 				"data-flickr-url" : "http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/",
 				"data-author-url": hyperlinkAuthorREST(item.owner),
 				"data-author-id" : item.owner,
-				"data-title": item.title	
+				"data-title": item.title || "[untitled]"
 		});
 		
 		$photoLink.append(newPhoto);
@@ -282,16 +297,16 @@ function setupImageTooltips(){
 					viewport: jQuery('#flickrFaves ul')
 				},
 				show: {
-					delay: 470,
+					delay: 390,
 					effect: function(offset) {
 						jQuery(this).fadeIn(300); // "this" refers to the tooltip
 		      }
 				},
 				hide: { 
-					delay: 190,
+					delay: 50,
 					fixed: true,  
 					effect: function(){
-						jQuery(this).fadeOut(289); // "this" refers to the tooltip
+						jQuery(this).fadeOut(220); // "this" refers to the tooltip
 					}
 				},
 				style: {
@@ -447,12 +462,9 @@ function setupBackToMine(){
 }
 
 function setupPopularTags(){
-	// jQuery(document).delegate( '.popularTag', 'click', function(event){
-	// 	jQuery('#tagForm').find('input').val(jQuery(this).text()).end().submit();
-	// });
-	
-	jQuery('.popularTag').click( function(event){
+	jQuery('.suggestionTag').click( function(event){
 		jQuery('#tagForm').find('input').val(jQuery(this).text()).end().submit();
+		jQuery('#noTagsFound').hide();
 	});
 }
 

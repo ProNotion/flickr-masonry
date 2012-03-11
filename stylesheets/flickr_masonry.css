@@ -35,7 +35,7 @@ a:link, a:visited {
 .bold {
   font-weight: bold; }
 
-.headerText, header, header a, #credits, #tagLimit {
+.headerText, header, header a, #credits, #tagLimit, #noTagsFound {
   color: #cfcfcf;
   font-family: "Lucida Grande", Helvetica, arial, sans-serif;
   text-shadow: 0px 1px 1px black;
@@ -217,7 +217,7 @@ header {
       #searchArea input:focus:-moz-placeholder {
         color: rgba(255, 255, 255, 0.3); }
 
-#tagLimit {
+#tagLimit, #noTagsFound {
   display: none;
   width: 65%;
   margin: 79px auto 40px;
@@ -225,6 +225,10 @@ header {
   padding: 14px 18px;
   font-size: 18px;
   line-height: 1.3em; }
+  #tagLimit p, #tagLimit ul, #noTagsFound p, #noTagsFound ul {
+    text-align: left; }
+  #tagLimit p, #noTagsFound p {
+    font-size: 86%; }
 
 #backToMine {
   display: block;
@@ -238,11 +242,12 @@ header {
   #backToMine:hover {
     cursor: pointer; }
 
-.popularTags {
+.suggestionTags {
   list-style: none;
   line-height: 1.8em; }
-  .popularTags .popularTag {
+  .suggestionTags .suggestionTag {
     float: left;
     margin-right: 15px; }
-    .popularTags .popularTag:hover {
-      cursor: pointer; }
+    .suggestionTags .suggestionTag:hover {
+      cursor: pointer;
+      text-decoration: underline; }
