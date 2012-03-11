@@ -245,7 +245,10 @@ header{
 	font-size: 18px;
 	line-height: 1.3em;
 	p, ul{text-align: left;}
-	p{font-size: 86%;}
+	p{
+		font-size: 86%;
+		word-spacing: 0px;
+	}
 	h3,h4{
 		margin-bottom: 50px;
 	}

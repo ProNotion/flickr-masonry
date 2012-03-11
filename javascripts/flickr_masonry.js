@@ -91,7 +91,7 @@ function getPhotosByTag(tag){
 function noTaggedImagesResult(tag){
 	var tagsToFetch = 10,
 			$tagsILikeMarkup = jQuery('<ul class="suggestionTags tagsILike group" />'), 
-			tagsILike = "colors fractal grafitti skyline complex pattern texture cute repetition urban decay spiral mandala";
+			tagsILike = "colors fractal grafitti skyline complex pattern texture cute repetition urban decay spiral mandala nostalgia";
 
 	// todo use jQuery.tmpl for this
 	jQuery(tagsILike.split(' ')).each(function(item, elem){
