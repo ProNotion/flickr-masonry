@@ -239,7 +239,7 @@ header{
 	@extend .headerText;
 	display: none;
 	width: 65%;
-	margin: 79px auto 40px;
+	margin: 86px auto 40px;
 	text-align: center;
 	padding: 14px 18px;
 	font-size: 18px;
@@ -288,3 +288,12 @@ header{
 	text-shadow: 0 0 1px rgba(0, 0, 0, 0.1);
 	font-size: 19px;	
 } 
+
+#seeSimilarTags{
+	.title{
+		margin-top: 38px;
+		margin-bottom: -9px;
+		text-align: left;
+	}
+	.suggestionTag{color: $link;}
+}

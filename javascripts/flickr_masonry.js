@@ -3,7 +3,7 @@ var FLICKR_MASONRY = {
 	forcePatternAJAXGet : false,
 	maxPhotosToRequest : 500,
 	flickrPhotos: null,
-	photosAtATime: 42,
+	photosAtATime: 46,
 	photosLoaded: 0,
 	loadLocalStorage: function(){
 		var milliseconds = localStorage.getItem('flickr_masonry_time_retrieved_at');
@@ -106,7 +106,6 @@ function noTaggedImagesResult(tag){
 	$tagsILikeMarkup.before("<p>some tags i suggest:</p>");		
 			
 	delayFooterVisibility();
-	setupPopularTags();
 
 	// not happy with this, as the top tags don't always return photos when searched via flickr.tags.getClusterPhotos
 
@@ -224,7 +223,7 @@ function displayPhotos(jsonData, options){
 
 		$ajaxLoader.fadeTo(200, 0, function(){
 			$ajaxLoader.hide();
-			$container.removeClass('disabled').fadeTo(750, 1, function(){
+			$container.removeClass('disabled').fadeTo(570, 1, function(){
 				
 				// try to set the height/width of each image (for better rendering performance/best practices)
 				jQuery('img').each( function(){
@@ -413,7 +412,30 @@ function delayFooterVisibility(){
 function updateCredits(tag){
 	jQuery('#seeTagsName').text(tag);
 	jQuery('#seeTagsLink').attr('href', 'http://www.flickr.com/photos/tags/'+tag+'/show/');
+	showSimilarTags(tag);
 }
+
+function showSimilarTags(tag){
+	
+	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getRelated";
+	getURL += "&tag="+tag;
+	getURL += "&cluster_id=&api_key=79f2e11b6b4e3213f8971bed7f17b4c4";
+	getURL += "&format=json&jsoncallback=?";
+	
+	jQuery.getJSON( getURL, 
+		function(data) { 
+			// console.log(data);
+			for( var item in data.tags.tag ){
+				if( item > 10 ){ break;}
+				var tagName = data.tags.tag[item]._content;
+				// console.log( data.tags.tag[item]._content );
+				jQuery('<li>', {"text" : tagName, 'class' : 'suggestionTag' }).appendTo('#seeSimilarTags ul');
+			}
+			
+		}
+	);
+}
+
 
 function setupTagForm(){
 	jQuery('#tagForm').submit( function(event){
@@ -423,6 +445,7 @@ function setupTagForm(){
 		updateTitleForTag(tag);
 		getPhotosByTag(tag);
 	});
+	setupPopularTags();
 }
 
 function updateTitleForTag(tag){
@@ -438,6 +461,7 @@ function clearPhotos(){
 		FLICKR_MASONRY.photosLoaded = 0;
 		var $container  = jQuery('#flickrFaves ul');
 		$container.masonry( 'destroy' ).empty();
+		jQuery('.suggestionTags').empty();
 		jQuery('#noTagsFound').hide();
 	}catch(e){
 		debug_console( 'error in clearPhotos(): ' + e.message, "debug");
@@ -467,7 +491,11 @@ function setupBackToMine(){
 }
 
 function setupPopularTags(){
-	jQuery('.suggestionTag').click( function(event){
-		jQuery('#tagForm').find('input').val(jQuery(this).text()).end().submit();
+	jQuery(document).delegate( '.suggestionTag', 'click', function(event){
+		jQuery('#tagForm')
+			.find('input')
+			.val(jQuery(this).text())
+			.end()
+			.submit();
 	});
 }
