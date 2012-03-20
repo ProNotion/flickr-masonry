@@ -32,7 +32,6 @@ jQuery(function(){
 });
 
 function getPhotos(){
-	
 	hideCommonElements();
 	
 	if ( timeForFreshAJAXRequest() ){
@@ -420,7 +419,6 @@ function updateCredits(tag){
 }
 
 function showSimilarTags(tag){
-	
 	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getRelated";
 	getURL += "&tag="+tag;
 	getURL += "&cluster_id=&api_key=79f2e11b6b4e3213f8971bed7f17b4c4";
@@ -429,13 +427,16 @@ function showSimilarTags(tag){
 	jQuery.getJSON( getURL, 
 		function(data) { 
 			// console.log(data);
-			for( var item in data.tags.tag ){
-				if( item > 10 ){ break;}
-				var tagName = data.tags.tag[item]._content;
-				// console.log( data.tags.tag[item]._content );
-				jQuery('<li>', {"text" : tagName, 'class' : 'suggestionTag' }).appendTo('#seeSimilarTags ul');
+			try{
+				for( var item in data.tags.tag ){
+					if( item > 10 ){ break;}
+					var tagName = data.tags.tag[item]._content;
+					// console.log( data.tags.tag[item]._content );
+					jQuery('<li>', {"text" : tagName, 'class' : 'suggestionTag' }).appendTo('#seeSimilarTags ul');
+				}
+			}catch(e){
+				debug_console( 'error in showSimilarTags: ' e.message, "error");
 			}
-			
 		}
 	);
 }
