@@ -21,7 +21,7 @@ jQuery(function(){
 		this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
 		this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
 		return this;
-	}
+	};
 
 	FLICKR_MASONRY.originalTitle = jQuery('header .title').text(); // TODO probably somewhere better to do this
 
@@ -89,8 +89,7 @@ function getPhotosByTag(tag){
 
 // no images with the user-input tag were found; show something a message and some suggestions
 function noTaggedImagesResult(tag){
-	var tagsToFetch = 10,
-			$tagsILikeMarkup = jQuery('<ul class="suggestionTags tagsILike group" />'), 
+	var $tagsILikeMarkup = jQuery('<ul class="suggestionTags tagsILike group" />'), 
 			tagsILike = "colors fractal grafitti skyline complex pattern texture cute repetition urban decay spiral mandala nostalgia";
 
 	// todo use jQuery.tmpl for this
@@ -110,6 +109,7 @@ function noTaggedImagesResult(tag){
 	// not happy with this, as the top tags don't always return photos when searched via flickr.tags.getClusterPhotos
 
 	/*
+	var tagsToFetch = 10;
 	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getHotList";
 	getURL += "&api_key=79f2e11b6b4e3213f8971bed7f17b4c4";
 	getURL += "&period=week&count="+ tagsToFetch;
@@ -169,17 +169,17 @@ function displayPhotos(jsonData, options){
 		newPhoto = new Image();
 		$listItem = jQuery('<li>', { "class" : "photo" } );
 
-		// for RSS
-		// $photoLink = jQuery('<a>', 
-		// 								{ "target": "_blank", 
-		// 									"class": "flickrFaveItem", 
-		// 									"href" :  item.link + "lightbox/", 
-		// 									"data-author": hyperlinkAuthor(item.author_id, item.author),
-		// 									"data-title": item.title,
-		// 									"data-time": item.date_taken,
-		// 									"data-tags": hyperlinkTags(item.tags) });
-		// 
-		// newPhoto.src = item.media.m;
+    // for RSS
+    // $photoLink = jQuery('<a>', 
+    //                 { "target": "_blank", 
+    //                   "class": "flickrFaveItem", 
+    //                   "href" :  item.link + "lightbox/", 
+    //                   "data-author": hyperlinkAuthor(item.author_id, item.author),
+    //                   "data-title": item.title,
+    //                   "data-time": item.date_taken,
+    //                   "data-tags": hyperlinkTags(item.tags) 
+    //                 });
+    // newPhoto.src = item.media.m;
 		
 		// for REST API
 		$photoLink = jQuery('<a>', 
@@ -240,10 +240,10 @@ function displayPhotos(jsonData, options){
 				});
 
 				// only fade the 'more' button back in if there are still images remaining to be shown
-				if ( !options['taggedPhotos'] && FLICKR_MASONRY.photosLoaded < FLICKR_MASONRY.flickrPhotos.photos.photo.length ){
+				if ( !options.taggedPhotos && FLICKR_MASONRY.photosLoaded < FLICKR_MASONRY.flickrPhotos.photos.photo.length ){
 					jQuery('#moreButton').fadeTo( 650, 1, 'swing');
 				}
-				if( options['taggedPhotos'] ){
+				if( options.taggedPhotos ){
 					jQuery('#tagLimit').show();
 				}
 				
@@ -255,8 +255,8 @@ function displayPhotos(jsonData, options){
 				// setup pretty photo gallery
 				setupPrettyPhoto();
 				
-				if (options['taggedPhotos']){
-					updateCredits(options['searchedTag']);
+				if (options.taggedPhotos){
+					updateCredits(options.searchedTag);
 				}
 				// temp off
 				// jQuery('img:even').statick({opacity: 0.06, timing:{baseTime: 140}});
@@ -288,47 +288,47 @@ function setupImageTooltips(){
 			content: {
 				text: "<div class='loading'><span>loading...</span></div>",
 				ajax: {
-		         url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id="+userId+"&format=json&jsoncallback=?", 
-		         type: 'GET', // POST or GET,
-					 	 dataType: "json",
-		         success: function(data, status) {
-									// debug_console(data, 'log');
-									var realname = fetchRealName(data);
-									var username = fetchUserName(data);
-									var markup =  "<p class='photoTitle'><a href='"+flickrUrl+"' target='_blank'>" + title + "</a></p>\
-													<p>by: <a class='authorName' href='http://www.flickr.com/photos/"+userId+"' target='_blank'>" + username + realname + "</a></p>";
+          url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id="+userId+"&format=json&jsoncallback=?", 
+          type: 'GET', // POST or GET,
+          dataType: "json",
+          success: function(data, status) {
+						// debug_console(data, 'log');
+						var realname = fetchRealName(data),
+						    username = fetchUserName(data),
+						    markup =  "<p class='photoTitle'><a href='"+flickrUrl+"' target='_blank'>" + title + "</a></p>\
+										<p>by: <a class='authorName' href='http://www.flickr.com/photos/"+userId+"' target='_blank'>" + username + realname + "</a></p>";
 
-								// TODO: don't really like this, try and clean it up
-								jQuery(jQuery(this)[0].elements.content[0]).find('.loading').html(markup);
-		         }
-		      },
-				},
-				position:{
-					my: 'left center',
-					at: 'right center',
-					viewport: jQuery('#flickrFaves ul')
-				},
-				show: {
-					delay: 350,
-					effect: function(offset) {
-						jQuery(this).fadeIn(300); // "this" refers to the tooltip
-		      }
-				},
-				hide: { 
-					delay: 50,
-					fixed: true,  
-					effect: function(){
-						jQuery(this).fadeOut(220); // "this" refers to the tooltip
-					}
-				},
-				style: {
-					tip:{
-						width: 7,
-						height: 19
-					},
-					classes: "flickrTip"
-				}
-			});
+						// TODO: don't really like this, try and clean it up
+					  jQuery(jQuery(this)[0].elements.content[0]).find('.loading').html(markup);
+          }
+		    }
+			},
+      position:{
+        my: 'left center',
+        at: 'right center',
+        viewport: jQuery('#flickrFaves ul')
+      },
+      show: {
+        delay: 350,
+        effect: function(offset) {
+          jQuery(this).fadeIn(300); // "this" refers to the tooltip
+        }
+      },
+      hide: { 
+        delay: 50,
+        fixed: true,  
+        effect: function(){
+          jQuery(this).fadeOut(220); // "this" refers to the tooltip
+        }
+      },
+      style: {
+        tip:{
+          width: 7,
+          height: 19
+        },
+        classes: "flickrTip"
+      }
+    });
 	});	
 }
 
@@ -348,7 +348,7 @@ function fetchRealName(data){
 function fetchUserName(data){
 	var username;
 	try{
-		username = data.person.username._content;											
+		username = data.person.username._content;
 	}
 	catch(e){
 		username = '';
@@ -366,9 +366,13 @@ function hyperlinkAuthor(authorId, authorName){
 
 function hyperlinkTags(tags){
 	var tagsArray = tags.split(' '),
-			linkedTags = [];
-	for (var tag in tagsArray){
-		linkedTags.push("<a class='tag' href='http://www.flickr.com/photos/tags/"+tagsArray[tag]+"' target='_blank'>"+tagsArray[tag]+"</span>");
+			linkedTags = [], 
+			tag;
+	
+	for (tag in tagsArray){
+    if( tagsArray.hasOwnProperty(tag) ){
+      linkedTags.push("<a class='tag' href='http://www.flickr.com/photos/tags/"+tagsArray[tag]+"' target='_blank'>"+tagsArray[tag]+"</span>");
+    }
 	}
 	return linkedTags.join(' ');
 }
@@ -386,7 +390,7 @@ function setupMoreButton(){
 function timeForFreshAJAXRequest(){
 	return FLICKR_MASONRY.timeSinceLastPhotoGet === null // if we've never made an ajax call for photos
 					|| ((new Date().getTime() - FLICKR_MASONRY.timeSinceLastPhotoGet) / (1000 * 60 * 60 * 24)) > 1  // if the last time we made an ajax call was over a day ago
-					|| FLICKR_MASONRY.forcePatternAJAXGet // or if we want to force an ajax retrieval
+					|| FLICKR_MASONRY.forcePatternAJAXGet; // or if we want to force an ajax retrieval
 }
 
 
