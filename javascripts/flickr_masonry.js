@@ -435,7 +435,7 @@ function showSimilarTags(tag){
 					jQuery('<li>', {"text" : tagName, 'class' : 'suggestionTag' }).appendTo('#seeSimilarTags ul');
 				}
 			}catch(e){
-				debug_console( 'error in showSimilarTags: ' e.message, "error");
+				debug_console( 'error in showSimilarTags: ' + e.message, "error");
 			}
 		}
 	);
