@@ -1,9 +1,10 @@
+
 var FLICKR_MASONRY = {
 	timeSinceLastPhotoGet : null,
 	forcePatternAJAXGet : false,
 	maxPhotosToRequest : 500,
 	flickrPhotos: null,
-	photosAtATime: 46,
+	photosAtATime: 50,
 	photosLoaded: 0,
 	loadLocalStorage: function(){
 		var milliseconds = localStorage.getItem('flickr_masonry_time_retrieved_at');
@@ -29,7 +30,38 @@ jQuery(function(){
 	getPhotos(); // get the initial photos the first time the page loads
 	setupMoreButton();
 	setupTagForm();
+	
+	// experimental
+	reflectPlugin();
 });
+
+function reflectPlugin(){
+	if( location.href.match(/reflect=(1|true)/) ){
+		var s = document.createElement('script');
+		s.src='/misc/test-jquery-plugins/reflect-images/javascripts/jquery.reflect-images.js'; 
+		document.getElementsByTagName('head')[0].appendChild(s);
+
+		s = jQuery('<link/>', {'href' : '/misc/test-jquery-plugins/reflect-images/stylesheets/test.css', 'type' : 'text/css', 'rel' : 'stylesheet' } );
+		jQuery('head').append(s);
+
+	  jQuery(document).delegate('body', 'keyup', function(e){
+	    try{
+	      switch( e.which ){
+	        case 39: // right key
+	            // location = jQuery('#wordNavNext').attr('href');
+						jQuery('li img').reflectImages();
+	          break;
+	        case 37: // left key
+						// location = jQuery('#wordNavPrevious').attr('href');
+	          break;
+	      }
+	    }
+		catch(e){
+	      // nothing
+	  }
+	 });
+	}
+}
 
 function getPhotos(){
 	hideCommonElements();
@@ -308,7 +340,7 @@ function setupImageTooltips(){
         viewport: jQuery('#flickrFaves ul')
       },
       show: {
-        delay: 350,
+        delay: 260,
         effect: function(offset) {
           jQuery(this).fadeIn(300); // "this" refers to the tooltip
         }

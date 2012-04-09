@@ -57,7 +57,7 @@ header{
 	width: 90%;
 	@include background_gradient( rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05));
 	padding: 7px 2px 14px;
-	border-radius: 1px;
+	@include borderRadius(1px);
 	border-width: 0 1px 1px 1px;
 	border-color: #2a2a2a;
 	border-style: solid;
@@ -115,7 +115,7 @@ header{
 	text-transform: uppercase;
 	text-shadow: -1px -2px 2px rgba(255,255,255,0.4);
 	@include css3(box-shadow, inset 0 0 4px rgba(0,0,0,0.5) );
-	@include border-radius(6px);
+	@include borderRadius(6px);
 	@include css3(transition, background 200ms);
 	
 	&:hover{
@@ -144,7 +144,7 @@ header{
 	width: 250px;
 	
 	font-size: 14px;
-	border-radius: 3px;
+	@include borderRadius(3px);
 	box-shadow: 0 2px 7px rgba(0,0,0,0.8);
 	background: rgba(0,0,0,0.88) !important;
 	color: white !important;
@@ -215,7 +215,7 @@ header{
 		border: 1px solid #525252;
 		color: #eee;
 		
-		@include border-radius(2px);
+		@include borderRadius(2px);
 		&:hover{
 			background: lighten($searchBackground, 4%);
 			@include css3(transition, background 260ms );
@@ -294,6 +294,7 @@ header{
 		margin-top: 46px;
 		margin-bottom: -9px;
 		text-align: left;
+		font-weight: normal;
 	}
 	.suggestionTag{color: $link;}
 }
