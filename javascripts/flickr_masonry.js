@@ -49,10 +49,10 @@ function reflectPlugin(){
 	      switch( e.which ){
 	        case 39: // right key
 	            // location = jQuery('#wordNavNext').attr('href');
-						jQuery('li img').reflectImages();
+						jQuery('li img').reflectImages({ 'delay': 50, 'stripLinks' : true });
 	          break;
 	        case 37: // left key
-						// location = jQuery('#wordNavPrevious').attr('href');
+						jQuery('li img').reflectImages({'destroy' : true });
 	          break;
 	      }
 	    }
