@@ -30,10 +30,23 @@ jQuery(function(){
 	getPhotos(); // get the initial photos the first time the page loads
 	setupMoreButton();
 	setupTagForm();
+	FLICKR_MASONRY.setupAnalytics();
 	
 	// experimental
 	reflectPlugin();
 });
+
+
+FLICKR_MASONRY.setupAnalytics = function (){
+	jQuery('#seeTagsLink').click( function(event){
+		TELE.logAnalytics(['_trackEvent', 'view', 'flick masonry see all images with tag', jQuery('#seeTagsName').text() ]);
+	});	
+	
+	jQuery('.suggestionTag').click( function(event){
+		TELE.logAnalytics(['_trackEvent', 'view', 'flick masonry click suggested tag', jQuery(this).text() ]);
+	});
+}
+
 
 function reflectPlugin(){
 	if( location.href.match(/reflect=(1|true)/) ){
@@ -193,6 +206,8 @@ function displayPhotos(jsonData, options){
 	
 	jQuery.each(photos, function(i, item) {
 		
+		var itemTitle;
+		
 		// if the photo's index is above the quoto per fetch, then return
 		if ( i >= FLICKR_MASONRY.photosAtATime ){
 			return;
@@ -224,12 +239,15 @@ function displayPhotos(jsonData, options){
 		
 		newPhoto.src = item.url_s;
 		
+		itemTitle = item.title || "[untitled]";
+		
 		jQuery(newPhoto).attr({
 				"data-flickr-url" : "http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/",
 				"data-author-url": hyperlinkAuthorREST(item.owner),
 				"data-author-id" : item.owner,
-				"data-title": item.title || "[untitled]",
-				'alt' : item.title || "[untitled]"
+				"data-title": itemTitle,
+				'alt' : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>"+itemTitle+"</a>"
+				// 'alt' : item.title || "[untitled]"
 		});
 		
 		$photoLink.append(newPhoto);
@@ -411,6 +429,9 @@ function hyperlinkTags(tags){
 function setupMoreButton(){
 	var $button = jQuery('#moreButton');
 	$button.click( function(evt){
+		
+		TELE.logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
+		
 		$button.fadeTo(1, 0);
 		displayPhotos(FLICKR_MASONRY.flickrPhotos);
 	});
@@ -478,6 +499,9 @@ function setupTagForm(){
 	jQuery('#tagForm').submit( function(event){
 		var tag = jQuery(this).find('input').val();
 		event.preventDefault();
+		
+		TELE.logAnalytics(['_trackEvent', 'search', 'flickr masonry search', tag ]);
+		
 		clearPhotos();
 		updateTitleForTag(tag);
 		getPhotosByTag(tag);
