@@ -51,10 +51,10 @@ FLICKR_MASONRY.setupAnalytics = function (){
 function reflectPlugin(){
 	if( location.href.match(/reflect=(1|true)/) ){
 		var s = document.createElement('script');
-		s.src='/misc/test-jquery-plugins/reflect-images/javascripts/jquery.reflect-images.js'; 
+		s.src='https://raw.github.com/dguzzo/reflections/master/javascripts/jquery.reflections.js'; 
 		document.getElementsByTagName('head')[0].appendChild(s);
 
-		s = jQuery('<link/>', {'href' : '/misc/test-jquery-plugins/reflect-images/stylesheets/test.css', 'type' : 'text/css', 'rel' : 'stylesheet' } );
+		s = jQuery('<link/>', {'href' : 'http://www.telecommutetojuryduty.com/misc/reflections/stylesheets/reflections.css', 'type' : 'text/css', 'rel' : 'stylesheet' } );
 		jQuery('head').append(s);
 
 	  jQuery(document).delegate('body', 'keyup', function(e){
