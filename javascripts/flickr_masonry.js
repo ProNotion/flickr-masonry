@@ -84,6 +84,7 @@ function getPhotos(){
 
 		// var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
 		var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page="+FLICKR_MASONRY.maxPhotosToRequest+"&format=json&jsoncallback=?";
+		jQuery('#loader').center().show().fadeTo(1, 1);
 
 		jQuery.getJSON( getURL, 
 			function(data) { 
@@ -109,6 +110,8 @@ function getPhotosByTag(tag){
 	getURL += "&per_page="+FLICKR_MASONRY.maxPhotosToRequest+"&format=json&jsoncallback=?";
 
 	hideCommonElements();
+	
+	jQuery('#loader').center().show().fadeTo(1, 1);
 	
 	jQuery.getJSON( getURL, 
 		function(data) { 
