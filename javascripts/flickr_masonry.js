@@ -49,7 +49,7 @@ FLICKR_MASONRY.setupAnalytics = function (){
 
 
 function reflectPlugin(){
-	if( location.href.match(/reflect=(1|true)/) ){
+	if ( location.href.match(/reflect=(1|true)/) ){
 		var s = document.createElement('script');
 		s.src='https://raw.github.com/dguzzo/reflections/master/javascripts/jquery.reflections.js'; 
 		document.getElementsByTagName('head')[0].appendChild(s);
@@ -78,28 +78,35 @@ function reflectPlugin(){
 
 function getPhotos(){
 	hideCommonElements();
+	var searchTerm = gup('search');
 	
-	if ( timeForFreshAJAXRequest() ){
-		debug_console( 'using ajax call to flickr for photos retrieval', 'debug' );
-
-		// var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
-		var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page="+FLICKR_MASONRY.maxPhotosToRequest+"&format=json&jsoncallback=?";
-		jQuery('#loader').center().show().fadeTo(1, 1);
-
-		jQuery.getJSON( getURL, 
-			function(data) { 
-				// console.log(data);
-				localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
-				localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
-				FLICKR_MASONRY.flickrPhotos = data;
-				displayPhotos(data);
-			}
-		);
+	// allow search by tag to be done via a query string
+	if ( searchTerm ){
+		getPhotosByTag(encodeURI(searchTerm));
 	}
 	else{
-		console.log( 'using local storage for photos retrieval' );
-		FLICKR_MASONRY.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));	
-		displayPhotos(FLICKR_MASONRY.flickrPhotos);
+		if ( timeForFreshAJAXRequest() ){
+			debug_console( 'using ajax call to flickr for photos retrieval', 'debug' );
+
+			// var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
+			var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key=79f2e11b6b4e3213f8971bed7f17b4c4&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page="+FLICKR_MASONRY.maxPhotosToRequest+"&format=json&jsoncallback=?";
+			jQuery('#loader').center().show().fadeTo(1, 1);
+
+			jQuery.getJSON( getURL, 
+				function(data) { 
+					// console.log(data);
+					localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
+					localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
+					FLICKR_MASONRY.flickrPhotos = data;
+					displayPhotos(data);
+				}
+			);
+		}
+		else{
+			console.log( 'using local storage for photos retrieval' );
+			FLICKR_MASONRY.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));	
+			displayPhotos(FLICKR_MASONRY.flickrPhotos);
+		}
 	}
 }
 
@@ -297,7 +304,7 @@ function displayPhotos(jsonData, options){
 				if ( !options.taggedPhotos && FLICKR_MASONRY.photosLoaded < FLICKR_MASONRY.flickrPhotos.photos.photo.length ){
 					jQuery('#moreButton').fadeTo( 650, 1, 'swing');
 				}
-				if( options.taggedPhotos ){
+				if ( options.taggedPhotos ){
 					jQuery('#tagLimit').show();
 				}
 				
@@ -424,7 +431,7 @@ function hyperlinkTags(tags){
 			tag;
 	
 	for (tag in tagsArray){
-    if( tagsArray.hasOwnProperty(tag) ){
+    if ( tagsArray.hasOwnProperty(tag) ){
       linkedTags.push("<a class='tag' href='http://www.flickr.com/photos/tags/"+tagsArray[tag]+"' target='_blank'>"+tagsArray[tag]+"</span>");
     }
 	}
@@ -487,7 +494,7 @@ function showSimilarTags(tag){
 			// console.log(data);
 			try{
 				for( var item in data.tags.tag ){
-					if( item > 10 ){ break;}
+					if ( item > 10 ){ break;}
 					var tagName = data.tags.tag[item]._content;
 					// console.log( data.tags.tag[item]._content );
 					jQuery('<li>', {"text" : tagName, 'class' : 'suggestionTag' }).appendTo('#seeSimilarTags ul');
