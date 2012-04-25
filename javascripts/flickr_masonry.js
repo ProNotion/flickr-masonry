@@ -144,6 +144,8 @@ function noTaggedImagesResult(tag){
 		$tagsILikeMarkup.append("<li class='suggestionTag tagsILikeTag'>"+elem+"</li>");
 	});
 			
+	jQuery('#loader').hide();		
+	
 	jQuery('#noTagsFound')
 		.html('<h3>no photos tagged <span class="bold italic">' + tag + "</span></h3>")
 		.append($tagsILikeMarkup)

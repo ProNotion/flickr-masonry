@@ -8,6 +8,11 @@ a:link, a:visited {
 .stealthLink {
   color: #cfcfcf !important; }
 
+.offLeft {
+  position: absolute;
+  left: -10000px;
+  top: 0; }
+
 .group:before,
 .group:after {
   content: "";
@@ -66,6 +71,8 @@ header {
   text-align: center;
   font-size: 1em;
   padding-bottom: 20px; }
+  #credits span {
+    color: #404040; }
 
 .photo {
   width: 238px;

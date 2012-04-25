@@ -2,12 +2,14 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-	<title>Flickr Masonry</title>
+	<title>Flickr Masonry -- A Photo Browser For Flickr</title>
 	<link rel='stylesheet' type='text/css' href='http://www.telecommutetojuryduty.com/styles/external/jquery.qtip.css' />
 	<link rel='stylesheet' type='text/css' href='http://www.telecommutetojuryduty.com/styles/external/prettyPhoto.css' />
 	<link rel='stylesheet' type='text/css' href='stylesheets/flickr_masonry.css'/>
 </head>
 <body>
+	<h1 class='offLeft'>Flickr Photo Browser</h1>
+	<h2 class='offLeft'>Using Flickr's API, jQuery, and some plugins, I use AJAX to display my favorite photos from Flickr, but also allow searching by tag. Since it's all done via AJAX, results should be snappy!</h2>
 	<div id="loader">
 		<img src='http://www.telecommutetojuryduty.com/images/ajax_loader_76.gif' width=76 height=76>
 	</div>
@@ -16,6 +18,7 @@
 		<ul>
 			<li>'sticky' scroll top bar</li>
 			<li>user-authenticated access</li>
+			<li>query string in url for direct link to tag search</li>
 			<li>manually close tooltip when lightbox is initiated, not when it finishes loading and displays</li>
 			<li>put in iframe as post on telecommute</li>
 		</ul>
@@ -48,7 +51,7 @@
 	<div id="noTagsFound"></div>
 	
 	<footer id='credits'>
-		[[ built with <a href="http://jquery.com/" title="jQuery: The Write Less, Do More, JavaScript Library" target="_blank">jQuery</a> and some jQuery plugins: <a href="http://masonry.desandro.com/" title="jQuery Masonry" target="_blank">Masonry</a>, <a href="http://www.no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/" title="jQuery lightbox for images, videos, YouTube, iframes, ajax | Stéphane Caron – No Margin For Errors" target="_blank">PrettyPhoto</a>, <a href="http://craigsworks.com/projects/qtip2/" title="qTip2 - Pretty powerful tooltips" target="_blank">qtip2</a> ]]
+		<span>[[</span> built with <a href="http://jquery.com/" title="jQuery: The Write Less, Do More, JavaScript Library" target="_blank">jQuery</a> and some jQuery plugins: <a href="http://masonry.desandro.com/" title="jQuery Masonry" target="_blank">Masonry</a>, <a href="http://www.no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/" title="jQuery lightbox for images, videos, YouTube, iframes, ajax | Stéphane Caron – No Margin For Errors" target="_blank">PrettyPhoto</a>, <a href="http://craigsworks.com/projects/qtip2/" title="qTip2 - Pretty powerful tooltips" target="_blank">qtip2</a> <span>]]</span>
 	</footer>
 	
 	<script type="text/javascript">
@@ -68,9 +71,8 @@
 	<script src="http://www.telecommutetojuryduty.com/scripts/external/jquery.masonry.min.js"></script>
 	<script src="http://www.telecommutetojuryduty.com/scripts/external/jquery.qtip.js"></script>
 	<script src='http://www.telecommutetojuryduty.com/scripts/external/jquery.prettyPhoto.js'></script>
-	<script src='http://www.telecommutetojuryduty.com/scripts/external/raphael-min.js'></script>
+	<!-- <script src='http://www.telecommutetojuryduty.com/scripts/external/raphael-min.js'></script>  -->
 	<!-- <script src='http://www.telecommutetojuryduty.com/misc/undulate_overlay_jquery/scripts/jquery.statick.js'></script>  -->
 	<script src="javascripts/flickr_masonry.js"></script>
-	
 </body>
 </html>

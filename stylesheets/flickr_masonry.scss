@@ -16,6 +16,8 @@ a:link, a:visited{
 	color: $headerText !important;
 }
 
+.offLeft{position: absolute; left: -10000px; top: 0;}
+
 // ~~~ clearfix
 .group:before,
 .group:after {
@@ -76,6 +78,9 @@ header{
 	text-align: center;
 	font-size: 1em;
 	padding-bottom: 20px;
+	span{
+		color: darken($headerText, 56%);
+	}
 }
 
 .photo {
