@@ -282,3 +282,6 @@ header {
   font-weight: normal; }
 #seeSimilarTags .suggestionTag {
   color: #cff09e; }
+
+.addToFavorites {
+  display: none; }
