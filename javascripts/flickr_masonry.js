@@ -4,7 +4,7 @@ var FLICKR_MASONRY = {
 	forcePatternAJAXGet : false,
 	maxPhotosToRequest : 500,
 	flickrPhotos: null,
-	photosAtATime: 50,
+	photosAtATime: 58,
 	photosLoaded: 0,
 	loadLocalStorage: function(){
 		var milliseconds = localStorage.getItem('flickr_masonry_time_retrieved_at');
@@ -14,7 +14,7 @@ var FLICKR_MASONRY = {
 	}
 };
 
-
+// begin/ready
 jQuery(function(){
 
 	jQuery.fn.center = function () {
@@ -467,7 +467,7 @@ function setupPrettyPhoto(){
 		social_tools: false,
 		changepicturecallback: function(){
 			// hide all image tooltips
-			jQuery('.flickrFaveItem img').qtip('hide');
+			FLICKR_MASONRY.hideTooltips();
 		}
 	});
 }
@@ -513,7 +513,8 @@ function setupTagForm(){
 		event.preventDefault();
 		
 		TELE.logAnalytics(['_trackEvent', 'search', 'flickr masonry search', tag ]);
-		
+
+		FLICKR_MASONRY.hideTooltips();
 		clearPhotos();
 		updateTitleForTag(tag);
 		getPhotosByTag(tag);
@@ -547,10 +548,11 @@ function hideCommonElements(){
 	jQuery('#credits, #moreButton, #tagLimit').hide();
 }
 
-// might not be needed.
-function showCommonElements(){
-	jQuery('#credits, #moreButton').hide();	
-}
+
+// hides any open tooltips, for the sake of UX
+FLICKR_MASONRY.hideTooltips = function (){
+	jQuery('.flickrFaveItem img').qtip('hide');
+};
 
 function setupBackToMine(){
 	jQuery('#backToMine').fadeIn()
