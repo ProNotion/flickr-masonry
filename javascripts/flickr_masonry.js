@@ -1,3 +1,4 @@
+/*global TELE, gup, debug_console, console */
 
 var FLICKR_MASONRY = {
 	apiKey: "79f2e11b6b4e3213f8971bed7f17b4c4",
@@ -42,41 +43,40 @@ jQuery(function(){
 FLICKR_MASONRY.setupAnalytics = function (){
 	jQuery('#seeTagsLink').click( function(event){
 		TELE.logAnalytics(['_trackEvent', 'view', 'flick masonry see all images with tag', jQuery('#seeTagsName').text() ]);
-	});	
+	});
 	
 	jQuery('.suggestionTag').click( function(event){
 		TELE.logAnalytics(['_trackEvent', 'view', 'flick masonry click suggested tag', jQuery(this).text() ]);
 	});
-}
+};
 
 
 FLICKR_MASONRY.reflectPlugin = function(){
 	if ( location.href.match(/reflect=(1|true)/) ){
 		var s = document.createElement('script');
-		s.src='https://raw.github.com/dguzzo/reflections/master/javascripts/jquery.reflections.js'; 
+		s.src='https://raw.github.com/dguzzo/reflections/master/javascripts/jquery.reflections.js';
 		document.getElementsByTagName('head')[0].appendChild(s);
 
 		s = jQuery('<link/>', {'href' : 'http://www.telecommutetojuryduty.com/misc/reflections/stylesheets/reflections.css', 'type' : 'text/css', 'rel' : 'stylesheet' } );
 		jQuery('head').append(s);
 
-	  jQuery(document).delegate('body', 'keyup', function(e){
-	    try{
-	      switch( e.which ){
-	        case 39: // right key
-	            // location = jQuery('#wordNavNext').attr('href');
+    jQuery(document).delegate('body', 'keyup', function(e){
+      try{
+        switch( e.which ){
+          case 39: // right key
+            // location = jQuery('#wordNavNext').attr('href');
 						jQuery('li img').reflectImages({ 'delay': 50, 'stripLinks' : true });
-	          break;
-	        case 37: // left key
+            break;
+          case 37: // left key
 						jQuery('li img').reflectImages({'destroy' : true });
-	          break;
-	      }
-	    }
-		catch(e){
-	      // nothing
-	  }
-	 });
+            break;
+        }
+      }
+      catch(err){
+      }
+    });
 	}
-}
+};
 
 FLICKR_MASONRY.getPhotos = function(){
 	FLICKR_MASONRY.hideCommonElements();
@@ -94,8 +94,8 @@ FLICKR_MASONRY.getPhotos = function(){
 			var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key="+FLICKR_MASONRY.apiKey+"&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page="+FLICKR_MASONRY.maxPhotosToRequest+"&format=json&jsoncallback=?";
 			jQuery('#loader').center().show().fadeTo(1, 1);
 
-			jQuery.getJSON( getURL, 
-				function(data) { 
+			jQuery.getJSON( getURL,
+				function(data) {
 					// console.log(data);
 					localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
 					localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
@@ -106,11 +106,11 @@ FLICKR_MASONRY.getPhotos = function(){
 		}
 		else{
 			console.log( 'using local storage for photos retrieval' );
-			FLICKR_MASONRY.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));	
+			FLICKR_MASONRY.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));
 			FLICKR_MASONRY.displayPhotos(FLICKR_MASONRY.flickrPhotos);
 		}
 	}
-}
+};
 
 FLICKR_MASONRY.getPhotosByTag = function(tag){
 	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getClusterPhotos";
@@ -122,8 +122,8 @@ FLICKR_MASONRY.getPhotosByTag = function(tag){
 	
 	jQuery('#loader').center().show().fadeTo(1, 1);
 	
-	jQuery.getJSON( getURL, 
-		function(data) { 
+	jQuery.getJSON( getURL,
+		function(data) {
 			// console.log(data);
 			// localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
 			// localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
@@ -131,7 +131,7 @@ FLICKR_MASONRY.getPhotosByTag = function(tag){
 			
 			//TODO display message if no photos were found with the tag
 			if (data.photos.photo.length > 0 ){
-				FLICKR_MASONRY.displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });	
+				FLICKR_MASONRY.displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });
 			}
 			else{
 				// todo - make sure to guard against security vulnerabilities here
@@ -140,12 +140,11 @@ FLICKR_MASONRY.getPhotosByTag = function(tag){
 			FLICKR_MASONRY.setupBackToMine();
 		}
 	);
-
-}
+};
 
 // no images with the user-input tag were found; show something a message and some suggestions
 FLICKR_MASONRY.noTaggedImagesResult = function(tag){
-	var $tagsILikeMarkup = jQuery('<ul class="suggestionTags tagsILike group" />'), 
+	var $tagsILikeMarkup = jQuery('<ul class="suggestionTags tagsILike group" />'),
 			tagsILike = "colors fractal grafitti skyline complex pattern texture cute repetition urban decay spiral mandala nostalgia";
 
 	// todo use jQuery.tmpl for this
@@ -153,14 +152,14 @@ FLICKR_MASONRY.noTaggedImagesResult = function(tag){
 		$tagsILikeMarkup.append("<li class='suggestionTag tagsILikeTag'>"+elem+"</li>");
 	});
 			
-	jQuery('#loader').hide();		
+	jQuery('#loader').hide();
 	
 	jQuery('#noTagsFound')
 		.html('<h3>no photos tagged <span class="bold italic">' + tag + "</span></h3>")
 		.append($tagsILikeMarkup)
 		.fadeIn();
 		
-	$tagsILikeMarkup.before("<p>some tags i suggest:</p>");		
+	$tagsILikeMarkup.before("<p>some tags i suggest:</p>");
 			
 	FLICKR_MASONRY.delayFooterVisibility();
 
@@ -173,11 +172,11 @@ FLICKR_MASONRY.noTaggedImagesResult = function(tag){
 	getURL += "&period=week&count="+ tagsToFetch;
 	getURL += "&format=json&jsoncallback=?";
 
-	jQuery.getJSON( getURL, 
-		function(data) { 
+	jQuery.getJSON( getURL,
+		function(data) {
 			// console.log(data);
 				var hottags = data.hottags.tag,
-						$markup = jQuery('<ul class="suggestionTags popularTags group" />'), 
+						$markup = jQuery('<ul class="suggestionTags popularTags group" />'),
 						hottag;
 				
 				for (var item in hottags ){
@@ -196,11 +195,10 @@ FLICKR_MASONRY.noTaggedImagesResult = function(tag){
 		}
 	);
 	*/
-}
+};
 
 
 FLICKR_MASONRY.displayPhotos = function(jsonData, options){
-	
 	debug_console( jsonData, "debug");
 	
 	options = options || {};
@@ -210,8 +208,8 @@ FLICKR_MASONRY.displayPhotos = function(jsonData, options){
 			// photos = jsonData.items.slice(FLICKR_MASONRY.photosLoaded, FLICKR_MASONRY.photosLoaded + FLICKR_MASONRY.photosAtATime ),
 			// for REST API
 			photos = jsonData.photos.photo.slice(FLICKR_MASONRY.photosLoaded, FLICKR_MASONRY.photosLoaded + FLICKR_MASONRY.photosAtATime ),
-			newPhoto, 
-			$listItem, 
+			newPhoto,
+			$listItem,
 			$photoLink,
 			$ajaxLoader = jQuery('#loader');
 
@@ -230,25 +228,25 @@ FLICKR_MASONRY.displayPhotos = function(jsonData, options){
 		$listItem = jQuery('<li>', { "class" : "photo" } );
 
     // for RSS
-    // $photoLink = jQuery('<a>', 
-    //                 { "target": "_blank", 
-    //                   "class": "flickrFaveItem", 
-    //                   "href" :  item.link + "lightbox/", 
+    // $photoLink = jQuery('<a>',
+    //                 { "target": "_blank",
+    //                   "class": "flickrFaveItem",
+    //                   "href" :  item.link + "lightbox/",
     //                   "data-author": hyperlinkAuthor(item.author_id, item.author),
     //                   "data-title": item.title,
     //                   "data-time": item.date_taken,
-    //                   "data-tags": hyperlinkTags(item.tags) 
+    //                   "data-tags": hyperlinkTags(item.tags)
     //                 });
     // newPhoto.src = item.media.m;
 		
 		// for REST API
-		$photoLink = jQuery('<a>', 
-										{ "target": "_blank", 
-											"class": "flickrFaveItem", 
-											"href" :  FLICKR_MASONRY.getLargestImageSizeAvailable(item), 
+		$photoLink = jQuery('<a>',
+										{ "target": "_blank",
+											"class": "flickrFaveItem",
+											"href" :  FLICKR_MASONRY.getLargestImageSizeAvailable(item),
 											"rel" : "lightbox['flickr']"
 											// "data-time": item.date_taken,
-											// "data-tags": hyperlinkTags(item.tags) 
+											// "data-tags": hyperlinkTags(item.tags)
 											});
 		
 		newPhoto.src = item.url_s;
@@ -279,11 +277,11 @@ FLICKR_MASONRY.displayPhotos = function(jsonData, options){
 	// run the masonry plugin
 	$container.imagesLoaded(function(){
 		
-	  $container.masonry({
-	    itemSelector : '.photo',
-	    columnWidth : 260,
-			isFitWidth: true
-	  });
+    $container.masonry({
+      itemSelector : '.photo',
+      columnWidth : 260,
+      isFitWidth: true
+    });
 
 		$ajaxLoader.fadeTo(200, 0, function(){
 			$ajaxLoader.hide();
@@ -329,13 +327,13 @@ FLICKR_MASONRY.displayPhotos = function(jsonData, options){
 			
 		});
 	});
-}
+};
 
 
 // sometimes the large image size isn't available. fall back onto other versions.
 FLICKR_MASONRY.getLargestImageSizeAvailable = function(item){
 	return item.url_l || item.url_m || item.url_s || item.url_t;
-}
+};
 
 
 FLICKR_MASONRY.setupImageTooltips = function(){
@@ -344,7 +342,6 @@ FLICKR_MASONRY.setupImageTooltips = function(){
 		
 		var $image = jQuery(this),
 				userId = $image.data('authorId'),
-				userUrl = $image.data('authorUrl'),
 				flickrUrl = $image.data('flickrUrl'),
 				title = $image.data('title');
 		
@@ -352,22 +349,20 @@ FLICKR_MASONRY.setupImageTooltips = function(){
 			content: {
 				text: "<div class='loading'><span>loading...</span></div>",
 				ajax: {
-          url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key="+FLICKR_MASONRY.apiKey+"&user_id="+userId+"&format=json&jsoncallback=?", 
+          url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key="+FLICKR_MASONRY.apiKey+"&user_id="+userId+"&format=json&jsoncallback=?",
           type: 'GET', // POST or GET,
           dataType: "json",
           success: function(data, status) {
 						// debug_console(data, 'log');
 						var realname = FLICKR_MASONRY.fetchRealName(data),
-						    username = FLICKR_MASONRY.fetchUserName(data),
+                username = FLICKR_MASONRY.fetchUserName(data),
 								photoId = FLICKR_MASONRY.fetchPhotoId($image),
-						    markup =  "<p class='photoTitle'><a href='"+flickrUrl+"' target='_blank'>" + title + "</a></p>\
-										<p>by: <a class='authorName' href='http://www.flickr.com/photos/"+userId+"' target='_blank'>" + username + realname + "</a></p>\
-										<a href='#' class='addToFavorites' data-photo-id='"+photoId+"'>add to favorites</a>";
+                markup = "<p class='photoTitle'><a href='"+flickrUrl+"' target='_blank'>" + title + "</a></p><p>by: <a class='authorName' href='http://www.flickr.com/photos/"+userId+"' target='_blank'>" + username + realname + "</a></p><a href='#' class='addToFavorites' data-photo-id='"+photoId+"'>add to favorites</a>";
 
 						// TODO: don't really like this, try and clean it up
-					  jQuery(jQuery(this)[0].elements.content[0]).find('.loading').html(markup);
+            jQuery(jQuery(this)[0].elements.content[0]).find('.loading').html(markup);
           }
-		    }
+        }
 			},
       position:{
         my: 'left center',
@@ -380,9 +375,9 @@ FLICKR_MASONRY.setupImageTooltips = function(){
           jQuery(this).fadeIn(300); // "this" refers to the tooltip
         }
       },
-      hide: { 
+      hide: {
         delay: 50,
-        fixed: true,  
+        fixed: true,
         effect: function(){
           jQuery(this).fadeOut(220); // "this" refers to the tooltip
         }
@@ -395,13 +390,13 @@ FLICKR_MASONRY.setupImageTooltips = function(){
         classes: "flickrTip"
       }
     });
-	});	
-}
+	});
+};
 
 // todo
 FLICKR_MASONRY.fetchPhotoId = function($photo){
 	return $photo.data('photoId');
-}
+};
 
 // return real name of the photo's owner if it exists
 FLICKR_MASONRY.fetchRealName = function(data){
@@ -413,7 +408,7 @@ FLICKR_MASONRY.fetchRealName = function(data){
 		realname = '';
 	}
 	return realname;
-}
+};
 
 // return username of the photo's owner if it exists
 FLICKR_MASONRY.fetchUserName = function(data){
@@ -425,19 +420,19 @@ FLICKR_MASONRY.fetchUserName = function(data){
 		username = '';
 	}
 	return username;
-}
+};
 
-FLICKR_MASONRY.hyperlinkAuthorREST = function(authorId, authorName){
+FLICKR_MASONRY.hyperlinkAuthorREST = function(authorId){
 	return "<a href='http://www.flickr.com/photos/" + authorId + "' target='_blank'>" + authorId + "</a>";
-}
+};
 
 FLICKR_MASONRY.hyperlinkAuthor = function(authorId, authorName){
 	return "<a href='http://www.flickr.com/photos/" + authorId + "' target='_blank'>" + authorName + "</a>";
-}
+};
 
 FLICKR_MASONRY.hyperlinkTags = function(tags){
 	var tagsArray = tags.split(' '),
-			linkedTags = [], 
+			linkedTags = [],
 			tag;
 	
 	for (tag in tagsArray){
@@ -446,18 +441,17 @@ FLICKR_MASONRY.hyperlinkTags = function(tags){
     }
 	}
 	return linkedTags.join(' ');
-}
+};
 
 FLICKR_MASONRY.setupMoreButton = function(){
 	var $button = jQuery('#moreButton');
-	$button.click( function(evt){
-		
+	$button.click( function(){
 		TELE.logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
 		
 		$button.fadeTo(1, 0);
 		FLICKR_MASONRY.displayPhotos(FLICKR_MASONRY.flickrPhotos);
 	});
-}
+};
 
 
 // only make an ajax call to flickr if it's been over a day
@@ -465,7 +459,7 @@ FLICKR_MASONRY.timeForFreshAJAXRequest = function(){
 	return FLICKR_MASONRY.timeSinceLastPhotoGet === null // if we've never made an ajax call for photos
 					|| ((new Date().getTime() - FLICKR_MASONRY.timeSinceLastPhotoGet) / (1000 * 60 * 60 * 24)) > 1  // if the last time we made an ajax call was over a day ago
 					|| FLICKR_MASONRY.forcePatternAJAXGet; // or if we want to force an ajax retrieval
-}
+};
 
 
 // sets up the lightbox for images
@@ -480,41 +474,43 @@ FLICKR_MASONRY.setupPrettyPhoto = function(){
 			FLICKR_MASONRY.hideTooltips();
 		}
 	});
-}
+};
 
 // don't want the footer showing before other stuff is loaded b/c the reflow looks bad
 FLICKR_MASONRY.delayFooterVisibility = function(){
 	jQuery('#credits').fadeIn(2000);
-}
+};
 
 FLICKR_MASONRY.updateCredits = function(tag){
 	jQuery('#seeTagsName').text(tag);
 	jQuery('#seeTagsLink').attr('href', 'http://www.flickr.com/photos/tags/'+tag+'/show/');
 	FLICKR_MASONRY.showSimilarTags(tag);
-}
+};
 
 FLICKR_MASONRY.showSimilarTags = function(tag){
 	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getRelated";
-	getURL += "&tag="+tag;
-	getURL += "&cluster_id=&api_key=" + FLICKR_MASONRY.apiKey;
-	getURL += "&format=json&jsoncallback=?";
+    getURL += "&tag="+tag;
+    getURL += "&cluster_id=&api_key=" + FLICKR_MASONRY.apiKey;
+    getURL += "&format=json&jsoncallback=?";
 	
-	jQuery.getJSON( getURL, 
-		function(data) { 
+	jQuery.getJSON( getURL,
+		function(data) {
 			// console.log(data);
 			try{
 				for( var item in data.tags.tag ){
-					if ( item > 10 ){ break;}
-					var tagName = data.tags.tag[item]._content;
-					// console.log( data.tags.tag[item]._content );
-					jQuery('<li>', {"text" : tagName, 'class' : 'suggestionTag' }).appendTo('#seeSimilarTags ul');
+          if (data.tags.tag.hasOwnProperty(item)) {
+            if ( item > 10 ){ break;}
+            var tagName = data.tags.tag[item]._content;
+            // console.log( data.tags.tag[item]._content );
+            jQuery('<li>', {"text" : tagName, 'class' : 'suggestionTag' }).appendTo('#seeSimilarTags ul');
+          }
 				}
 			}catch(e){
 				debug_console( 'error in showSimilarTags: ' + e.message, "error");
 			}
 		}
 	);
-}
+};
 
 
 FLICKR_MASONRY.setupTagForm = function(){
@@ -530,12 +526,12 @@ FLICKR_MASONRY.setupTagForm = function(){
 		FLICKR_MASONRY.getPhotosByTag(tag);
 	});
 	FLICKR_MASONRY.setupPopularTags();
-}
+};
 
 FLICKR_MASONRY.updateTitleForTag = function(tag){
 	jQuery('header .title')
 		.html('<a href="http://www.flickr.com" class="stealthLink" target="_blank">flickr</a> photos tagged <a href="http://www.flickr.com/photos/tags/' + tag + '/show/" class="bold italic stealthLink" target="_blank">' + tag + '</span>');
-}
+};
 
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 FLICKR_MASONRY.clearPhotos = function(){
@@ -550,13 +546,13 @@ FLICKR_MASONRY.clearPhotos = function(){
 	}catch(e){
 		debug_console( 'error in clearPhotos(): ' + e.message, "debug");
 	}
-}
+};
 
 
 // for UX purposes
 FLICKR_MASONRY.hideCommonElements = function(){
 	jQuery('#credits, #moreButton, #tagLimit').hide();
-}
+};
 
 
 // hides any open tooltips, for the sake of UX
@@ -573,7 +569,7 @@ FLICKR_MASONRY.setupBackToMine = function(){
 			FLICKR_MASONRY.getPhotos();
 			// setupMoreButton()
 		});
-}
+};
 
 FLICKR_MASONRY.setupPopularTags = function(){
 	jQuery(document).delegate( '.suggestionTag', 'click', function(event){
@@ -583,7 +579,7 @@ FLICKR_MASONRY.setupPopularTags = function(){
 			.end()
 			.submit();
 	});
-}
+};
 
 FLICKR_MASONRY.setupAddToFavorites = function(){
 	jQuery(document).delegate( '.addToFavorites', 'click', function(event){
@@ -594,13 +590,12 @@ FLICKR_MASONRY.setupAddToFavorites = function(){
 
 
 FLICKR_MASONRY.addPhotoToFavorites = function(photoId) {
-	
 	// TODO: need to go through oAuth flow to get an auth token for this post
 	jQuery.ajax({
-	  type: 'POST',
-	  url: 'http://api.flickr.com/services/rest/?method=flickr.favorites.add&format=json&jsoncallback=?',
-	  data: { 'api_key' : FLICKR_MASONRY.apiKey, 'photo_id' : photoId },
-	  success: function(data, textStatus, jqXHR){
+    type: 'POST',
+    url: 'http://api.flickr.com/services/rest/?method=flickr.favorites.add&format=json&jsoncallback=?',
+    data: { 'api_key' : FLICKR_MASONRY.apiKey, 'photo_id' : photoId },
+    success: function(data, textStatus, jqXHR){
 			console.log(data);
 		},
 		error: function(jqXHR, textStatus, errorThrown){
@@ -608,5 +603,4 @@ FLICKR_MASONRY.addPhotoToFavorites = function(photoId) {
 			console.log(errorThrown);
 		}
 	});
-	
 };
