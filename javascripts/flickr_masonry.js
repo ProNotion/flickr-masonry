@@ -81,33 +81,34 @@ FlickrMasonry.getPhotos = function(){
 	var searchTerm = gup('search');
 	
 	// allow search by tag to be done via a query string
-	if ( searchTerm ){
+	if ( searchTerm ) {
 		this.getPhotosByTag(encodeURI(searchTerm));
+	}	else if (this.timeForFreshAJAXRequest()) {
+	  this.getFavoritePhotos();
+	}	else {
+    console.log( 'using local storage for photos retrieval' );
+    this.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));
+    this.displayPhotos(this.flickrPhotos);
 	}
-	else{
-		if ( this.timeForFreshAJAXRequest() ){
-			debug_console( 'using ajax call to flickr for photos retrieval', 'debug' );
+};
 
-			// var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
-			var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key=" + this.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
-			jQuery('#loader').center().show().fadeTo(1, 1);
+FlickrMasonry.getFavoritePhotos = function() {
+  debug_console( 'using ajax call to flickr for photos retrieval', 'debug' );
 
-			jQuery.getJSON( getURL,
-				function(data) {
-					// console.log(data);
-					localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
-					localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
-					this.flickrPhotos = data;
-					this.displayPhotos(data);
-				}
-			);
-		}
-		else{
-			console.log( 'using local storage for photos retrieval' );
-			this.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));
-			this.displayPhotos(this.flickrPhotos);
-		}
-	}
+  // var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
+  var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key=" + this.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
+
+  jQuery('#loader').center().show().fadeTo(1, 1);
+
+  jQuery.getJSON( getURL,
+    function(data) {
+      // console.log(data);
+      localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
+      localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
+      this.flickrPhotos = data;
+      this.displayPhotos(data);
+    }
+  );
 };
 
 FlickrMasonry.getPhotosByTag = function(tag){
@@ -125,13 +126,13 @@ FlickrMasonry.getPhotosByTag = function(tag){
 			this.flickrPhotos = data;
 			
 			//TODO display message if no photos were found with the tag
-			if (data.photos.photo.length > 0 ){
+			if (data.photos.photo.length > 0 ) {
 				this.displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });
-			}
-			else{
+			} else {
 				// todo - make sure to guard against security vulnerabilities here
 				this.noTaggedImagesResult(tag);
 			}
+			
 			this.setupBackToMine();
 		}
 	);
@@ -157,39 +158,6 @@ FlickrMasonry.noTaggedImagesResult = function(tag){
 	$tagsILikeMarkup.before("<p>some tags i suggest:</p>");
 			
 	this.delayFooterVisibility();
-
-	// not happy with this, as the top tags don't always return photos when searched via flickr.tags.getClusterPhotos
-
-	/*
-	var tagsToFetch = 10;
-	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getHotList";
-	getURL += "&api_key=79f2e11b6b4e3213f8971bed7f17b4c4";
-	getURL += "&period=week&count="+ tagsToFetch;
-	getURL += "&format=json&jsoncallback=?";
-
-	jQuery.getJSON( getURL,
-		function(data) {
-			// console.log(data);
-				var hottags = data.hottags.tag,
-						$markup = jQuery('<ul class="suggestionTags popularTags group" />'),
-						hottag;
-				
-				for (var item in hottags ){
-					if (item >= tagsToFetch ){break;}
-					hottag = hottags[item]['_content'];
-					$markup.append("<li class='suggestionTag popularTag'>" + hottag + "</li>");
-				}
-				
-				// debug_console( markup, "debug");
-				jQuery('#tagLimit').hide();
-				jQuery('#noTagsFound')
-					.html('no photos tagged <span class="bold italic">' + tag + "</span>")
-					.append($tagsILikeMarkup, $markup);
-					
-				$markup.before("<p>trending tags:</p>");
-		}
-	);
-	*/
 };
 
 

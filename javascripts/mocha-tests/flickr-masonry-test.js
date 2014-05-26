@@ -1,6 +1,8 @@
 /*global FlickrMasonry */
 
 describe('FlicrkMasonry', function(){
+    window.gup = window.gup || function() {};
+  
     it( "sets up its global JS object", function(){
       expect(FlickrMasonry).to.exist;
     });
@@ -59,6 +61,56 @@ describe('FlicrkMasonry', function(){
         FlickrMasonry.clearPhotos();
         expect(FlickrMasonry.flickrPhotos).to.be.null;
         expect(FlickrMasonry.photosLoaded).to.equal(0);
+      });
+    });
+
+    describe( "getPhotos", function() {
+      var searchTermStub, timeForFreshAJAXRequestStub, getFavoritePhotosStub, displayPhotosStub, getPhotosByTagStub;
+
+      before(function() {
+        searchTermStub = sinon.stub(window, 'gup');
+        timeForFreshAJAXRequestStub = sinon.stub(FlickrMasonry, 'timeForFreshAJAXRequest');
+        displayPhotosStub = sinon.stub(FlickrMasonry, 'displayPhotos');
+        getFavoritePhotosStub = sinon.stub(FlickrMasonry, 'getFavoritePhotos');
+        getPhotosByTagStub = sinon.stub(FlickrMasonry, 'getPhotosByTag');
+      });
+
+      afterEach(function() {
+        searchTermStub.reset();
+        timeForFreshAJAXRequestStub.reset();
+        displayPhotosStub.reset();
+        getFavoritePhotosStub.reset();
+        getPhotosByTagStub.reset();
+      });
+
+      after(function() {
+        searchTermStub.restore();
+        timeForFreshAJAXRequestStub.restore();
+        displayPhotosStub.restore();
+        getFavoritePhotosStub.restore();
+        getPhotosByTagStub.restore();
+      });
+      
+      it( "should getPhotosByTag if a searchterm is present", function() {
+        searchTermStub.returns('sample search');
+        FlickrMasonry.getPhotos();
+        expect(getPhotosByTagStub).to.have.been.calledOnce;
+      });
+      
+      it( "should getFavoritePhotos if no searchterm present and timeForFreshAJAXRequest", function() {
+        searchTermStub.returns(null);
+        timeForFreshAJAXRequestStub.returns(true);
+        FlickrMasonry.getPhotos();
+        expect(getFavoritePhotosStub).to.have.been.calledOnce;
+      });
+      
+      it( "should use local storage to display photos if no searchterm and not timeForFreshAJAXRequest", function() {
+        searchTermStub.returns(null);
+        timeForFreshAJAXRequestStub.returns(false);
+        FlickrMasonry.getPhotos();
+        expect(displayPhotosStub).to.have.been.calledOnce;
+        expect(getFavoritePhotosStub).to.not.have.been.called;
+        expect(getPhotosByTagStub).to.not.have.been.called;
       });
     });
     
