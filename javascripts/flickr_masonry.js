@@ -12,7 +12,7 @@ var FlickrMasonry = {
 	loadLocalStorage: function(){
 		var milliseconds = localStorage.getItem('flickr_masonry_time_retrieved_at');
 		if (milliseconds){
-			FlickrMasonry.timeSinceLastPhotoGet = parseInt(milliseconds, 10);
+			this.timeSinceLastPhotoGet = parseInt(milliseconds, 10);
 		}
 	},
 	
@@ -70,8 +70,7 @@ FlickrMasonry.reflectPlugin = function(){
 						jQuery('li img').reflectImages({'destroy' : true });
             break;
         }
-      }
-      catch(err){
+      } catch(err){
       }
     });
 	}
@@ -123,9 +122,6 @@ FlickrMasonry.getPhotosByTag = function(tag){
 	
 	jQuery.getJSON( getURL,
 		function(data) {
-			// console.log(data);
-			// localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
-			// localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
 			this.flickrPhotos = data;
 			
 			//TODO display message if no photos were found with the tag
@@ -198,15 +194,13 @@ FlickrMasonry.noTaggedImagesResult = function(tag){
 
 
 FlickrMasonry.displayPhotos = function(jsonData, options){
-	debug_console( jsonData, "debug");
-	
 	options = options || {};
 	
 	var $container = jQuery('#flickrFaves ul'),
 			// for RSS feed
 			// photos = jsonData.items.slice(this.photosLoaded, this.photosLoaded + this.photosAtATime ),
 			// for REST API
-			photos = jsonData.photos.photo.slice(this.photosLoaded, this.photosLoaded + this.photosAtATime ),
+			photos = jsonData.photos.photo.slice(this.photosLoaded, this.photosLoaded + this.photosAtATime ), // crude way of achieving offset
 			newPhoto,
 			$listItem,
 			$photoLink,
@@ -216,13 +210,11 @@ FlickrMasonry.displayPhotos = function(jsonData, options){
 	$container.addClass('disabled').fadeTo(0, 0);
 	
 	jQuery.each(photos, function(i, item) {
-		
 		var itemTitle;
 		
 		// if the photo's index is above the quoto per fetch, then return
-		if ( i >= this.photosAtATime ){
-			return;
-		}
+		if ( i >= this.photosAtATime ){ return; }
+		
 		newPhoto = new Image();
 		$listItem = jQuery('<li>', { "class" : "photo" } );
 
@@ -294,8 +286,7 @@ FlickrMasonry.displayPhotos = function(jsonData, options){
 						}
 						jQuery(this).attr('width', jQuery(this)[0].width)
 												.attr('height', jQuery(this)[0].height);
-					}
-					catch (e){
+					} catch (e){
 						debug_console( e.message, "error");
 					}
 				});
@@ -402,8 +393,7 @@ FlickrMasonry.fetchRealName = function(data){
 	var realname;
 	try{
 		realname = " (" + data.person.realname._content + ")";
-	}
-	catch(e){
+	}	catch(e){
 		realname = '';
 	}
 	return realname;
@@ -414,8 +404,7 @@ FlickrMasonry.fetchUserName = function(data){
 	var username;
 	try{
 		username = data.person.username._content;
-	}
-	catch(e){
+	}	catch(e){
 		username = '';
 	}
 	return username;
@@ -466,7 +455,6 @@ FlickrMasonry.timeForFreshAJAXRequest = function(){
 // sets up the lightbox for images
 FlickrMasonry.setupPrettyPhoto = function(){
   var self = this;
-	// debug_console( "setting up prettyPhoto", "debug");
 	jQuery("a[rel^='lightbox']").prettyPhoto({
 		overlay_gallery : false,
 		deeplinking: false,
@@ -507,7 +495,7 @@ FlickrMasonry.showSimilarTags = function(tag){
             jQuery('<li>', {"text" : tagName, 'class' : 'suggestionTag' }).appendTo('#seeSimilarTags ul');
           }
 				}
-			}catch(e){
+			} catch(e){
 				debug_console( 'error in showSimilarTags: ' + e.message, "error");
 			}
 		}
@@ -538,15 +526,15 @@ FlickrMasonry.updateTitleForTag = function(tag){
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 FlickrMasonry.clearPhotos = function(){
 	try{
-		debug_console( 'clearing past photos', "debug");
+    // debug_console( 'clearing past photos', "debug");
 		this.flickrPhotos = null;
 		this.photosLoaded = 0;
 		var $container  = jQuery('#flickrFaves ul');
 		$container.masonry( 'destroy' ).empty();
 		jQuery('.suggestionTags').empty();
 		jQuery('#noTagsFound').hide();
-	}catch(e){
-		debug_console( 'error in clearPhotos(): ' + e.message, "debug");
+	} catch(e){
+    // debug_console( 'error in clearPhotos(): ' + e.message, "debug");
 	}
 };
 
