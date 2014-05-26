@@ -8,36 +8,35 @@ var FlickrMasonry = {
 	flickrPhotos: null,
 	photosAtATime: 58,
 	photosLoaded: 0,
+	
 	loadLocalStorage: function(){
 		var milliseconds = localStorage.getItem('flickr_masonry_time_retrieved_at');
 		if (milliseconds){
 			FlickrMasonry.timeSinceLastPhotoGet = parseInt(milliseconds, 10);
 		}
+	},
+	
+	initialize: function() {
+	  jQuery.fn.center = function () {
+  		// this.css("position","absolute"); // assume center position
+  		this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
+  		this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+  		return this;
+  	};
+
+  	FlickrMasonry.originalTitle = jQuery('header .title').text(); // TODO probably somewhere better to do this
+
+  	FlickrMasonry.loadLocalStorage();
+  	FlickrMasonry.getPhotos(); // get the initial photos the first time the page loads
+  	FlickrMasonry.setupMoreButton();
+  	FlickrMasonry.setupTagForm();
+  	FlickrMasonry.setupAnalytics();
+  	FlickrMasonry.setupAddToFavorites();
+
+  	// experimental
+  	FlickrMasonry.reflectPlugin();
 	}
 };
-
-// begin/ready
-jQuery(function(){
-
-	jQuery.fn.center = function () {
-		// this.css("position","absolute"); // assume center position
-		this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
-		this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
-		return this;
-	};
-
-	FlickrMasonry.originalTitle = jQuery('header .title').text(); // TODO probably somewhere better to do this
-
-	FlickrMasonry.loadLocalStorage();
-	FlickrMasonry.getPhotos(); // get the initial photos the first time the page loads
-	FlickrMasonry.setupMoreButton();
-	FlickrMasonry.setupTagForm();
-	FlickrMasonry.setupAnalytics();
-	FlickrMasonry.setupAddToFavorites();
-	
-	// experimental
-	FlickrMasonry.reflectPlugin();
-});
 
 
 FlickrMasonry.setupAnalytics = function (){
@@ -91,7 +90,7 @@ FlickrMasonry.getPhotos = function(){
 			debug_console( 'using ajax call to flickr for photos retrieval', 'debug' );
 
 			// var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
-			var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key="+FlickrMasonry.apiKey+"&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page="+FlickrMasonry.maxPhotosToRequest+"&format=json&jsoncallback=?";
+			var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key=" + FlickrMasonry.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=?";
 			jQuery('#loader').center().show().fadeTo(1, 1);
 
 			jQuery.getJSON( getURL,
@@ -114,9 +113,9 @@ FlickrMasonry.getPhotos = function(){
 
 FlickrMasonry.getPhotosByTag = function(tag){
 	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getClusterPhotos";
-	getURL += "&tag="+tag;
-	getURL += "&cluster_id=&api_key="+FlickrMasonry.apiKey+"&extras=url_t,url_s,url_m,url_z,url_l,url_o";
-	getURL += "&per_page="+FlickrMasonry.maxPhotosToRequest+"&format=json&jsoncallback=?";
+	  getURL += "&tag=" + tag;
+	  getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey + "&extras=url_t,url_s,url_m,url_z,url_l,url_o";
+	  getURL += "&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=?";
 
 	FlickrMasonry.hideCommonElements();
 	
@@ -149,7 +148,7 @@ FlickrMasonry.noTaggedImagesResult = function(tag){
 
 	// todo use jQuery.tmpl for this
 	jQuery(tagsILike.split(' ')).each(function(item, elem){
-		$tagsILikeMarkup.append("<li class='suggestionTag tagsILikeTag'>"+elem+"</li>");
+		$tagsILikeMarkup.append("<li class='suggestionTag tagsILikeTag'>" + elem + "</li>");
 	});
 			
 	jQuery('#loader').hide();
@@ -182,7 +181,7 @@ FlickrMasonry.noTaggedImagesResult = function(tag){
 				for (var item in hottags ){
 					if (item >= tagsToFetch ){break;}
 					hottag = hottags[item]['_content'];
-					$markup.append("<li class='suggestionTag popularTag'>"+hottag+"</li>");
+					$markup.append("<li class='suggestionTag popularTag'>" + hottag + "</li>");
 				}
 				
 				// debug_console( markup, "debug");
@@ -259,7 +258,7 @@ FlickrMasonry.displayPhotos = function(jsonData, options){
 				"data-author-id" : item.owner,
 				"data-title": itemTitle,
 				"data-photo-id" : item.id,
-				'alt' : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>"+itemTitle+"</a>"
+				'alt' : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>" + itemTitle + "</a>"
 				// 'alt' : item.title || "[untitled]"
 		});
 		
@@ -349,7 +348,7 @@ FlickrMasonry.setupImageTooltips = function(){
 			content: {
 				text: "<div class='loading'><span>loading...</span></div>",
 				ajax: {
-          url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key="+FlickrMasonry.apiKey+"&user_id="+userId+"&format=json&jsoncallback=?",
+          url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key=" + FlickrMasonry.apiKey + "&user_id=" + userId + "&format=json&jsoncallback=?",
           type: 'GET', // POST or GET,
           dataType: "json",
           success: function(data, status) {
@@ -357,7 +356,7 @@ FlickrMasonry.setupImageTooltips = function(){
 						var realname = FlickrMasonry.fetchRealName(data),
                 username = FlickrMasonry.fetchUserName(data),
 								photoId = FlickrMasonry.fetchPhotoId($image),
-                markup = "<p class='photoTitle'><a href='"+flickrUrl+"' target='_blank'>" + title + "</a></p><p>by: <a class='authorName' href='http://www.flickr.com/photos/"+userId+"' target='_blank'>" + username + realname + "</a></p><a href='#' class='addToFavorites' data-photo-id='"+photoId+"'>add to favorites</a>";
+                markup = "<p class='photoTitle'><a href='" + flickrUrl + "' target='_blank'>" + title + "</a></p><p>by: <a class='authorName' href='http://www.flickr.com/photos/" + userId + "' target='_blank'>" + username + realname + "</a></p><a href='#' class='addToFavorites' data-photo-id='" + photoId + "'>add to favorites</a>";
 
 						// TODO: don't really like this, try and clean it up
             jQuery(jQuery(this)[0].elements.content[0]).find('.loading').html(markup);
@@ -437,7 +436,7 @@ FlickrMasonry.hyperlinkTags = function(tags){
 	
 	for (tag in tagsArray){
     if ( tagsArray.hasOwnProperty(tag) ){
-      linkedTags.push("<a class='tag' href='http://www.flickr.com/photos/tags/"+tagsArray[tag]+"' target='_blank'>"+tagsArray[tag]+"</span>");
+      linkedTags.push("<a class='tag' href='http://www.flickr.com/photos/tags/" + tagsArray[tag] + "' target='_blank'>" + tagsArray[tag] + "</span>");
     }
 	}
 	return linkedTags.join(' ');
@@ -483,13 +482,13 @@ FlickrMasonry.delayFooterVisibility = function(){
 
 FlickrMasonry.updateCredits = function(tag){
 	jQuery('#seeTagsName').text(tag);
-	jQuery('#seeTagsLink').attr('href', 'http://www.flickr.com/photos/tags/'+tag+'/show/');
+	jQuery('#seeTagsLink').attr('href', 'http://www.flickr.com/photos/tags/' + tag + '/show/');
 	FlickrMasonry.showSimilarTags(tag);
 };
 
 FlickrMasonry.showSimilarTags = function(tag){
 	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getRelated";
-    getURL += "&tag="+tag;
+    getURL += "&tag=" + tag;
     getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey;
     getURL += "&format=json&jsoncallback=?";
 	
