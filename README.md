@@ -1,3 +1,5 @@
+[![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
+
 Built with [jQuery](http://jquery.com/ "jQuery: The Write Less, Do More, JavaScript Library") and some jQuery plugins: 
   * [Masonry](http://masonry.desandro.com/ "jQuery Masonry")
   * [PrettyPhoto](http://www.no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/ "jQuery lightbox for images, videos, YouTube, iframes, ajax | Stéphane Caron – No Margin For Errors")
