@@ -17,10 +17,10 @@ var FlickrMasonry = {
 	},
 	
 	initialize: function() {
-	  jQuery.fn.center = function () {
-  		this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
-  		this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
-  		return this;
+    jQuery.fn.center = function () {
+      this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
+      this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
+      return this;
   	};
 
   	this.originalTitle = jQuery('header .title').text(); // TODO probably somewhere better to do this
@@ -39,11 +39,11 @@ var FlickrMasonry = {
 
 
 FlickrMasonry.setupAnalytics = function () {
-	jQuery('#seeTagsLink').click( function(event) {
+	jQuery('#seeTagsLink').click( function() {
 		TELE.logAnalytics(['_trackEvent', 'view', 'flick masonry see all images with tag', jQuery('#seeTagsName').text() ]);
 	});
 	
-	jQuery('.suggestionTag').click( function(event) {
+	jQuery('.suggestionTag').click( function() {
 		TELE.logAnalytics(['_trackEvent', 'view', 'flick masonry click suggested tag', jQuery(this).text() ]);
 	});
 };
@@ -310,7 +310,7 @@ FlickrMasonry.setupImageTooltips = function() {
           url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key=" + this.apiKey + "&user_id=" + userId + "&format=json&jsoncallback=?",
           type: 'GET', // POST or GET,
           dataType: "json",
-          success: function(data, status) {
+          success: function(data) {
 						// debug_console(data, 'log');
 						var realname = this.fetchRealName(data),
                 username = this.fetchUserName(data),
@@ -329,7 +329,7 @@ FlickrMasonry.setupImageTooltips = function() {
       },
       show: {
         delay: 260,
-        effect: function(offset) {
+        effect: function() {
           jQuery(this).fadeIn(300); // "this" refers to the tooltip
         }
       },
@@ -413,9 +413,9 @@ FlickrMasonry.setupMoreButton = function() {
 
 // only make an ajax call to flickr if it's been over a day
 FlickrMasonry.timeForFreshAJAXRequest = function() {
-	return this.timeSinceLastPhotoGet === null // if we've never made an ajax call for photos
-	    || ((new Date().getTime() - this.timeSinceLastPhotoGet) / (1000 * 60 * 60 * 24)) > 1  // if the last time we made an ajax call was over a day ago
-			|| this.forcePatternAJAXGet; // or if we want to force an ajax retrieval
+  // if the last time we made an ajax call was over a day ago
+  // or if we want to force an ajax retrieval
+	return this.timeSinceLastPhotoGet === null || ((new Date().getTime() - this.timeSinceLastPhotoGet) / (1000 * 60 * 60 * 24)) > 1 || this.forcePatternAJAXGet; 
 };
 
 
@@ -518,7 +518,7 @@ FlickrMasonry.hideTooltips = function () {
 FlickrMasonry.setupBackToMine = function() {
   var self = this;
 	jQuery('#backToMine').fadeIn()
-		.click( function(event) {
+		.click( function() {
 			self.clearPhotos();
 			jQuery('header .title').text(FlickrMasonry.originalTitle);
 			jQuery('#tagForm input').val('');
@@ -527,7 +527,7 @@ FlickrMasonry.setupBackToMine = function() {
 };
 
 FlickrMasonry.setupPopularTags = function() {
-	jQuery(document).delegate( '.suggestionTag', 'click', function(event) {
+	jQuery(document).delegate( '.suggestionTag', 'click', function() {
 		jQuery('#tagForm')
 			.find('input')
 			.val(jQuery(this).text())
@@ -538,7 +538,7 @@ FlickrMasonry.setupPopularTags = function() {
 
 FlickrMasonry.setupAddToFavorites = function() {
   var self = this;
-	jQuery(document).delegate( '.addToFavorites', 'click', function(event) {
+	jQuery(document).delegate( '.addToFavorites', 'click', function() {
 		var photoId = jQuery(this).data('photoId');
 		self.addPhotoToFavorites(photoId);
 	});
@@ -551,7 +551,7 @@ FlickrMasonry.addPhotoToFavorites = function(photoId) {
     type: 'POST',
     url: 'http://api.flickr.com/services/rest/?method=flickr.favorites.add&format=json&jsoncallback=?',
     data: { 'api_key' : this.apiKey, 'photo_id' : photoId },
-    success: function(data, textStatus, jqXHR) {
+    success: function(data) {
 			console.log(data);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
