@@ -311,7 +311,6 @@ FlickrMasonry.setupImageTooltips = function() {
           type: 'GET', // POST or GET,
           dataType: "json",
           success: function(data) {
-						// debug_console(data, 'log');
 						var realname = this.fetchRealName(data),
                 username = this.fetchUserName(data),
 								photoId = this.fetchPhotoId($image),
@@ -490,11 +489,12 @@ FlickrMasonry.updateTitleForTag = function(tag) {
 
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 FlickrMasonry.clearPhotos = function() {
+  var $container  = jQuery('#flickrFaves ul');
+	
+  this.flickrPhotos = null;
+	this.photosLoaded = 0;
+
 	try{
-    // debug_console( 'clearing past photos', "debug");
-		this.flickrPhotos = null;
-		this.photosLoaded = 0;
-		var $container  = jQuery('#flickrFaves ul');
 		$container.masonry( 'destroy' ).empty();
 		jQuery('.suggestionTags').empty();
 		jQuery('#noTagsFound').hide();
