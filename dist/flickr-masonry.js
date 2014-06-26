@@ -9796,6 +9796,7 @@ if(!jQuery)throw new Error("Bootstrap requires jQuery");+function(a){"use strict
 
 var FlickrMasonry = {
 	apiKey: "79f2e11b6b4e3213f8971bed7f17b4c4",
+	baseUrl: 'https://api.flickr.com/services/rest/',
 	timeSinceLastPhotoGet : null,
 	forcePatternAJAXGet : false,
 	maxPhotosToRequest : 500,
@@ -9815,19 +9816,19 @@ var FlickrMasonry = {
       this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
       this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
       return this;
-  	};
+    };
 
-  	this.originalTitle = jQuery('header .title').text(); // TODO probably somewhere better to do this
+    this.originalTitle = jQuery('header .title').text(); // TODO probably somewhere better to do this
 
-  	this.loadLocalStorage();
-  	this.getPhotos(); // get the initial photos the first time the page loads
-  	this.setupMoreButton();
-  	this.setupTagForm();
-  	this.setupAnalytics();
-  	this.setupAddToFavorites();
+    this.loadLocalStorage();
+    this.getPhotos(); // get the initial photos the first time the page loads
+    this.setupMoreButton();
+    this.setupTagForm();
+    this.setupAnalytics();
+    this.setupAddToFavorites();
 
-  	// experimental
-  	this.reflectPlugin();
+    // experimental
+    this.reflectPlugin();
 	}
 };
 
@@ -9850,9 +9851,9 @@ FlickrMasonry.reflectPlugin = function() {
 		document.getElementsByTagName('head')[0].appendChild(s);
 
 		s = jQuery('<link/>', {
-		  'href' : 'http://www.telecommutetojuryduty.com/misc/reflections/stylesheets/reflections.css', 
-		  'type' : 'text/css', 
-		  'rel' : 'stylesheet' 
+      href : 'http://www.telecommutetojuryduty.com/misc/reflections/stylesheets/reflections.css',
+      type : 'text/css',
+      rel : 'stylesheet'
 		});
 		
 		jQuery('head').append(s);
@@ -9880,7 +9881,7 @@ FlickrMasonry.getPhotos = function() {
 	if ( searchTerm ) {
 		this.getPhotosByTag(encodeURI(searchTerm));
 	}	else if (this.timeForFreshAJAXRequest()) {
-	  this.getFavoritePhotos();
+    this.getFavoritePhotos();
 	}	else {
     console.log( 'using local storage for photos retrieval' );
     this.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));
@@ -9891,8 +9892,7 @@ FlickrMasonry.getPhotos = function() {
 FlickrMasonry.getFavoritePhotos = function() {
   debug_console( 'using ajax call to flickr for photos retrieval', 'debug' );
 
-  // var getURL = 'http://api.flickr.com/services/feeds/photos_faves.gne?id=49782305@N02&format=json&jsoncallback=?';
-  var getURL = "http://api.flickr.com/services/rest/?method=flickr.favorites.getPublicList&api_key=" + this.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
+  var getURL = this.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + this.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
 
   jQuery('#loader').center().show().fadeTo(1, 1);
 
@@ -9907,10 +9907,10 @@ FlickrMasonry.getFavoritePhotos = function() {
 };
 
 FlickrMasonry.getPhotosByTag = function(tag) {
-	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getClusterPhotos";
-	  getURL += "&tag=" + tag;
-	  getURL += "&cluster_id=&api_key=" + this.apiKey + "&extras=url_t,url_s,url_m,url_z,url_l,url_o";
-	  getURL += "&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
+	var getURL = this.baseUrl + "/?method=flickr.tags.getClusterPhotos";
+    getURL += "&tag=" + tag;
+    getURL += "&cluster_id=&api_key=" + this.apiKey + "&extras=url_t,url_s,url_m,url_z,url_l,url_o";
+    getURL += "&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
 
 	this.hideCommonElements();
 	
@@ -10101,11 +10101,10 @@ FlickrMasonry.setupImageTooltips = function() {
 			content: {
 				text: "<div class='loading'><span>loading...</span></div>",
 				ajax: {
-          url: "http://api.flickr.com/services/rest/?method=flickr.people.getInfo&api_key=" + this.apiKey + "&user_id=" + userId + "&format=json&jsoncallback=?",
+          url: FlickrMasonry.baseUrl + "/?method=flickr.people.getInfo&api_key=" + this.apiKey + "&user_id=" + userId + "&format=json&jsoncallback=?",
           type: 'GET', // POST or GET,
           dataType: "json",
           success: function(data) {
-						// debug_console(data, 'log');
 						var realname = this.fetchRealName(data),
                 username = this.fetchUserName(data),
 								photoId = this.fetchPhotoId($image),
@@ -10194,7 +10193,7 @@ FlickrMasonry.hyperlinkTags = function(tags) {
 
 FlickrMasonry.setupMoreButton = function() {
 	var $button = jQuery('#moreButton'),
-	    self = this;
+    self = this;
 	    
 	$button.click( function() {
 		TELE.logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
@@ -10209,7 +10208,7 @@ FlickrMasonry.setupMoreButton = function() {
 FlickrMasonry.timeForFreshAJAXRequest = function() {
   // if the last time we made an ajax call was over a day ago
   // or if we want to force an ajax retrieval
-	return this.timeSinceLastPhotoGet === null || ((new Date().getTime() - this.timeSinceLastPhotoGet) / (1000 * 60 * 60 * 24)) > 1 || this.forcePatternAJAXGet; 
+	return this.timeSinceLastPhotoGet === null || ((new Date().getTime() - this.timeSinceLastPhotoGet) / (1000 * 60 * 60 * 24)) > 1 || this.forcePatternAJAXGet;
 };
 
 
@@ -10238,7 +10237,7 @@ FlickrMasonry.updateCredits = function(tag) {
 };
 
 FlickrMasonry.showSimilarTags = function(tag) {
-	var getURL = "http://api.flickr.com/services/rest/?method=flickr.tags.getRelated";
+	var getURL = this.baseUrl + "/?method=flickr.tags.getRelated";
     getURL += "&tag=" + tag;
     getURL += "&cluster_id=&api_key=" + this.apiKey;
     getURL += "&format=json&jsoncallback=?";
@@ -10284,11 +10283,12 @@ FlickrMasonry.updateTitleForTag = function(tag) {
 
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 FlickrMasonry.clearPhotos = function() {
+  var $container  = jQuery('#flickrFaves ul');
+	
+  this.flickrPhotos = null;
+	this.photosLoaded = 0;
+
 	try{
-    // debug_console( 'clearing past photos', "debug");
-		this.flickrPhotos = null;
-		this.photosLoaded = 0;
-		var $container  = jQuery('#flickrFaves ul');
 		$container.masonry( 'destroy' ).empty();
 		jQuery('.suggestionTags').empty();
 		jQuery('#noTagsFound').hide();
@@ -10343,7 +10343,7 @@ FlickrMasonry.addPhotoToFavorites = function(photoId) {
 	// TODO: need to go through oAuth flow to get an auth token for this post
 	jQuery.ajax({
     type: 'POST',
-    url: 'http://api.flickr.com/services/rest/?method=flickr.favorites.add&format=json&jsoncallback=?',
+    url: FlickrMasonry.baseUrl + '?method=flickr.favorites.add&format=json&jsoncallback=?',
     data: { 'api_key' : this.apiKey, 'photo_id' : photoId },
     success: function(data) {
 			console.log(data);

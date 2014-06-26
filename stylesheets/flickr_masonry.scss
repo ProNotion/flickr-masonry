@@ -2,6 +2,7 @@
 
 $link: #CFF09E;
 $headerText: #cfcfcf;
+$standardSpacing: 12px;
 
 body{
 	background: black;
@@ -110,7 +111,7 @@ header{
 	
 	@include background_gradient( $gray, darken($gray, $darkenAmount) );
 	
-	padding: 9px 12px;
+	padding: 9px $standardSpacing;
 	color: black;
 	width: 260px;
 	margin: 84px auto 46px;
@@ -211,7 +212,7 @@ header{
 #searchArea{
 	$searchBackground: #282828;
 	position: absolute;
-	right: 83px;
+	right: $standardSpacing;
 	
 	input{
 		width: 120px;
