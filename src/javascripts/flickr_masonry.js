@@ -98,7 +98,7 @@ FlickrMasonry.getPhotos = function() {
 FlickrMasonry.getFavoritePhotos = function() {
   debug_console( 'using ajax call to flickr for photos retrieval', 'debug' );
 
-  var getURL = this.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + this.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
+  var getURL = this.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + FlickrMasonry.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
 
   jQuery('#loader').center().show().fadeTo(1, 1);
 
@@ -116,7 +116,7 @@ FlickrMasonry.getFavoritePhotos = function() {
 FlickrMasonry.getPhotosByTag = function(tag) {
 	var getURL = this.baseUrl + "/?method=flickr.tags.getClusterPhotos";
     getURL += "&tag=" + tag;
-    getURL += "&cluster_id=&api_key=" + this.apiKey + "&extras=url_t,url_s,url_m,url_z,url_l,url_o";
+    getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey + "&extras=url_t,url_s,url_m,url_z,url_l,url_o";
     getURL += "&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
 
 	this.hideCommonElements();
@@ -299,6 +299,7 @@ FlickrMasonry.getLargestImageSizeAvailable = function(item) {
 
 
 FlickrMasonry.setupImageTooltips = function() {
+  var self = this;
 	// TODO might be able to optimize this; possible to only run qtip on the images that haven't had it run on yet?
 	jQuery('.flickrFaveItem img').each(function() {
 		
@@ -311,13 +312,13 @@ FlickrMasonry.setupImageTooltips = function() {
 			content: {
 				text: "<div class='loading'><span>loading...</span></div>",
 				ajax: {
-          url: FlickrMasonry.baseUrl + "/?method=flickr.people.getInfo&api_key=" + this.apiKey + "&user_id=" + userId + "&format=json&jsoncallback=?",
+          url: FlickrMasonry.baseUrl + "/?method=flickr.people.getInfo&api_key=" + FlickrMasonry.apiKey + "&user_id=" + userId + "&format=json&jsoncallback=?",
           type: 'GET', // POST or GET,
           dataType: "json",
           success: function(data) {
-						var realname = this.fetchRealName(data),
-                username = this.fetchUserName(data),
-								photoId = this.fetchPhotoId($image),
+						var realname = self.fetchRealName(data),
+                username = self.fetchUserName(data),
+								photoId = self.fetchPhotoId($image),
                 markup = "<p class='photoTitle'><a href='" + flickrUrl + "' target='_blank'>" + title + "</a></p><p>by: <a class='authorName' href='http://www.flickr.com/photos/" + userId + "' target='_blank'>" + username + realname + "</a></p><a href='#' class='addToFavorites' data-photo-id='" + photoId + "'>add to favorites</a>";
 
 						// TODO: don't really like this, try and clean it up
@@ -449,7 +450,7 @@ FlickrMasonry.updateCredits = function(tag) {
 FlickrMasonry.showSimilarTags = function(tag) {
 	var getURL = this.baseUrl + "/?method=flickr.tags.getRelated";
     getURL += "&tag=" + tag;
-    getURL += "&cluster_id=&api_key=" + this.apiKey;
+    getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey;
     getURL += "&format=json&jsoncallback=?";
 	
 	jQuery.getJSON( getURL,
@@ -554,7 +555,7 @@ FlickrMasonry.addPhotoToFavorites = function(photoId) {
 	jQuery.ajax({
     type: 'POST',
     url: FlickrMasonry.baseUrl + '?method=flickr.favorites.add&format=json&jsoncallback=?',
-    data: { 'api_key' : this.apiKey, 'photo_id' : photoId },
+    data: { 'api_key' : FlickrMasonry.apiKey, 'photo_id' : photoId },
     success: function(data) {
 			console.log(data);
 		},

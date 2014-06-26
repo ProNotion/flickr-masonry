@@ -2,6 +2,7 @@
 
 $link: #CFF09E;
 $headerText: #cfcfcf;
+$nearBlack: #222;
 $standardSpacing: 12px;
 
 body{
@@ -172,7 +173,7 @@ header{
 }
 
 .tags{
-	border-top: 1px solid #222;
+	border-top: 1px solid $nearBlack;
 	padding-top: 18px;
 }
 
@@ -181,6 +182,10 @@ header{
 }
 
 .flickrTip{
+  background: $nearBlack;
+  border-color: lighten($nearBlack, 10%);
+  box-shadow: 0 3px 17px rgba(0, 0, 0, 0.7);
+	
 	span{padding: 20px 7px;display: inline-block;}
 }
 

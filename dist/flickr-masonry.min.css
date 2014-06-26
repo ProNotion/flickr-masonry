@@ -575,10 +575,11 @@ header a:hover { text-decoration: underline; color: white; }
 .ui-tooltip-content .authorName:link, .ui-tooltip-content .authorName:visited { color: #aee65c; }
 .ui-tooltip-content .authorName:hover { color: #bf9ef0; }
 
-.tags { border-top: 1px solid #222; padding-top: 18px; }
+.tags { border-top: 1px solid #222222; padding-top: 18px; }
 
 .date { color: #aaa; }
 
+.flickrTip { background: #222222; border-color: #3c3c3c; box-shadow: 0 3px 17px rgba(0, 0, 0, 0.7); }
 .flickrTip span { padding: 20px 7px; display: inline-block; }
 
 .statickContainer { position: absolute; top: 0; left: 0; z-index: 10; pointer-events: none; }
