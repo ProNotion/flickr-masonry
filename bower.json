@@ -23,9 +23,13 @@
     "tests"
   ],
   "dependencies": {
-      "jquery": "~1.10.2",
-      "bootstrap": "~3.0.0",
-      "chai": "~1.7.2",
-      "mocha": "~1.18.2"
+    "jquery": "~1.10.2",
+    "bootstrap": "~3.0.0",
+    "chai": "~1.7.2",
+    "mocha": "~1.18.2",
+    "jquery-masonry": "~3.1.5",
+    "qtip2": "~2.2.0",
+    "jquery-prettyPhoto": "*",
+    "imagesloaded": "~3.1.8"
   }
 }

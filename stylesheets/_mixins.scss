@@ -1,0 +1,156 @@
+
+@mixin borderRadius($radius: 6px) {
+    -moz-border-radius: $radius;
+    -webkit-border-radius: $radius;
+    border-radius: $radius;
+}
+
+@mixin borderRadiusTop($radius: 8px){
+    -moz-border-radius-topleft: $radius;
+    -moz-border-radius-topright: $radius;
+    -webkit-border-top-right-radius: $radius;
+    -webkit-border-top-left-radius: $radius;
+    border-top-left-radius: $radius;
+    border-top-right-radius: $radius;
+}
+
+@mixin borderRadiusBottom($radius: 8px){
+    -moz-border-radius-bottomleft: $radius;
+    -moz-border-radius-bottomright: $radius;
+    -webkit-border-bottom-right-radius: $radius;
+    -webkit-border-bottom-left-radius: $radius;
+    border-bottom-left-radius: $radius;
+    border-bottom-right-radius: $radius;
+}
+
+@mixin borderRadiusNW($radius: 8px){
+    -moz-border-radius-topleft: $radius;
+    -webkit-border-top-left-radius: $radius;
+    border-top-left-radius: $radius;
+}
+
+@mixin borderRadiusNE($radius: 8px){
+    -moz-border-radius-topright: $radius;
+    -webkit-border-top-right-radius: $radius;
+    border-top-right-radius: $radius;
+}
+
+@mixin borderRadiusSW($radius: 8px){
+    -moz-border-radius-bottomleft: $radius;
+    -webkit-border-bottom-left-radius: $radius;
+    border-bottom-left-radius: $radius;
+}
+
+@mixin borderRadiusSE($radius: 8px){
+    -moz-border-radius-bottomright: $radius;
+    -webkit-border-bottom-right-radius: $radius;
+    border-bottom-right-radius: $radius;
+}
+
+@mixin boxShadow( $xaxis:1px, $yaxis:1px, $blur:3px, $color: rgb(0,0,0)){
+    -moz-box-shadow: $xaxis $yaxis $blur $color;
+    -webkit-box-shadow: $xaxis $yaxis $blur $color;
+    box-shadow: $xaxis $yaxis $blur $color;	
+}
+
+@mixin boxShadowInset( $xaxis:1px, $yaxis:1px, $blur:3px, $color: rgb(0,0,0)){
+    -moz-box-shadow: $xaxis $yaxis $blur $color inset;
+    -webkit-box-shadow: $xaxis $yaxis $blur $color inset;
+    box-shadow: $xaxis $yaxis $blur $color inset;	
+}
+
+@mixin transition( $property, $time: 0.25s, $ease: ease-in-out ){
+    -webkit-transition: $property $time ease-in-out;
+    -moz-transition: $property $time ease-in-out;
+    -o-transition: $property $time ease-in-out;
+    transition: $property $time ease-in-out;
+}
+
+@mixin css3Animation($animName, $animTime: 10s, $animLoop: infinite, $animEase: linear){
+    -webkit-animation: $animName $animTime $animLoop $animEase;
+    -moz-animation: $animName $animTime $animLoop $animEase;
+}
+
+
+@mixin css3($property, $value){
+    -moz-#{$property}: $value;
+    -webkit-#{$property}: $value;
+    -o-#{$property}: $value;
+    -ms-#{$property}: $value;
+    #{$property}: $value;
+}
+
+@mixin opacity($opacity: 0.5){
+    opacity: $opacity;
+    filter: alpha(opacity=$opacity * 100); // for IE
+}
+
+// assumes a linear gradient from left bottom to left top
+// note: had to use two separate topStop/bottomStop values because SASS doesn't interpoloate variables with a trailing percentage sign. arghh.
+// $topStop - colorstop at the top provided in percentage (0-100)
+// $topBottom - colorstop at the bottom provided in percentage (0-100)
+@mixin background_gradient( $topColor: #FEFEFE, $bottomColor: #E8E9EA, $topStop: 1.0, $bottomStop: 0){
+
+    background-image: -webkit-gradient(
+    linear,
+    left bottom,
+    left top,
+    color-stop($bottomStop, $bottomColor),
+    color-stop($topStop, $topColor)
+    );
+    background-image: -moz-linear-gradient(
+    center bottom,
+    $bottomColor percent($bottomStop),
+    $topColor percent($topStop)
+    ); 
+}
+
+@mixin twoColumnItem($itemWidth: 49%){
+    float: left;
+    width: $itemWidth;
+    $derivedMarginRight: (100% - ($itemWidth*2));
+    margin-bottom: 8px;
+    margin-right: $derivedMarginRight;
+    &:nth-child(2n){margin-right: 0;}
+}
+
+
+@mixin threeColumnItem($itemWidth: 32.1111%){
+    float: left;
+    width: $itemWidth;
+    $derivedMarginRight: (100% - ($itemWidth*3))/2;
+
+    margin-bottom: 8px;
+    margin-right: $derivedMarginRight;
+    &:nth-child(3n){margin-right: 0;}
+}
+
+@mixin fourColumnItem($itemWidth: 24%){
+    float: left;
+    margin-bottom: 10px;
+
+    // clamp this value so layout issues don't result
+    @if ($itemWidth > 25%){
+        $itemWidth: 25%;
+    }
+
+    width: $itemWidth;
+    $derivedMarginRight: (100% - ($itemWidth*4))/3;
+    margin-right: $derivedMarginRight;
+    &:nth-child(4n){margin-right: 0;}
+}
+
+@mixin nColumnItem($columns: 3, $marginBottom: 10px){
+    float: left;
+    margin-bottom: $marginBottom;
+    
+    $itemWidth: 100% / $columns;
+    
+    $derivedMarginRight: (100% - ($itemWidth*$columns)) / $columns - 1;
+    margin-right: $derivedMarginRight;
+    &:nth-child(#{$columns}n){margin-right: 0;}
+}
+
+@mixin latoText{
+    font-family: "Lato", Verdana, Arial, sans-serif;
+}

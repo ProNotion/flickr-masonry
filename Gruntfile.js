@@ -2,12 +2,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     concat: {
-      options: {
-        separator: ';'
-      },
       dist: {
-        src: ['bower_components/jquery/jquery.js', 'bower_components/bootstrap/dist/js/bootstrap.min.js', 'src/javascripts/flickr_masonry.js'],
+        src: ['bower_components/jquery/jquery.js', 'bower_components/bootstrap/dist/js/bootstrap.min.js', 'bower_components/imagesloaded/imagesloaded.pkgd.min.js', 'bower_components/qtip2/jquery.qtip.js', 'bower_components/jquery-prettyPhoto/js/jquery.prettyPhoto.js', 'bower_components/jquery-masonry/dist/masonry.pkgd.min.js', 'src/javascripts/flickr_masonry.js'],
         dest: 'dist/<%= pkg.name %>.js'
+      },
+      css: {
+        src: ['bower_components/qtip2/jquery.qtip.min.css', 'bower_components/jquery-prettyPhoto/css/prettyPhoto.css', 'stylesheets/<%= pkg.name %>.css'],
+        dest: 'dist/<%= pkg.name %>.min.css'
       }
     },
     uglify: {
@@ -39,6 +40,16 @@ module.exports = function(grunt) {
     watch: {
       files: ['<%= jshint.files %>'],
       tasks: ['jshint']
+    },
+    sass: {
+      dist: {
+        options: {
+          style: 'compact'
+        },
+        files: {
+          'stylesheets/<%= pkg.name %>.css': 'stylesheets/flickr-masonry.scss'
+        }
+      }
     }
   });
 
@@ -47,7 +58,8 @@ module.exports = function(grunt) {
   // grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-sass');
 
   grunt.registerTask('test', ['jshint', 'qunit']);
-  grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'sass', 'concat', 'uglify']);
 };

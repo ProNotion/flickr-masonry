@@ -203,7 +203,7 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 		$photoLink = jQuery('<a>',
 										{ "target": "_blank",
 											"class": "flickrFaveItem",
-											"href" :  this.getLargestImageSizeAvailable(item),
+											"href" :  FlickrMasonry.getLargestImageSizeAvailable(item),
 											"rel" : "lightbox['flickr']"
 											// "data-time": item.date_taken,
 											// "data-tags": hyperlinkTags(item.tags)
@@ -215,7 +215,7 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 		
 		jQuery(newPhoto).attr({
 				"data-flickr-url" : "http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/",
-				"data-author-url": this.hyperlinkAuthorREST(item.owner),
+				"data-author-url": FlickrMasonry.hyperlinkAuthorREST(item.owner),
 				"data-author-id" : item.owner,
 				"data-title": itemTitle,
 				"data-photo-id" : item.id,
