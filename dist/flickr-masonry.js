@@ -14261,12 +14261,13 @@ FlickrMasonry.getFavoritePhotos = function() {
 
   jQuery('#loader').center().show().fadeTo(1, 1);
 
+  var self = this;
   jQuery.getJSON( getURL,
     function(data) {
       localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
       localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
-      this.flickrPhotos = data;
-      this.displayPhotos(data);
+      self.flickrPhotos = data;
+      self.displayPhotos(data);
     }
   );
 };
@@ -14280,20 +14281,21 @@ FlickrMasonry.getPhotosByTag = function(tag) {
 	this.hideCommonElements();
 	
 	jQuery('#loader').center().show().fadeTo(1, 1);
-	
+
+	var self = this;
 	jQuery.getJSON( getURL,
 		function(data) {
-			this.flickrPhotos = data;
+			self.flickrPhotos = data;
 			
 			//TODO display message if no photos were found with the tag
 			if (data.photos.photo.length > 0 ) {
-				this.displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });
+				self.displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });
 			} else {
 				// todo - make sure to guard against security vulnerabilities here
-				this.noTaggedImagesResult(tag);
+				self.noTaggedImagesResult(tag);
 			}
 			
-			this.setupBackToMine();
+			self.setupBackToMine();
 		}
 	);
 };
@@ -14323,6 +14325,8 @@ FlickrMasonry.noTaggedImagesResult = function(tag) {
 
 FlickrMasonry.displayPhotos = function(jsonData, options) {
 	options = options || {};
+	
+	var self = this;
 	
 	var $container = jQuery('#flickrFaves ul'),
 			// for RSS feed
@@ -14401,7 +14405,7 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
       columnWidth : 260,
       isFitWidth: true
     });
-
+    
 		$ajaxLoader.fadeTo(200, 0, function() {
 			$ajaxLoader.hide();
 			$container.removeClass('disabled').fadeTo(570, 1, function() {
@@ -14420,27 +14424,27 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 				});
 
 				// only fade the 'more' button back in if there are still images remaining to be shown
-				if ( !options.taggedPhotos && this.photosLoaded < this.flickrPhotos.photos.photo.length ) {
+				if ( !options.taggedPhotos && self.photosLoaded < self.flickrPhotos.photos.photo.length ) {
 					jQuery('#moreButton').fadeTo( 650, 1, 'swing');
 				}
 				if ( options.taggedPhotos ) {
 					jQuery('#tagLimit').show();
 				}
 				
-				this.photosLoaded = this.photosLoaded + this.photosAtATime;
-				this.delayFooterVisibility();
+				self.photosLoaded = self.photosLoaded + self.photosAtATime;
+				self.delayFooterVisibility();
 
 				// Setup tooltips for each image
-				this.setupImageTooltips();
+				self.setupImageTooltips();
 				// setup pretty photo gallery
-				this.setupPrettyPhoto();
+				self.setupPrettyPhoto();
 				
 				if (options.taggedPhotos) {
-					this.updateCredits(options.searchedTag);
+					self.updateCredits(options.searchedTag);
 				}
+				
 				// temp off
 				// jQuery('img:even').statick({opacity: 0.06, timing:{baseTime: 140}});
-				
 			});
 		});
 	});
