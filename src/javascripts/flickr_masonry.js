@@ -473,16 +473,17 @@ FlickrMasonry.showSimilarTags = function(tag) {
 
 
 FlickrMasonry.setupTagForm = function() {
+  var self = this;
 	jQuery('#tagForm').submit( function(event) {
 		var tag = jQuery(this).find('input').val();
 		event.preventDefault();
 		
 		TELE.logAnalytics(['_trackEvent', 'search', 'flickr masonry search', tag ]);
 
-		this.hideTooltips();
-		this.clearPhotos();
-		this.updateTitleForTag(tag);
-		this.getPhotosByTag(tag);
+		self.hideTooltips();
+		self.clearPhotos();
+		self.updateTitleForTag(tag);
+		self.getPhotosByTag(tag);
 	});
 	this.setupPopularTags();
 };

@@ -81,6 +81,7 @@ header{
 	text-align: center;
 	font-size: 1em;
 	padding-bottom: 20px;
+	margin-top: 110px;
 	span{
 		color: darken($headerText, 56%);
 	}
@@ -256,14 +257,26 @@ header{
 	padding: 14px 18px;
 	font-size: 18px;
 	line-height: 1.3em;
-	p, ul{text-align: left;}
+	
+	p, ul{
+	  text-align: left;
+	}
+	
 	p{
 		font-size: 86%;
 		word-spacing: 0px;
 	}
-	h3,h4{
+	
+	h3, h4{
 		margin-bottom: 50px;
 	}
+}
+
+#tagLimit{
+  p{
+    text-align: center;
+    margin: 0;
+  }
 }
 
 

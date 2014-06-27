@@ -553,7 +553,7 @@ a:link, a:visited { color: #cff09e; text-decoration: none; }
 header { text-align: center; margin: 0 auto 11px; position: relative; width: 90%; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgba(255, 255, 255, 0.05)), color-stop(1, rgba(255, 255, 255, 0.12))); background-image: -moz-linear-gradient(center bottom, rgba(255, 255, 255, 0.05) percent(0), rgba(255, 255, 255, 0.12) percent(1)); padding: 7px 2px 14px; -moz-border-radius: 1px; -webkit-border-radius: 1px; border-radius: 1px; border-width: 0 1px 1px 1px; border-color: #2a2a2a; border-style: solid; }
 header a:hover { text-decoration: underline; color: white; }
 
-#credits { display: none; text-align: center; font-size: 1em; padding-bottom: 20px; }
+#credits { display: none; text-align: center; font-size: 1em; padding-bottom: 20px; margin-top: 110px; }
 #credits span { color: #404040; }
 
 .photo { width: 238px; margin: 10px; float: left; list-style: none; text-align: center; }
@@ -600,6 +600,8 @@ header a:hover { text-decoration: underline; color: white; }
 #tagLimit p, #tagLimit ul, #noTagsFound p, #noTagsFound ul { text-align: left; }
 #tagLimit p, #noTagsFound p { font-size: 86%; word-spacing: 0px; }
 #tagLimit h3, #tagLimit h4, #noTagsFound h3, #noTagsFound h4 { margin-bottom: 50px; }
+
+#tagLimit p { text-align: center; margin: 0; }
 
 #backToMine { display: block; display: none; position: relative; float: left; font-size: 14px; top: 8px; left: 10px; word-spacing: 0; }
 #backToMine:hover { cursor: pointer; }
