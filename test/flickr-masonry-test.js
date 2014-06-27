@@ -50,11 +50,11 @@ describe('FlicrkMasonry', function(){
       it( "should return false if last call was less than a day ago", function() {
         FlickrMasonry.timeSinceLastPhotoGet = new Date().getTime() - (1000 * 60 * 60 * 2); // 2 hours ago
         expect(FlickrMasonry.timeForFreshAJAXRequest()).to.be.false;
-      });      
+      });
     });
     
     describe( "clearPhotos", function() {
-  		FlickrMasonry.flickrPhotos = {photos: {photo: [{id: 1, title: 'blah'}, {id: 2, title: 'blah'}]}};
+      FlickrMasonry.flickrPhotos = {photos: {photo: [{id: 1, title: 'blah'}, {id: 2, title: 'blah'}]}};
   		
       it( "should clear flickrPhotos and photosLoaded", function() {
         FlickrMasonry.photosLoaded = 2;
@@ -63,6 +63,11 @@ describe('FlicrkMasonry', function(){
         expect(FlickrMasonry.photosLoaded).to.equal(0);
       });
     });
+
+    describe( "search by tag", function() {
+      it( "trims search input of outer whitespace");
+    });
+    
 
     describe( "getPhotos", function() {
       var searchTermStub, timeForFreshAJAXRequestStub, getFavoritePhotosStub, displayPhotosStub, getPhotosByTagStub;
