@@ -84,7 +84,7 @@ FlickrMasonry.getPhotos = function() {
 	var searchTerm = gup('search');
 	
 	// allow search by tag to be done via a query string
-	if ( searchTerm ) {
+	if (searchTerm) {
 		this.getPhotosByTag(encodeURIComponent(searchTerm));
 	}	else if (this.timeForFreshAJAXRequest()) {
     this.getFavoritePhotos();
@@ -532,10 +532,12 @@ FlickrMasonry.hideTooltips = function () {
 FlickrMasonry.setupBackToMine = function() {
   var self = this;
 	jQuery('#backToMine').fadeIn()
-		.click( function() {
+		.click(function() {
 			self.clearPhotos();
 			jQuery('header .title').text(FlickrMasonry.originalTitle);
 			jQuery('#tagForm input').val('');
+			// TODO gotta be a better way to clear this out...
+			history.pushState(null, null, "?");
 			self.getPhotos();
 		});
 };
