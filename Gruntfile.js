@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       dist: {
-        src: ['bower_components/jquery/jquery.js', 'bower_components/bootstrap/dist/js/bootstrap.min.js', 'bower_components/imagesloaded/imagesloaded.pkgd.min.js', 'bower_components/qtip2/jquery.qtip.js', 'bower_components/jquery-prettyPhoto/js/jquery.prettyPhoto.js', 'bower_components/jquery-masonry/dist/masonry.pkgd.min.js', 'src/javascripts/flickr_masonry.js'],
+        src: ['bower_components/jquery/jquery.js', 'bower_components/bootstrap/dist/js/bootstrap.min.js', 'bower_components/imagesloaded/imagesloaded.pkgd.min.js', 'bower_components/qtip2/jquery.qtip.js', 'bower_components/jquery-prettyPhoto/js/jquery.prettyPhoto.js', 'bower_components/jquery-masonry/dist/masonry.pkgd.min.js', 'src/javascripts/util.js', 'src/javascripts/flickr_masonry.js'],
         dest: 'dist/<%= pkg.name %>.js'
       },
       css: {
