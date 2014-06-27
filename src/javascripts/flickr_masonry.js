@@ -1,4 +1,4 @@
-/*global TELE, gup, debug_console, console */
+/*global gup, logAnalytics, debugConsole, console */
 
 var FlickrMasonry = {
 	apiKey: "79f2e11b6b4e3213f8971bed7f17b4c4",
@@ -41,11 +41,11 @@ var FlickrMasonry = {
 
 FlickrMasonry.setupAnalytics = function () {
 	jQuery('#seeTagsLink').click( function() {
-		TELE.logAnalytics(['_trackEvent', 'view', 'flick masonry see all images with tag', jQuery('#seeTagsName').text() ]);
+		logAnalytics(['_trackEvent', 'view', 'flick masonry see all images with tag', jQuery('#seeTagsName').text() ]);
 	});
 	
 	jQuery('.suggestionTag').click( function() {
-		TELE.logAnalytics(['_trackEvent', 'view', 'flick masonry click suggested tag', jQuery(this).text() ]);
+		logAnalytics(['_trackEvent', 'view', 'flick masonry click suggested tag', jQuery(this).text() ]);
 	});
 };
 
@@ -85,7 +85,7 @@ FlickrMasonry.getPhotos = function() {
 	
 	// allow search by tag to be done via a query string
 	if ( searchTerm ) {
-		this.getPhotosByTag(encodeURI(searchTerm));
+		this.getPhotosByTag(encodeURIComponent(searchTerm));
 	}	else if (this.timeForFreshAJAXRequest()) {
     this.getFavoritePhotos();
 	}	else {
@@ -96,7 +96,7 @@ FlickrMasonry.getPhotos = function() {
 };
 
 FlickrMasonry.getFavoritePhotos = function() {
-  debug_console( 'using ajax call to flickr for photos retrieval', 'debug' );
+  debugConsole( 'using ajax call to flickr for photos retrieval', 'debug' );
 
   var getURL = this.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + FlickrMasonry.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
 
@@ -120,6 +120,7 @@ FlickrMasonry.getPhotosByTag = function(tag) {
     getURL += "&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
 
 	this.hideCommonElements();
+	this.updateTitleForTag(tag);
 	
 	jQuery('#loader').center().show().fadeTo(1, 1);
 
@@ -224,7 +225,6 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 				"data-title": itemTitle,
 				"data-photo-id" : item.id,
 				'alt' : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>" + itemTitle + "</a>"
-				// 'alt' : item.title || "[untitled]"
 		});
 		
 		$photoLink.append(newPhoto);
@@ -234,7 +234,7 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 	
 	// needed for masonry layout to be recalculated properly
 	if ( this.photosLoaded > 0 ) {
-		debug_console( 'masonry reloadItems', "debug");
+		debugConsole( 'masonry reloadItems', "debug");
 		$container.masonry( 'reloadItems' );
 	}
 	
@@ -260,7 +260,7 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 						jQuery(this).attr('width', jQuery(this)[0].width)
 												.attr('height', jQuery(this)[0].height);
 					} catch (e) {
-						debug_console( e.message, "error");
+						debugConsole( e.message, "error");
 					}
 				});
 
@@ -407,7 +407,7 @@ FlickrMasonry.setupMoreButton = function() {
     self = this;
 	    
 	$button.click( function() {
-		TELE.logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
+		logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
 		
 		$button.fadeTo(1, 0);
 		self.displayPhotos(self.flickrPhotos);
@@ -465,7 +465,7 @@ FlickrMasonry.showSimilarTags = function(tag) {
           }
 				}
 			} catch(e) {
-				debug_console( 'error in showSimilarTags: ' + e.message, "error");
+				debugConsole( 'error in showSimilarTags: ' + e.message, "error");
 			}
 		}
 	);
@@ -474,18 +474,26 @@ FlickrMasonry.showSimilarTags = function(tag) {
 
 FlickrMasonry.setupTagForm = function() {
   var self = this;
-	jQuery('#tagForm').submit( function(event) {
+	jQuery('#tagForm').submit(function(event) {
 		var tag = jQuery.trim(jQuery(this).find('input').val());
 		event.preventDefault();
 		
-		TELE.logAnalytics(['_trackEvent', 'search', 'flickr masonry search', tag ]);
+		logAnalytics(['_trackEvent', 'search', 'flickr masonry search', tag ]);
 
 		self.hideTooltips();
 		self.clearPhotos();
-		self.updateTitleForTag(tag);
+    self.setSearchQueryParam(tag);
 		self.getPhotosByTag(tag);
+		return false;
 	});
-	this.setupPopularTags();
+  
+  this.setupPopularTags();
+};
+
+
+FlickrMasonry.setSearchQueryParam = function(tag) {
+  tag = encodeURIComponent(tag);
+  history.pushState(null, null, "?search=" + tag);
 };
 
 FlickrMasonry.updateTitleForTag = function(tag) {
@@ -505,7 +513,7 @@ FlickrMasonry.clearPhotos = function() {
 		jQuery('.suggestionTags').empty();
 		jQuery('#noTagsFound').hide();
 	} catch(e) {
-    // debug_console( 'error in clearPhotos(): ' + e.message, "debug");
+    // debugConsole( 'error in clearPhotos(): ' + e.message, "debug");
 	}
 };
 
