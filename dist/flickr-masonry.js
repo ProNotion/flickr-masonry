@@ -14634,7 +14634,7 @@ FlickrMasonry.showSimilarTags = function(tag) {
 FlickrMasonry.setupTagForm = function() {
   var self = this;
 	jQuery('#tagForm').submit( function(event) {
-		var tag = jQuery(this).find('input').val();
+		var tag = jQuery.trim(jQuery(this).find('input').val());
 		event.preventDefault();
 		
 		TELE.logAnalytics(['_trackEvent', 'search', 'flickr masonry search', tag ]);
