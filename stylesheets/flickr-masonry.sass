@@ -37,14 +37,18 @@ a:link, a:visited
 #todo
     color: white
      display: none
+     
 #flickrFaves
 	margin: 0 auto
 	ul.disabled
 	    pointer-events: none
+	    
 .italic
     font-style: italic
+    
 .bold
     font-weight: bold
+    
 .headerText
 	color: $headerText
 	font-family: "Lucida Grande", Helvetica, arial, sans-serif
@@ -71,8 +75,6 @@ header
 		&:hover
 			text-decoration: underline
 			color: white
-		
-	
 
 #credits
 	display: none
@@ -83,7 +85,6 @@ header
 	margin-top: 110px
 	span
 		color: darken($headerText, 56%)
-	
 
 .photo 
   width: 238px
@@ -99,8 +100,6 @@ header
 		&:hover
 			opacity: 0.78 !important
 			@include css3(transition, opacity 250ms)
-		
-	
 
 #moreButton
 	opacity: 0
@@ -203,7 +202,6 @@ header
 	img
 		position: relative
 		margin: 0 auto
-	
 
 #searchArea
 	$searchBackground: #282828
@@ -233,8 +231,6 @@ header
 			
 		  @include css3(transition, width 300ms)
 		
-	
-
 #tagLimit, #noTagsFound
 	@extend .headerText
 	display: none
@@ -260,7 +256,6 @@ header
   p
     text-align: center
     margin: 0
-  
 
 #backToMine
 	display: block
@@ -274,7 +269,6 @@ header
 	&:hover
 	    cursor: pointer
 	    
-
 .suggestionTags
 	list-style: none
 	line-height: 1.8em
@@ -293,8 +287,6 @@ header
 			cursor: pointer
 			color: #fcfcfc
 		
-	
-
 .ppt
 	text-align: center
 	text-shadow: 0 0 1px rgba(0, 0, 0, 0.1)
