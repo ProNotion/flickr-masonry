@@ -503,13 +503,11 @@ FlickrMasonry.updateTitleForTag = function(tag) {
 
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 FlickrMasonry.clearPhotos = function() {
-  var $container = this.$masonryContainer;
-	
   this.flickrPhotos = null;
 	this.photosLoaded = 0;
 
 	try{
-		$container.masonry( 'destroy' ).empty();
+		this.$masonryContainer.masonry( 'destroy' ).empty();
 		jQuery('.suggestionTags').empty();
 		jQuery('#noTagsFound').hide();
 	} catch(e) {
@@ -520,7 +518,7 @@ FlickrMasonry.clearPhotos = function() {
 
 // for UX purposes
 FlickrMasonry.hideCommonElements = function() {
-  // jQuery('#credits, #moreButton, #tagLimit').hide();
+  jQuery('#credits, #moreButton, #tagLimit').hide();
 };
 
 

@@ -14263,7 +14263,7 @@ var FlickrMasonry = {
 	forcePatternAJAXGet : false,
 	maxPhotosToRequest : 500,
 	flickrPhotos: null,
-	photosAtATime: 24,
+	photosAtATime: 48,
 	photosLoaded: 0,
 	
 	loadLocalStorage: function() {
@@ -14503,8 +14503,8 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 	
   // run the masonry plugin
 	$container.imagesLoaded(function() {
-	  // TODO not sure why this is necessary; should only be run once initially, but run into masonry layout issues
-	  // if i don't run it each time.
+    // TODO not sure why this is necessary; should only be run once initially, but run into masonry layout issues
+    // if i don't run it each time.
     $container.masonry({
       itemSelector : '.photo',
       columnWidth : 260,
@@ -14759,13 +14759,11 @@ FlickrMasonry.updateTitleForTag = function(tag) {
 
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 FlickrMasonry.clearPhotos = function() {
-  var $container  = self.$masonryContainer;
-	
   this.flickrPhotos = null;
 	this.photosLoaded = 0;
 
 	try{
-		$container.masonry( 'destroy' ).empty();
+		this.$masonryContainer.masonry( 'destroy' ).empty();
 		jQuery('.suggestionTags').empty();
 		jQuery('#noTagsFound').hide();
 	} catch(e) {
@@ -14776,7 +14774,7 @@ FlickrMasonry.clearPhotos = function() {
 
 // for UX purposes
 FlickrMasonry.hideCommonElements = function() {
-  // jQuery('#credits, #moreButton, #tagLimit').hide();
+  jQuery('#credits, #moreButton, #tagLimit').hide();
 };
 
 
