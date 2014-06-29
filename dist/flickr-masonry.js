@@ -14283,6 +14283,7 @@ var FlickrMasonry = {
     this.originalTitle = jQuery('header .title').text(); // TODO probably somewhere better to do this
 
     this.loadLocalStorage();
+    this.$masonryContainer = jQuery('#flickrFaves ul');
     this.getPhotos(); // get the initial photos the first time the page loads
     this.setupMoreButton();
     this.setupTagForm();
@@ -14426,7 +14427,7 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 	
 	var self = this;
 	
-	var $container = jQuery('#flickrFaves ul'),
+	var $container = self.$masonryContainer,
 			// for RSS feed
 			// photos = jsonData.items.slice(this.photosLoaded, this.photosLoaded + this.photosAtATime ),
 			// for REST API
@@ -14585,7 +14586,7 @@ FlickrMasonry.setupImageTooltips = function() {
       position:{
         my: 'left center',
         at: 'right center',
-        viewport: jQuery('#flickrFaves ul')
+        viewport: self.$masonryContainer
       },
       show: {
         delay: 260,
@@ -14759,7 +14760,7 @@ FlickrMasonry.updateTitleForTag = function(tag) {
 
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 FlickrMasonry.clearPhotos = function() {
-  var $container  = jQuery('#flickrFaves ul');
+  var $container  = self.$masonryContainer;
 	
   this.flickrPhotos = null;
 	this.photosLoaded = 0;
