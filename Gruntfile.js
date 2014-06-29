@@ -38,8 +38,8 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['jshint']
+      files: ['<%= jshint.files %>', 'stylesheets/flickr-masonry.sass'],
+      tasks: ['jshint', 'sass']
     },
     sass: {
       dist: {
@@ -47,7 +47,7 @@ module.exports = function(grunt) {
           style: 'compact'
         },
         files: {
-          'stylesheets/<%= pkg.name %>.css': 'stylesheets/flickr-masonry.scss'
+          'stylesheets/<%= pkg.name %>.css': 'stylesheets/flickr-masonry.sass'
         }
       }
     }
