@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name %>.js'
       },
       css: {
-        src: ['bower_components/qtip2/jquery.qtip.min.css', 'bower_components/jquery-prettyPhoto/css/prettyPhoto.css', 'stylesheets/<%= pkg.name %>.css'],
+        src: ['bower_components/qtip2/jquery.qtip.min.css', 'bower_components/jquery-prettyPhoto/css/prettyPhoto.css', 'src/stylesheets/<%= pkg.name %>.css'],
         dest: 'dist/<%= pkg.name %>.min.css'
       }
     },
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['<%= jshint.files %>', 'stylesheets/flickr-masonry.sass'],
+      files: ['<%= jshint.files %>', 'src/stylesheets/flickr-masonry.sass'],
       tasks: ['jshint', 'sass', 'concat', 'uglify']
     },
     sass: {
@@ -47,7 +47,7 @@ module.exports = function(grunt) {
           style: 'compact'
         },
         files: {
-          'stylesheets/<%= pkg.name %>.css': 'stylesheets/flickr-masonry.sass'
+          'src/stylesheets/<%= pkg.name %>.css': 'src/stylesheets/<%= pkg.name %>.sass'
         }
       }
     }
