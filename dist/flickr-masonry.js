@@ -14425,26 +14425,30 @@ FlickrMasonry.noTaggedImagesResult = function(tag) {
 FlickrMasonry.displayPhotos = function(jsonData, options) {
 	options = options || {};
 	
+	var elems = [];
 	var self = this;
 	
 	var $container = self.$masonryContainer,
 			// for RSS feed
 			// photos = jsonData.items.slice(this.photosLoaded, this.photosLoaded + this.photosAtATime ),
 			// for REST API
-			photos = jsonData.photos.photo.slice(this.photosLoaded, this.photosLoaded + this.photosAtATime ), // crude way of achieving offset
+			photos = jsonData.photos.photo.slice(self.photosLoaded, self.photosLoaded + self.photosAtATime ), // crude way of achieving offset
 			newPhoto,
 			$listItem,
 			$photoLink,
 			$ajaxLoader = jQuery('#loader');
 
-	$ajaxLoader.center().show().fadeTo(1, 1);
-	$container.addClass('disabled').fadeTo(0, 0);
+  // only show this loader on initial load
+  if (!self.photosLoaded) {
+    $ajaxLoader.center().show().fadeTo(1, 1);
+    $container.addClass('disabled').fadeTo(0, 0);
+  }
 	
 	jQuery.each(photos, function(i, item) {
 		var itemTitle;
 		
 		// if the photo's index is above the quoto per fetch, then return
-		if ( i >= this.photosAtATime ) { return; }
+		if ( i >= self.photosAtATime ) { return; }
 		
 		newPhoto = new Image();
 		$listItem = jQuery('<li>', { "class" : "photo" } );
@@ -14481,70 +14485,76 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 				"data-author-id" : item.owner,
 				"data-title": itemTitle,
 				"data-photo-id" : item.id,
-				'alt' : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>" + itemTitle + "</a>"
+				"alt" : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>" + itemTitle + "</a>"
 		});
 		
 		$photoLink.append(newPhoto);
 		$listItem.append($photoLink);
-		$container.append($listItem);
+		
+    $container.append($listItem);
+    elems.push($listItem[0]);
 	});
 	
-	// needed for masonry layout to be recalculated properly
-	if ( this.photosLoaded > 0 ) {
-		debugConsole( 'masonry reloadItems', "debug");
-		$container.masonry( 'reloadItems' );
+	if (self.photosLoaded) {
+    $container.append(elems);
+    FlickrMasonry.$masonryContainer.masonry('appended', elems);
 	}
 	
-	// run the masonry plugin
+  // run the masonry plugin
 	$container.imagesLoaded(function() {
-		
     $container.masonry({
       itemSelector : '.photo',
       columnWidth : 260,
       isFitWidth: true
     });
-    
-		$ajaxLoader.fadeTo(200, 0, function() {
-			$ajaxLoader.hide();
-			$container.removeClass('disabled').fadeTo(570, 1, function() {
-				
-				// try to set the height/width of each image (for better rendering performance/best practices)
-				jQuery('img').each( function() {
-					try{
-						if (jQuery(this)[0].width === 0 ) {
-							throw new Error(jQuery(this)[0].src + " has a width of 0" );
-						}
-						jQuery(this).attr('width', jQuery(this)[0].width)
-												.attr('height', jQuery(this)[0].height);
-					} catch (e) {
-						debugConsole( e.message, "error");
+
+    var imagesCallback = function() {
+			// try to set the height/width of each image (for better rendering performance/best practices)
+			jQuery('img').each( function() {
+				try{
+					if (jQuery(this)[0].width === 0 ) {
+						throw new Error(jQuery(this)[0].src + " has a width of 0" );
 					}
-				});
-
-				// only fade the 'more' button back in if there are still images remaining to be shown
-				if ( !options.taggedPhotos && self.photosLoaded < self.flickrPhotos.photos.photo.length ) {
-					jQuery('#moreButton').fadeTo( 650, 1, 'swing');
+					jQuery(this).attr('width', jQuery(this)[0].width)
+											.attr('height', jQuery(this)[0].height);
+				} catch (e) {
+					debugConsole( e.message, "error");
 				}
-				if ( options.taggedPhotos ) {
-					jQuery('#tagLimit').show();
-				}
-				
-				self.photosLoaded = self.photosLoaded + self.photosAtATime;
-				self.delayFooterVisibility();
-
-				// Setup tooltips for each image
-				self.setupImageTooltips();
-				// setup pretty photo gallery
-				self.setupPrettyPhoto();
-				
-				if (options.taggedPhotos) {
-					self.updateCredits(options.searchedTag);
-				}
-				
-				// temp off
-				// jQuery('img:even').statick({opacity: 0.06, timing:{baseTime: 140}});
 			});
-		});
+
+			// only fade the 'more' button back in if there are still images remaining to be shown
+      if ( !options.taggedPhotos && self.photosLoaded < self.flickrPhotos.photos.photo.length ) {
+       jQuery('#moreButton').fadeTo( 650, 1, 'swing');
+      }
+			if ( options.taggedPhotos ) {
+				jQuery('#tagLimit').show();
+			}
+
+			self.photosLoaded = self.photosLoaded + self.photosAtATime;
+			self.delayFooterVisibility();
+
+			// Setup tooltips for each image
+      self.setupImageTooltips();
+      // setup pretty photo gallery
+      self.setupPrettyPhoto();
+
+			if (options.taggedPhotos) {
+				self.updateCredits(options.searchedTag);
+			}
+
+			// temp off
+			// jQuery('img:even').statick({opacity: 0.06, timing:{baseTime: 140}});
+    };
+    
+
+    if (!self.photosLoaded) {
+      $ajaxLoader.fadeTo(200, 0, function() {
+        $ajaxLoader.hide();
+        $container.removeClass('disabled').fadeTo(570, 1, imagesCallback);
+      });
+    } else {
+      imagesCallback();
+    }
 	});
 };
 
@@ -14666,7 +14676,7 @@ FlickrMasonry.setupMoreButton = function() {
 	$button.click( function() {
 		logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
 		
-		$button.fadeTo(1, 0);
+    // $button.fadeTo(1, 0);
 		self.displayPhotos(self.flickrPhotos);
 	});
 };
@@ -14777,7 +14787,7 @@ FlickrMasonry.clearPhotos = function() {
 
 // for UX purposes
 FlickrMasonry.hideCommonElements = function() {
-	jQuery('#credits, #moreButton, #tagLimit').hide();
+  // jQuery('#credits, #moreButton, #tagLimit').hide();
 };
 
 
