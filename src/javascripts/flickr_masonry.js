@@ -7,7 +7,7 @@ var FlickrMasonry = {
 	forcePatternAJAXGet : false,
 	maxPhotosToRequest : 500,
 	flickrPhotos: null,
-	photosAtATime: 58,
+	photosAtATime: 24,
 	photosLoaded: 0,
 	
 	loadLocalStorage: function() {
@@ -229,7 +229,8 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 				"data-author-id" : item.owner,
 				"data-title": itemTitle,
 				"data-photo-id" : item.id,
-				"alt" : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>" + itemTitle + "</a>"
+				"alt" : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>" + itemTitle + "</a>",
+				"width": item.width_s
 		});
 		
 		$photoLink.append(newPhoto);
@@ -246,26 +247,15 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 	
   // run the masonry plugin
 	$container.imagesLoaded(function() {
+	  // TODO not sure why this is necessary; should only be run once initially, but run into masonry layout issues
+	  // if i don't run it each time.
     $container.masonry({
       itemSelector : '.photo',
       columnWidth : 260,
       isFitWidth: true
     });
-
+    
     var imagesCallback = function() {
-			// try to set the height/width of each image (for better rendering performance/best practices)
-			jQuery('img').each( function() {
-				try{
-					if (jQuery(this)[0].width === 0 ) {
-						throw new Error(jQuery(this)[0].src + " has a width of 0" );
-					}
-					jQuery(this).attr('width', jQuery(this)[0].width)
-											.attr('height', jQuery(this)[0].height);
-				} catch (e) {
-					debugConsole( e.message, "error");
-				}
-			});
-
 			// only fade the 'more' button back in if there are still images remaining to be shown
       if ( !options.taggedPhotos && self.photosLoaded < self.flickrPhotos.photos.photo.length ) {
        jQuery('#moreButton').fadeTo( 650, 1, 'swing');
