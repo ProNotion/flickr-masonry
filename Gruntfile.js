@@ -39,7 +39,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>', 'stylesheets/flickr-masonry.sass'],
-      tasks: ['jshint', 'sass']
+      tasks: ['jshint', 'sass', 'concat', 'uglify']
     },
     sass: {
       dist: {
