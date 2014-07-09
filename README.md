@@ -6,3 +6,6 @@ Built with [jQuery](http://jquery.com/ "jQuery: The Write Less, Do More, JavaScr
   * [qtip2](http://craigsworks.com/projects/qtip2/ "qTip2 - Pretty powerful tooltips")
 
 [Demo](http://www.telecommutetojuryduty.com/flickr-masonry/)
+
+# Feedback
+Comments on the sanity of my code—either general or specific—are **extremely** welcomed.
