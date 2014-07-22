@@ -12,8 +12,6 @@ a:link, a:visited { color: #cff09e; text-decoration: none; }
 
 .group { zoom: 1; }
 
-#todo { color: white; display: none; }
-
 #flickrFaves { margin: 0 auto; }
 #flickrFaves ul.disabled { pointer-events: none; }
 
@@ -76,7 +74,7 @@ header a:hover { text-decoration: underline; color: white; }
 
 #tagLimit p { text-align: center; margin: 0; }
 
-#backToMine { display: block; display: none; position: relative; float: left; font-size: 14px; top: 8px; left: 10px; word-spacing: 0; }
+#backToMine { display: none; position: relative; float: left; font-size: 14px; top: 8px; left: 10px; word-spacing: 0; }
 #backToMine:hover { cursor: pointer; }
 
 .suggestionTags { list-style: none; line-height: 1.8em; }
