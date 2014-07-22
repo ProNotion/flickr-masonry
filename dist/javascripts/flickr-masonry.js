@@ -14715,9 +14715,11 @@ FlickrMasonry.showSimilarTags = function(tag) {
 				for( var item in data.tags.tag ) {
           if (data.tags.tag.hasOwnProperty(item)) {
             if ( item > 10 ) { break;}
-            
-            var tagName = data.tags.tag[item]._content;
-            jQuery('<li>', {"text" : tagName, 'class' : 'suggestionTag' }).appendTo('#seeSimilarTags ul');
+
+            var tagName = data.tags.tag[item]._content,
+              $link = jQuery('<a>', {"text" : tagName, 'class' : 'suggestionTag', href: "#" });
+              
+            jQuery('#seeSimilarTags ul').append(jQuery('<li></li>').append($link));
           }
 				}
 			} catch(e) {
@@ -14797,7 +14799,8 @@ FlickrMasonry.setupBackToMine = function() {
 };
 
 FlickrMasonry.setupPopularTags = function() {
-	jQuery(document).delegate( '.suggestionTag', 'click', function() {
+	jQuery(document).delegate( '.suggestionTag', 'click', function(event) {
+    event.preventDefault();
 		jQuery('#tagForm')
 			.find('input')
 			.val(jQuery(this).text())

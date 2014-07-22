@@ -12,7 +12,9 @@ a:link,
 a:visited
   color: $link
   text-decoration: none
-
+  &:hover
+    text-decoration: underline
+  
 .stealthLink
   color: $headerText !important
 
@@ -53,7 +55,6 @@ a:visited
   font-size: 23px
   letter-spacing: 2px
   word-spacing: 9px
-  text-decoration: none
 
 header
   @extend .headerText
@@ -70,7 +71,6 @@ header
   a
     @extend .headerText
     &:hover
-      text-decoration: underline
       color: white
 
 #credits
@@ -298,3 +298,4 @@ header
     
 .addToFavorites
   display: none
+
