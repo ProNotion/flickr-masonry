@@ -14214,6 +14214,7 @@ function debugConsole( text, type, trace ){
 	}
 }
 
+// parse the query string in your URL to grab certain values
 // from here ~~> http://www.netlobo.com/url_query_string_javascript.html
 function gup( name ){
   name = name.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]");
@@ -14254,6 +14255,7 @@ function updateQueryStringParameter(uri, key, value) {
     return uri + separator + key + "=" + value;
   }
 }
+
 /*global gup, logAnalytics, debugConsole, console */
 
 var FlickrMasonry = {
@@ -14290,6 +14292,11 @@ var FlickrMasonry = {
     this.setupAnalytics();
     this.setupAddToFavorites();
 
+    window.onpopstate = function(){
+      FlickrMasonry.clearPhotos();
+      FlickrMasonry.getPhotos();
+    };
+    
     // experimental
     this.reflectPlugin();
 	}
@@ -14453,18 +14460,6 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 		newPhoto = new Image();
 		$listItem = jQuery('<li>', { "class" : "photo" } );
 
-    // for RSS
-    // $photoLink = jQuery('<a>',
-    //                 { "target": "_blank",
-    //                   "class": "flickrFaveItem",
-    //                   "href" :  item.link + "lightbox/",
-    //                   "data-author": hyperlinkAuthor(item.author_id, item.author),
-    //                   "data-title": item.title,
-    //                   "data-time": item.date_taken,
-    //                   "data-tags": hyperlinkTags(item.tags)
-    //                 });
-    // newPhoto.src = item.media.m;
-		
 		// for REST API
 		$photoLink = jQuery('<a>',
 										{ "target": "_blank",
@@ -14480,13 +14475,13 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 		itemTitle = item.title || "[untitled]";
 		
 		jQuery(newPhoto).attr({
-				"data-flickr-url" : "http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/",
-				"data-author-url": FlickrMasonry.hyperlinkAuthorREST(item.owner),
-				"data-author-id" : item.owner,
-				"data-title": itemTitle,
-				"data-photo-id" : item.id,
-				"alt" : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>" + itemTitle + "</a>",
-				"width": item.width_s
+      "data-flickr-url" : "http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/",
+      "data-author-url": FlickrMasonry.hyperlinkAuthorREST(item.owner),
+      "data-author-id" : item.owner,
+      "data-title": itemTitle,
+      "data-photo-id" : item.id,
+      "alt" : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>" + itemTitle + "</a>",
+      "width": item.width_s
 		});
 		
 		$photoLink.append(newPhoto);
@@ -14784,6 +14779,7 @@ FlickrMasonry.hideCommonElements = function() {
 FlickrMasonry.hideTooltips = function () {
 	jQuery('.flickrFaveItem img').qtip('hide');
 };
+
 
 FlickrMasonry.setupBackToMine = function() {
   var self = this;
