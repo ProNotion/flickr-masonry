@@ -13,7 +13,8 @@ module.exports = function(grunt) {
     },
     uglify: {
       options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n'
+        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
+        compress: { drop_debugger: false }
       },
       dist: {
         files: {
@@ -39,6 +40,7 @@ module.exports = function(grunt) {
           module: true,
           document: true
         },
+        debug: true,
         expr: true // prevent chai syntax from triggering "Expected an assignment or function call and instead saw an expression."
       }
     },
