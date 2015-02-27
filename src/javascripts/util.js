@@ -55,6 +55,7 @@ function debugConsole( text, type, trace ){
 	}
 }
 
+// parse the query string in your URL to grab certain values
 // from here ~~> http://www.netlobo.com/url_query_string_javascript.html
 function gup( name ){
   name = name.replace(/[\[]/,"\\[").replace(/[\]]/,"\\]");
