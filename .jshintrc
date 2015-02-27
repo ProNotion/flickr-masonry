@@ -1,4 +1,4 @@
-/*dotfiles browser, mocha, chai, qunit*/
+/*dotfiles browser, mocha, chai */
 {
   "node": false,
   "esnext": false,
