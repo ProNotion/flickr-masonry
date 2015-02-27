@@ -21,8 +21,13 @@ module.exports = function(grunt) {
         }
       }
     },
-    qunit: {
-      files: ['test/**/*.html']
+    mocha: {
+      test: {
+        src: ['test/**/*.html'],
+        options: {
+          run: true
+        }
+      }
     },
     jshint: {
       files: ['Gruntfile.js', 'src/javascripts/*.js', 'test/**/*.js'],
@@ -55,11 +60,11 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  // grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
 
-  grunt.registerTask('test', ['jshint', 'qunit']);
+  grunt.registerTask('test', ['jshint', 'mocha']);
   grunt.registerTask('default', ['jshint', 'sass', 'concat', 'uglify']);
 };
