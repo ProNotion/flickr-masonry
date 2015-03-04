@@ -35,6 +35,7 @@ var FlickrMasonry = {
     this.setupAddToFavorites();
 
     window.onpopstate = function(){
+      FlickrMasonry.clearAllTooltips();
       FlickrMasonry.clearPhotos();
       FlickrMasonry.getPhotos();
     };
@@ -290,6 +291,11 @@ FlickrMasonry.getLargestImageSizeAvailable = function(item) {
 	return item.url_l || item.url_m || item.url_s || item.url_t;
 };
 
+FlickrMasonry.clearAllTooltips = function() {
+  jQuery('.flickrFaveItem img').each( function() {
+    jQuery(this).qtip('api').destroy();  
+  });
+};
 
 FlickrMasonry.setupImageTooltips = function() {
   var self = this;
