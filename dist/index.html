@@ -19,10 +19,10 @@
 		</span>
 	</header>
 	
-	<div id="flickrFaves" ng-controller="FavesController">
+	<div id="flickrFaves" ng-controller="FavesController as fCtrl">
 	  <ul>
 	    <li class='photo' ng-repeat="photo in faves" on-finish-render="ngRepeatFinished">
-	      <a class='flickrFaveItem' largestHREFSizeAvailable target='_blank' rel="lightbox['flickr']">
+	      <a class='flickrFaveItem' href="{{fCtrl.largestHREFSizeAvailable(photo)}}" target='_blank' rel="lightbox['flickr']">
 	        <img src="{{photo.url_s}}" data-title="{{photo.title}}" data-flickr-url="http://www.flickr.com/{{photo.owner}}/{{photo.id}}/lightbox/" width="{{photo.width_s}}"/>
 	      </a>
 	    </li>
@@ -30,15 +30,8 @@
 	</div>
 	
 	<div id="moreButton">More pics</div>
-	<div id="tagLimit">
-		<p>Flickr limits the amount of returned photos from its API to 24 for a given tag.</p>
-		<a href='#' id='seeTagsLink' target='_blank'>See all images tagged <span class='italic' id='seeTagsName'></span> on flickr.</a>
-		<div id='seeSimilarTags'>
-			<h4 class='title'>Some similar tags:</h4>
-			<ul class='suggestionTags group'></ul>
-		</div>
-	</div>
-	<div id="noTagsFound"></div>
+	
+	<tag-limit ng-controller="TagsController as tCtrl" ng-show="tCtrl.showTagLimit"></tag-limit>
 	
 	<footer id='credits'>
 		<span>&mdash;</span>built with <a href="http://jquery.com/" title="jQuery: The Write Less, Do More, JavaScript Library" target="_blank">jQuery</a> and some jQuery plugins: <a href="http://masonry.desandro.com/" title="jQuery Masonry" target="_blank">Masonry</a>, <a href="http://www.no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/" title="jQuery lightbox for images, videos, YouTube, iframes, ajax | Stéphane Caron – No Margin For Errors" target="_blank">PrettyPhoto</a>, <a href="http://craigsworks.com/projects/qtip2/" title="qTip2 - Pretty powerful tooltips" target="_blank">qtip2</a>. Also, <a href="http://gruntjs.com/" title="Grunt.js" target="_blank">Grunt.js</a><span>&mdash;</span>

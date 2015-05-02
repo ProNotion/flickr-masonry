@@ -68,7 +68,7 @@ header a:hover { color: white; }
 #searchArea input:focus::-webkit-input-placeholder { color: rgba(255, 255, 255, 0.3); }
 #searchArea input:focus:-moz-placeholder { color: rgba(255, 255, 255, 0.3); }
 
-#tagLimit, #noTagsFound { display: none; width: 65%; margin: 86px auto 40px; text-align: center; padding: 14px 18px; font-size: 18px; line-height: 1.3em; }
+#tagLimit, #noTagsFound { width: 65%; margin: 86px auto 40px; text-align: center; padding: 14px 18px; font-size: 18px; line-height: 1.3em; }
 #tagLimit p, #tagLimit ul, #noTagsFound p, #noTagsFound ul { text-align: left; }
 #tagLimit p, #noTagsFound p { font-size: 86%; word-spacing: 0px; }
 #tagLimit h3, #tagLimit h4, #noTagsFound h3, #noTagsFound h4 { margin-bottom: 50px; }

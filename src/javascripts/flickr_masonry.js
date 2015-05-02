@@ -18,12 +18,26 @@ App.controller('FavesController', ["$scope", "$http", "myCache", function($scope
       .success(function(data) {
         $scope.faves = data.photos.photo;
         myCache.put('faves', $scope.faves);
-        console.log($scope.faves[0]);
         App.initTooltipsOnControllerEmit($scope);
       });
   }
   
+  this.largestHREFSizeAvailable = function(photo) {
+    return photo.url_l || photo.url_m || photo.url_s || photo.url_t;
+  };
+  
 }]);
+
+App.controller('TagsController', function() {
+  
+  this.showTagLimit = false;
+  
+}).directive('tagLimit', function() {
+  return {
+    restrict: "E",
+    templateUrl: "templates/tag-limit.html"
+  };
+});
 
 App.initTooltipsOnControllerEmit = function($scope) {
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
@@ -523,13 +537,6 @@ FlickrMasonry.clearPhotos = function() {
     // debugConsole( 'error in clearPhotos(): ' + e.message, "debug");
 	}
 };
-
-
-// for UX purposes
-FlickrMasonry.hideCommonElements = function() {
-  jQuery('#credits, #moreButton, #tagLimit').hide();
-};
-
 
 // hides any open tooltips, for the sake of UX
 FlickrMasonry.hideTooltips = function () {
