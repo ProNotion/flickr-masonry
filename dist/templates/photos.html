@@ -1,0 +1,10 @@
+<div id="photosContainer" ng-controller="PhotosController as fCtrl">
+  <ul>
+    <li class='photo' ng-repeat="photo in faves" on-finish-render="ngRepeatFinished">
+      <a class='flickrFaveItem' href="{{fCtrl.largestHREFSizeAvailable(photo)}}" target='_blank' rel="lightbox['flickr']">
+        <img src="{{photo.url_s}}" data-title="{{photo.title}}" data-flickr-url="http://www.flickr.com/{{photo.owner}}/{{photo.id}}/lightbox/" width="{{photo.width_s}}"/>
+      </a>
+    </li>
+  </ul>
+</div>
+<div id="moreButton">More pics</div>

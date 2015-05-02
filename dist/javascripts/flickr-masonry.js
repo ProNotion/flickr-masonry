@@ -1191,7 +1191,7 @@ App.factory('myCache', function($cacheFactory) {
  return $cacheFactory('flickrData');
 });
 
-App.controller('FavesController', ["$scope", "$http", "myCache", function($scope, $http, myCache) {
+App.controller('PhotosController', ["$scope", "$http", "myCache", function($scope, $http, myCache) {
   var cachedData = myCache.get('faves');
   
   var getUrl = FlickrMasonry.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + FlickrMasonry.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
@@ -1211,7 +1211,13 @@ App.controller('FavesController', ["$scope", "$http", "myCache", function($scope
     return photo.url_l || photo.url_m || photo.url_s || photo.url_t;
   };
   
-}]);
+}])
+.directive("photos", function() {
+  return {
+    restrict: "E",
+    templateUrl: "templates/photos.html"
+  };
+});
 
 App.controller('TagsController', function() {
   
@@ -1265,7 +1271,7 @@ var FlickrMasonry = {
 	
 	initialize: function() {
     // this.loadLocalStorage();
-    // this.$masonryContainer = jQuery('#flickrFaves ul');
+    // this.$masonryContainer = jQuery('#photosContainer ul');
     // this.getPhotos(); // get the initial photos the first time the page loads
     // this.setupMoreButton();
     // this.setupTagForm();

@@ -538,8 +538,8 @@ a:link:hover, a:visited:hover { text-decoration: underline; }
 
 .group { zoom: 1; }
 
-#flickrFaves { margin: 0 auto; }
-#flickrFaves ul.disabled { pointer-events: none; }
+#photosContainer { margin: 0 auto; }
+#photosContainer ul.disabled { pointer-events: none; }
 
 .italic { font-style: italic; }
 
