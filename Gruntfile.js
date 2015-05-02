@@ -3,11 +3,11 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       dist: {
-        src: ['bower_components/jquery/jquery.js', 'bower_components/bootstrap/dist/js/bootstrap.min.js', 'bower_components/imagesloaded/imagesloaded.pkgd.min.js', 'bower_components/qtip2/jquery.qtip.js', 'bower_components/jquery-prettyPhoto/js/jquery.prettyPhoto.js', 'bower_components/jquery-masonry/dist/masonry.pkgd.min.js', 'src/javascripts/util.js', 'src/javascripts/flickr_masonry.js'],
+        src: ['bower_components/jquery/dist/jquery.min.js', 'bower_components/angular/angular.min.js', 'bower_components/angular-route/angular-route.min.js', 'src/javascripts/vendor/bootstrap/bootstrap.min.js', 'bower_components/jquery-prettyPhoto/js/jquery.prettyPhoto.js', 'src/javascripts/*.js'],
         dest: 'dist/javascripts/<%= pkg.name %>.js'
       },
       css: {
-        src: ['bower_components/qtip2/jquery.qtip.min.css', 'bower_components/jquery-prettyPhoto/css/prettyPhoto.css', 'src/stylesheets/<%= pkg.name %>.css'],
+        src: ['bower_components/jquery-prettyPhoto/css/prettyPhoto.css', 'src/stylesheets/<%= pkg.name %>.css'],
         dest: 'dist/stylesheets/<%= pkg.name %>.min.css'
       }
     },
@@ -31,7 +31,7 @@ module.exports = function(grunt) {
       }
     },
     jshint: {
-      files: ['Gruntfile.js', 'src/javascripts/*.js', 'test/**/*.js'],
+      files: ['Gruntfile.js', 'src/javascripts/*.js'],
       options: {
         // options here to override JSHint defaults
         globals: {
@@ -62,7 +62,6 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');

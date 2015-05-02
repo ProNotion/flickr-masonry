@@ -1,11 +1,58 @@
 /*global gup, logAnalytics, debugConsole, console */
 
+var App = angular.module('flickrApp', []);
+
+App.factory('myCache', function($cacheFactory) {
+ return $cacheFactory('flickrData');
+});
+
+App.controller('FavesController', ["$scope", "$http", "myCache", function($scope, $http, myCache) {
+  var cachedData = myCache.get('faves');
+  
+  var getUrl = FlickrMasonry.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + FlickrMasonry.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
+  
+  if (cachedData) { // If there’s something in the cache, use it!
+    $scope.faves = cachedData;
+  } else {
+    $http.jsonp(getUrl)
+      .success(function(data) {
+        $scope.faves = data.photos.photo;
+        myCache.put('faves', $scope.faves);
+        console.log($scope.faves[0]);
+        App.initTooltipsOnControllerEmit($scope);
+      });
+  }
+  
+}]);
+
+App.initTooltipsOnControllerEmit = function($scope) {
+  $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
+    console.log('ngRepeatFinished');
+    // FlickrMasonry.setupImageTooltips();
+    // setup pretty photo gallery
+    FlickrMasonry.setupPrettyPhoto();
+  });
+};
+
+App.directive('onFinishRender', function ($timeout) {
+  return {
+    restrict: 'A',
+    link: function (scope, element, attr) {
+      if (scope.$last === true) {
+        $timeout(function () {
+          scope.$emit('ngRepeatFinished');
+        });
+      }
+    }
+};});
+
+
 var FlickrMasonry = {
 	apiKey: "79f2e11b6b4e3213f8971bed7f17b4c4",
 	baseUrl: 'https://api.flickr.com/services/rest/',
 	timeSinceLastPhotoGet : null,
 	forcePatternAJAXGet : false,
-	maxPhotosToRequest : 500,
+	maxPhotosToRequest : 40,
 	flickrPhotos: null,
 	photosAtATime: 48,
 	photosLoaded: 0,
@@ -18,30 +65,19 @@ var FlickrMasonry = {
 	},
 	
 	initialize: function() {
-    jQuery.fn.center = function () {
-      this.css("top", (($(window).height() - this.outerHeight()) / 2) + $(window).scrollTop() + "px");
-      this.css("left", (($(window).width() - this.outerWidth()) / 2) + $(window).scrollLeft() + "px");
-      return this;
-    };
-
-    this.originalTitle = jQuery('header .title').text(); // TODO probably somewhere better to do this
-
-    this.loadLocalStorage();
-    this.$masonryContainer = jQuery('#flickrFaves ul');
-    this.getPhotos(); // get the initial photos the first time the page loads
-    this.setupMoreButton();
-    this.setupTagForm();
-    this.setupAnalytics();
-    this.setupAddToFavorites();
-
-    window.onpopstate = function(){
-      FlickrMasonry.clearAllTooltips();
-      FlickrMasonry.clearPhotos();
-      FlickrMasonry.getPhotos();
-    };
-    
-    // experimental
-    this.reflectPlugin();
+    // this.loadLocalStorage();
+    // this.$masonryContainer = jQuery('#flickrFaves ul');
+    // this.getPhotos(); // get the initial photos the first time the page loads
+    // this.setupMoreButton();
+    // this.setupTagForm();
+    // this.setupAnalytics();
+    // this.setupAddToFavorites();
+    // 
+    // window.onpopstate = function(){
+    //   FlickrMasonry.clearAllTooltips();
+    //   FlickrMasonry.clearPhotos();
+    //   FlickrMasonry.getPhotos();
+    // };
 	}
 };
 
@@ -57,34 +93,6 @@ FlickrMasonry.setupAnalytics = function () {
 };
 
 
-FlickrMasonry.reflectPlugin = function() {
-	if (location.href.match(/reflect=(1|true)/)) {
-		var s = document.createElement('script');
-		s.src = 'https://raw.github.com/dguzzo/reflections/master/javascripts/jquery.reflections.js';
-		document.getElementsByTagName('head')[0].appendChild(s);
-
-		s = jQuery('<link/>', {
-      href : 'http://www.telecommutetojuryduty.com/misc/reflections/stylesheets/reflections.css',
-      type : 'text/css',
-      rel : 'stylesheet'
-		});
-		
-		jQuery('head').append(s);
-
-    jQuery(document).delegate('body', 'keyup', function(e) {
-      try{
-        switch( e.which ) {
-          case 39: // right key
-						jQuery('li img').reflectImages({ 'delay': 50, 'stripLinks' : true });
-            break;
-          case 37: // left key
-						jQuery('li img').reflectImages({'destroy' : true });
-            break;
-        }
-      } catch(err) {}
-    });
-	}
-};
 
 FlickrMasonry.getPhotos = function() {
 	this.hideCommonElements();
