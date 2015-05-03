@@ -107,31 +107,7 @@ header
       @include css3(transition, opacity 250ms)
 
 #moreButton
-  $gray: #ccc
-  $darkenAmount: 20%
-  font-family: "Lucida Grande", Helvetica, arial, sans-serif
-  
-  @include background_gradient( $gray, darken($gray, $darkenAmount))
-  
   padding: 9px $standardSpacing
-  color: black
-  width: 260px
-  margin: 84px auto 46px
-  cursor: pointer
-  font-size: 28px
-  text-align: center
-  text-transform: uppercase
-  text-shadow: -1px -2px 2px rgba(255,255,255,0.4)
-  @include css3(box-shadow, inset 0 0 4px rgba(0,0,0,0.5))
-  @include borderRadius(6px)
-  @include css3(transition, background 200ms)
-  
-  &:hover
-    @include css3(transition, opacity 450ms)
-    @include background_gradient( darken($gray, $darkenAmount), $gray)
-  
-  &:active
-    @include background_gradient( darken($gray, $darkenAmount+15%), $gray)
 
 .photoTitle
   text-shadow: -1px -1px 8px black

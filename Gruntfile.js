@@ -7,7 +7,7 @@ module.exports = function(grunt) {
         dest: 'dist/javascripts/<%= pkg.name %>.js'
       },
       css: {
-        src: ['bower_components/jquery-prettyPhoto/css/prettyPhoto.css', 'src/stylesheets/<%= pkg.name %>.css'],
+        src: ['bower_components/jquery-prettyPhoto/css/prettyPhoto.css', 'bower_components/bootstrap/dist/css/bootstrap.min.css',   'src/stylesheets/<%= pkg.name %>.css'],
         dest: 'dist/stylesheets/<%= pkg.name %>.min.css'
       }
     },
