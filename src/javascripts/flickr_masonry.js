@@ -268,6 +268,7 @@ App.postRenderOnControllerEmit = function($scope) {
 
 App.postPhotosRender = function() {
   // FlickrMasonry.setupImageTooltips();
+  $('[data-toggle="tooltip"]').tooltip();
   FlickrMasonry.setupPrettyPhoto();
   // FlickrMasonry.runMasonry(300);
 };

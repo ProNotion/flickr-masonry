@@ -588,8 +588,8 @@ header a:hover { color: white; }
 
 .relative { position: relative; }
 
-#searchArea input { padding: 5px 7px; background: #111; border: 1px solid #525252; color: #eee; font-weight: 300; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px; }
-#searchArea input:hover { background: #1b1b1b; -moz-transition: background 260ms; -webkit-transition: background 260ms; -o-transition: background 260ms; -ms-transition: background 260ms; transition: background 260ms; }
+#tagForm input { padding: 5px 7px; background: #111; border: 1px solid #525252; color: #eee; font-weight: 300; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px; }
+#tagForm input:hover { background: #1b1b1b; -moz-transition: background 260ms; -webkit-transition: background 260ms; -o-transition: background 260ms; -ms-transition: background 260ms; transition: background 260ms; }
 
 #tagLimit, #noTagsFound { width: 65%; margin: 86px auto 40px; text-align: center; padding: 14px 18px; font-size: 18px; line-height: 1.3em; }
 #tagLimit p, #tagLimit ul, #noTagsFound p, #noTagsFound ul { text-align: left; }
@@ -615,5 +615,7 @@ header a:hover { color: white; }
 .addToFavorites { display: none; }
 
 .moreButtonWrapper { margin: 40px auto 10px; }
+
+.flickrPhotoLink img { display: block; }
 
 /*# sourceMappingURL=flickr-masonry.css.map */

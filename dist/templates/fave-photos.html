@@ -2,8 +2,8 @@
   <div id="favePhotosContainer" class='photosContainer'>
     <ul class='clearfix'>
       <li class='photo' ng-repeat="photo in photosToShow" on-finish-render="ngRepeatFinished">
-        <a class='flickrPhotoLink' href="{{fCtrl.largestHREFSizeAvailable(photo)}}" target='_blank' rel="lightbox['flickr']">
-          <img class='img-circle' src="{{photo.url_sq}}" data-title="{{photo.title}}" data-flickr-url="http://www.flickr.com/{{photo.owner}}/{{photo.id}}/lightbox/" />
+        <a class='flickrPhotoLink' href="{{fCtrl.largestHREFSizeAvailable(photo)}}" target='_blank' rel="lightbox['flickr']" title="{{photo.title}}" data-toggle="tooltip" data-placement="top">
+          <img class='img-circle' src="{{photo.url_sq}}" data-flickr-url="http://www.flickr.com/{{photo.owner}}/{{photo.id}}/lightbox/" />
         </a>
       </li>
     </ul>
