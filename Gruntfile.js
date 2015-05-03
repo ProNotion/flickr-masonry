@@ -14,19 +14,12 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
-        compress: { drop_debugger: false }
+        compress: { drop_debugger: false },
+        mangle: false // mangling, well, *mangles* injected angular vars such as "$scope" and breaks shite
       },
       dist: {
         files: {
           'dist/javascripts/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
-        }
-      }
-    },
-    mocha: {
-      test: {
-        src: ['test/**/*.html'],
-        options: {
-          run: true
         }
       }
     },
@@ -66,6 +59,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
 
-  grunt.registerTask('test', ['jshint', 'mocha']);
+  grunt.registerTask('test', ['jshint']);
   grunt.registerTask('default', ['jshint', 'sass', 'concat', 'uglify']);
 };
