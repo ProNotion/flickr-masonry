@@ -3,15 +3,13 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<title>Flickr Masonry -- A Photo Browser For Flickr</title>
+	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic' rel='stylesheet' type='text/css'>
 	<link rel='stylesheet' type='text/css' href='stylesheets/flickr-masonry.min.css'/>
 </head>
 <body ng-app="flickrApp">
-	<div id="loader">
-		<img src='http://www.telecommutetojuryduty.com/images/ajax_loader_76.gif' width=76 height=76>
-	</div>
 	<header>
 		<span id='backToMine'>my faves</span>
-		<span class='title'>my favorite items from flickr</span>
+		<h1 class='title'>my favorite items from flickr</h1>
 		<span id='searchArea'>
 			<form name='tagForm' id='tagForm'>
 				<input type='text' placeholder='search flickr by tag'>
@@ -36,11 +34,6 @@
 	</script>
 
 	<script src="javascripts/flickr-masonry.js"></script>
-	
-	<script>
-    jQuery(function(){
-      FlickrMasonry.initialize();
-    });
 	</script>
 </body>
 </html>

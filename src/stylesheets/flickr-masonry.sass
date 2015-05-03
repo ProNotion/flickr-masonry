@@ -5,6 +5,9 @@ $headerText: #cfcfcf
 $nearBlack: #222
 $standardSpacing: 12px
 
+@mixin Lato
+  font-family: 'Lato', sans-serif
+
 body
   background: black
 
@@ -48,26 +51,27 @@ a:visited
 .bold
   font-weight: bold
 
+h1, h2, h3, h4
+  @include Lato
+  font-weight: 300
+  
 .headerText
   color: $headerText
-  font-family: "Lucida Grande", Helvetica, arial, sans-serif
   text-shadow: 0px 1px 1px black
   font-size: 23px
+  
   letter-spacing: 2px
   word-spacing: 9px
 
 header
   @extend .headerText
+  
   text-align: center
   margin: 0 auto 11px
   position: relative
   width: 90%
-  @include background_gradient( rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.05))
   padding: 7px 2px 14px
-  @include borderRadius(1px)
-  border-width: 0 1px 1px 1px
-  border-color: #2a2a2a
-  border-style: solid
+
   a
     @extend .headerText
     &:hover
@@ -191,17 +195,6 @@ header
 
 .relative
   position: relative  
-
-#loader
-  background: black
-  background: rgba(0,0,0,0.5)
-  width: 76px
-  height: 76px
-  position: absolute
-  opacity: 0
-  img
-    position: relative
-    margin: 0 auto
 
 #searchArea
   $searchBackground: #282828
