@@ -1,18 +1,7 @@
-<h3>no photos tagged <span class="bold italic">{{tag}}</span></h3>
-<p>some tags i suggest:</p>
-
-<ul class="suggestionTags tagsILike group" />
-  <li class='suggestionTag tagsILikeTag'>colors</li>
-  <li class='suggestionTag tagsILikeTag'>fractal
-    <li class='suggestionTag tagsILikeTag'>grafitti
-      <li class='suggestionTag tagsILikeTag'>skyline
-        <li class='suggestionTag tagsILikeTag'>complex
-          <li class='suggestionTag tagsILikeTag'>pattern
-            <li class='suggestionTag tagsILikeTag'>texture
-              <li class='suggestionTag tagsILikeTag'>
-  
-     <!-- THIS SHOULD BE DONE PROGRAMMATICALLY, in the directive -->
-     
-      cute repetition urban decay spiral mandala nostalgia</li>
-
-</ul>
+<section class='container well' ng-show="photosToShow.length === 0">
+  <h3>no photos tagged <span class="bold italic" ng-model='search.term'>{{search.term}}</span></h3>
+  <p>some tags i suggest:</p>
+  <ul class="suggestionTags tagsILike group">
+    <li class='suggestionTag tagsILikeTag' ng-repeat='tag in tCtrl.tags track by $index'>{{tag}}</li>
+  </ul>  
+</section>

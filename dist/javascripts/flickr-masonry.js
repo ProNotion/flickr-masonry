@@ -1384,7 +1384,8 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
   
   this.tagSearch = function() {
     $scope.page = "tagged";
-    tag = encodeURIComponent(this.search.term);
+    tag = encodeURIComponent($scope.search.term);
+    this.search.term = tag;
     $scope.$emit('handleEmit', {page: "tagged", searchTerm: tag});
     this.getPhotosByTag(tag);
     // this.setSearchQueryParam(tag);
@@ -1395,11 +1396,11 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
     if ($scope.tagged.length > 0) {
       $scope.photosToShow = $scope.tagged.slice(0, photosLoaded + photosAtATime);
       photosLoaded = photosAtATime;
-      $scope.morePhotosToShow = $scope.tagged.length > $scope.photosToShow.length;
       myCache.put('tagged:' + tag, $scope.tagged); // 'session' cache
-      // localStorageService.setTimeSinceLastPhotoGet(); // longterm storage
       localStorageService.setTagged(tag, $scope.tagged); // longterm storage
       App.postRenderOnControllerEmit($scope);
+    } else {
+      $scope.photosToShow = [];
     }
   };
 
@@ -1408,7 +1409,6 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
     $scope.tagged = cachedData;
     $scope.photosToShow = $scope.tagged.slice(0, photosLoaded + photosAtATime);
     photosLoaded = photosAtATime;
-    $scope.morePhotosToShow = $scope.tagged.length > $scope.photosToShow.length;
     App.postRenderOnControllerEmit($scope);
   };
   
@@ -1436,10 +1436,23 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
   // this.showTagLimit = false;
 }]);
 
+App.controller( 'TagsILikeController', function() {
+  this.tags = "colors fractal grafitti skyline pattern complex pattern texture cute repetition urban decay spiral mandala nostalgia".split(' ');
+});
+
 App.directive('taggedPhotos', function() {
   return {
     restrict: "E",
     templateUrl: "templates/tagged-photos.html"
+  };
+});
+
+App.directive('tagsILike', function() {
+  return {
+    restrict: "E",
+    templateUrl: "templates/tags-i-like.html",
+    controller: "TagsILikeController",
+    controllerAs: 'tCtrl'
   };
 });
 
