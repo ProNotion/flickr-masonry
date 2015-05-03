@@ -1199,7 +1199,6 @@ App.controller('MainController', function() {
     templateUrl: "templates/credits.html",
     link: function(scope, elem, attrs) {
       $timeout(function() {
-        window.blah = elem;
         elem.find("footer").removeClass('opacityZero');
       }, 2000);
     }
