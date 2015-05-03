@@ -1,7 +1,9 @@
 <section class='container well' ng-show="photosToShow.length === 0">
-  <h3>no photos tagged <span class="bold italic" ng-model='search.term'>{{search.term}}</span></h3>
-  <p>some tags i suggest:</p>
+  <h3>No photos tagged <span class="bold italic">{{search.term}}</span>.</h3>
+  <p>Sample tags:</p>
   <ul class="suggestionTags tagsILike group">
-    <li class='suggestionTag tagsILikeTag' ng-repeat='tag in tCtrl.tags track by $index'>{{tag}}</li>
+    <li class='suggestionTag' ng-repeat='tag in tilCtrl.tags track by $index'>
+      <button type='button' class='btn btn-link' ng-click='tilCtrl.searchTag(search.term, tag)'>{{tag}}</button>
+    </li>
   </ul>  
 </section>

@@ -206,20 +206,13 @@ header
 #backToMine
   position: relative
   float: left
-  font-size: 14px
-  top: 8px
-  left: 10px
-  word-spacing: 0
-  &:hover
-    cursor: pointer
       
 .suggestionTags
   list-style: none
-  line-height: 1.8em
+  padding: 0
   
   .suggestionTag
     float: left
-    margin-right: 15px
 
     &:after
       content: ' | '
@@ -227,10 +220,6 @@ header
     &:last-child:after
       content: none
         
-    &:hover
-      cursor: pointer
-      color: #fcfcfc
-
 .ppt
   text-align: center
   text-shadow: 0 0 1px rgba(0, 0, 0, 0.1)

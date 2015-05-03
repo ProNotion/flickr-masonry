@@ -198,8 +198,10 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
       myCache.put('tagged:' + tag, $scope.tagged); // 'session' cache
       localStorageService.setTagged(tag, $scope.tagged); // longterm storage
       App.postRenderOnControllerEmit($scope);
+      $scope.showTagLimit = true;
     } else {
       $scope.photosToShow = [];
+      $scope.showTagLimit = false;
     }
   };
 
@@ -231,12 +233,15 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
         .success(this.freshPhotosFetched);
     }
   };
-  
-  // this.showTagLimit = false;
 }]);
 
-App.controller( 'TagsILikeController', function() {
-  this.tags = "colors fractal grafitti skyline pattern complex pattern texture cute repetition urban decay spiral mandala nostalgia".split(' ');
+App.controller( 'TagsILikeController', function($scope) {
+  this.tags = "colors fractal grafitti skyline pattern pattern texture cute repetition urban decay spiral mandala nostalgia".split(' ');
+  
+  this.searchTag = function(searchTerm, tag) {
+    $scope.$parent.search.term = tag;
+    $scope.$parent.tCtrl.tagSearch();
+  };
 });
 
 App.directive('taggedPhotos', function() {
@@ -251,7 +256,7 @@ App.directive('tagsILike', function() {
     restrict: "E",
     templateUrl: "templates/tags-i-like.html",
     controller: "TagsILikeController",
-    controllerAs: 'tCtrl'
+    controllerAs: 'tilCtrl'
   };
 });
 

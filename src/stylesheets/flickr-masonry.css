@@ -66,14 +66,12 @@ header a:hover { color: white; }
 
 #tagLimit p { text-align: center; margin: 0; }
 
-#backToMine { position: relative; float: left; font-size: 14px; top: 8px; left: 10px; word-spacing: 0; }
-#backToMine:hover { cursor: pointer; }
+#backToMine { position: relative; float: left; }
 
-.suggestionTags { list-style: none; line-height: 1.8em; }
-.suggestionTags .suggestionTag { float: left; margin-right: 15px; }
+.suggestionTags { list-style: none; padding: 0; }
+.suggestionTags .suggestionTag { float: left; }
 .suggestionTags .suggestionTag:after { content: " | "; }
 .suggestionTags .suggestionTag:last-child:after { content: none; }
-.suggestionTags .suggestionTag:hover { cursor: pointer; color: #fcfcfc; }
 
 .ppt { text-align: center; text-shadow: 0 0 1px rgba(0, 0, 0, 0.1); font-size: 19px; }
 
