@@ -73,8 +73,12 @@ header
     &:hover
       color: white
 
+.opacityZero
+  opacity: 0
+
 #credits
-  display: none
+  @include css3(transition, opacity 1000ms)
+  
   @extend .headerText
   text-align: center
   font-size: 1em

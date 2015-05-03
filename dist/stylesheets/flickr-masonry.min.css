@@ -550,7 +550,9 @@ a:link:hover, a:visited:hover { text-decoration: underline; }
 header { text-align: center; margin: 0 auto 11px; position: relative; width: 90%; background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgba(255, 255, 255, 0.05)), color-stop(1, rgba(255, 255, 255, 0.12))); background-image: -moz-linear-gradient(center bottom, rgba(255, 255, 255, 0.05) percent(0), rgba(255, 255, 255, 0.12) percent(1)); padding: 7px 2px 14px; -moz-border-radius: 1px; -webkit-border-radius: 1px; border-radius: 1px; border-width: 0 1px 1px 1px; border-color: #2a2a2a; border-style: solid; }
 header a:hover { color: white; }
 
-#credits { display: none; text-align: center; font-size: 1em; padding-bottom: 20px; margin-top: 130px; }
+.opacityZero { opacity: 0; }
+
+#credits { -moz-transition: opacity 1000ms; -webkit-transition: opacity 1000ms; -o-transition: opacity 1000ms; -ms-transition: opacity 1000ms; transition: opacity 1000ms; text-align: center; font-size: 1em; padding-bottom: 20px; margin-top: 130px; }
 #credits span { color: #404040; }
 
 .photo { width: 238px; margin: 10px; float: left; list-style: none; text-align: center; }

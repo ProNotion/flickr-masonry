@@ -6,6 +6,21 @@ App.factory('myCache', function($cacheFactory) {
  return $cacheFactory('flickrData');
 });
 
+App.controller('MainController', function() {
+})
+.directive("credits", ["$timeout", function($timeout) {
+  return {
+    restrict: "E",
+    templateUrl: "templates/credits.html",
+    link: function(scope, elem, attrs) {
+      $timeout(function() {
+        window.blah = elem;
+        elem.find("footer").removeClass('opacityZero');
+      }, 2000);
+    }
+  };
+}]);
+
 App.controller('PhotosController', ["$scope", "$http", "myCache", function($scope, $http, myCache) {
   var cachedData = myCache.get('faves');
   
@@ -196,7 +211,6 @@ FlickrMasonry.noTaggedImagesResult = function(tag) {
 		
 	$tagsILikeMarkup.before("<p>some tags i suggest:</p>");
 			
-	this.delayFooterVisibility();
 };
 
 
@@ -287,7 +301,6 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 			}
 
 			self.photosLoaded = self.photosLoaded + self.photosAtATime;
-			self.delayFooterVisibility();
 
 			// Setup tooltips for each image
       self.setupImageTooltips();
@@ -463,10 +476,6 @@ FlickrMasonry.setupPrettyPhoto = function() {
 	});
 };
 
-// don't want the footer showing before other stuff is loaded b/c the reflow looks bad
-FlickrMasonry.delayFooterVisibility = function() {
-	jQuery('#credits').fadeIn(2000);
-};
 
 FlickrMasonry.updateCredits = function(tag) {
 	jQuery('#seeTagsName').text(tag);
