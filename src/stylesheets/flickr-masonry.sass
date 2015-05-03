@@ -1,7 +1,7 @@
 @import "mixins"
 
 $link: #CFF09E
-$headerText: #cfcfcf
+$headerText: #dedede
 $nearBlack: #222
 $standardSpacing: 12px
 
@@ -21,11 +21,6 @@ a:visited
 .stealthLink
   color: $headerText !important
 
-.offLeft
-  position: absolute
-  left: -10000px
-  top: 0
-    
 // ~~~ clearfix
 .group:before,
 .group:after
@@ -106,9 +101,6 @@ header
       opacity: 0.78 !important
       @include css3(transition, opacity 250ms)
 
-#moreButton
-  padding: 9px $standardSpacing
-
 .photoTitle
   text-shadow: -1px -1px 8px black
   font-style: italic
@@ -172,32 +164,19 @@ header
   position: relative  
 
 #searchArea
-  $searchBackground: #282828
-  position: absolute
-  right: $standardSpacing
+  $searchBackground: #111
   
   input
-    width: 120px
     padding: 5px 7px
     background: $searchBackground
     border: 1px solid #525252
     color: #eee
+    font-weight: 300
 
     @include borderRadius(2px)
     &:hover
       background: lighten($searchBackground, 4%)
       @include css3(transition, background 260ms)
-
-    &:focus
-      width: 200px
-      outline: 4px auto $link
-      &::-webkit-input-placeholder 
-        color: rgba(255,255,255,0.3)
-      
-      &:-moz-placeholder 
-        color: rgba(255,255,255,0.3)
-      
-      @include css3(transition, width 300ms)
 
 #tagLimit, #noTagsFound
   @extend .headerText
@@ -270,3 +249,5 @@ header
 .addToFavorites
   display: none
 
+.moreButtonWrapper
+  margin: 40px auto 10px
