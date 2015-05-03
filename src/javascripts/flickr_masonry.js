@@ -6,6 +6,47 @@ App.factory('myCache', function($cacheFactory) {
  return $cacheFactory('flickrData');
 });
 
+App.service('analyticsService', function () {
+  return {
+    logAnalytics: function(valArray){
+    	try{
+    		if( typeof _gaq !== "undefined" ){
+    			_gaq.push(valArray);
+    			// for debugging
+    			if( location.search.indexOf( "analytics=1" ) > 0 ){
+    				debugConsole( 'analytics event:', "debug");
+    				debugConsole( valArray, "debug");
+    			}
+    		}
+    	}catch(e){
+    		debugConsole( 'problem in logAnalytics: ' + e.message, "debug");
+    	}
+    }
+  };
+});
+
+App.service('localStorageService', function () {
+  var timeSinceLastPhotoGet = localStorage.getItem('flickr_masonry_time_retrieved_at');
+  var faves = localStorage.getItem('flickrPhotos');
+  
+  return {
+    getTimeSinceLastPhotoGet: function() {return parseInt(timeSinceLastPhotoGet, 10);},
+    
+    setTimeSinceLastPhotoGet: function() {
+      timeSinceLastPhotoGet = new Date().getTime();
+      localStorage.setItem('flickr_masonry_time_retrieved_at', timeSinceLastPhotoGet);
+    },
+    
+    getFaves: function() { return JSON.parse(faves); },
+    
+    setFaves: function(data) {
+      faves = JSON.stringify(data);
+      localStorage.setItem('flickrPhotos', faves);
+    }
+  };
+});
+
+
 App.controller('MainController', function() {
 })
 .directive("credits", ["$timeout", function($timeout) {
@@ -20,26 +61,55 @@ App.controller('MainController', function() {
   };
 }]);
 
-App.controller('PhotosController', ["$scope", "$http", "myCache", function($scope, $http, myCache) {
-  var cachedData = myCache.get('faves');
+App.controller('PhotosController', ["$scope", "$http", "myCache", "localStorageService", "analyticsService", function($scope, $http, myCache, localStorageService, analyticsService) {
+  var cachedData = myCache.get('faves') || localStorageService.getFaves();
+  var photosAtATime = 50;
+  var photosLoaded = 0;
   
   var getUrl = FlickrMasonry.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + FlickrMasonry.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
   
-  if (cachedData) { // If there’s something in the cache, use it!
+  this.freshPhotosFetched = function(data) {
+    $scope.faves = data.photos.photo;
+    $scope.photosToShow = $scope.faves.slice(0, photosLoaded + photosAtATime);
+    photosLoaded = photosLoaded + photosAtATime;
+    $scope.morePhotosToShow = $scope.faves.length > $scope.photosToShow.length;
+    myCache.put('faves', $scope.faves); // 'session' cache
+    localStorageService.setTimeSinceLastPhotoGet(); // longterm storage
+    localStorageService.setFaves($scope.faves); // longterm storage
+    App.postRenderOnControllerEmit($scope);
+  };
+  
+  this.showCachedPhotos = function() {
+    console.log('using cached data! yay!');
     $scope.faves = cachedData;
+    $scope.photosToShow = $scope.faves.slice(0, photosLoaded + photosAtATime);
+    photosLoaded = photosLoaded + photosAtATime;
+    $scope.morePhotosToShow = $scope.faves.length > $scope.photosToShow.length;
+    App.postRenderOnControllerEmit($scope);
+  };
+  
+  if (cachedData) { // If there’s something in the cache, use it!
+    this.showCachedPhotos();
   } else {
     $http.jsonp(getUrl)
-      .success(function(data) {
-        $scope.faves = data.photos.photo;
-        myCache.put('faves', $scope.faves);
-        App.initTooltipsOnControllerEmit($scope);
-      });
+      .success(this.freshPhotosFetched(data));
   }
-  
+
+  // sometimes the large image size isn't available. fall back onto other versions.
   this.largestHREFSizeAvailable = function(photo) {
     return photo.url_l || photo.url_m || photo.url_s || photo.url_t;
   };
   
+  this.showMorePhotos = function() {
+    analyticsService.logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
+    
+    App.destroyMasonry();
+
+    $scope.photosToShow = $scope.faves.slice(0, photosLoaded + photosAtATime);
+    photosLoaded = photosLoaded + photosAtATime;
+    $scope.morePhotosToShow = $scope.faves.length > $scope.photosToShow.length;
+    App.postPhotosRender();
+  };
 }])
 .directive("photos", function() {
   return {
@@ -59,12 +129,16 @@ App.controller('TagsController', function() {
   };
 });
 
-App.initTooltipsOnControllerEmit = function($scope) {
+App.postRenderOnControllerEmit = function($scope) {
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
-    // FlickrMasonry.setupImageTooltips();
-    FlickrMasonry.setupPrettyPhoto();
-    FlickrMasonry.runMasonry(300);
+    App.postPhotosRender();
   });
+};
+
+App.postPhotosRender = function() {
+  // FlickrMasonry.setupImageTooltips();
+  FlickrMasonry.setupPrettyPhoto();
+  FlickrMasonry.runMasonry(300);
 };
 
 App.directive('onFinishRender', function ($timeout) {
@@ -85,7 +159,7 @@ var FlickrMasonry = {
 	baseUrl: 'https://api.flickr.com/services/rest/',
 	timeSinceLastPhotoGet : null,
 	forcePatternAJAXGet : false,
-	maxPhotosToRequest : 40,
+	maxPhotosToRequest : 400,
 	flickrPhotos: null,
 	photosAtATime: 48,
 	photosLoaded: 0,
@@ -98,21 +172,18 @@ var FlickrMasonry = {
 	},
 	
 	initialize: function() {
-    // this.loadLocalStorage();
-    // this.$masonryContainer = jQuery('#photosContainer ul');
-    // this.getPhotos(); // get the initial photos the first time the page loads
-    // this.setupMoreButton();
     // this.setupTagForm();
     // this.setupAnalytics();
     // this.setupAddToFavorites();
     // 
-    // window.onpopstate = function(){
-    //   FlickrMasonry.clearAllTooltips();
-    //   FlickrMasonry.clearPhotos();
-    //   FlickrMasonry.getPhotos();
-    // };
 	}
 };
+
+App.destroyMasonry = function() {
+  var $container = jQuery('#photosContainer ul');
+  $container.masonry( 'destroy' );
+};
+
 
 FlickrMasonry.runMasonry = function(delay) {
   var $container = jQuery('#photosContainer ul');
@@ -138,7 +209,6 @@ FlickrMasonry.setupAnalytics = function () {
 };
 
 
-
 FlickrMasonry.getPhotos = function() {
 	this.hideCommonElements();
 	var searchTerm = gup('search');
@@ -155,23 +225,6 @@ FlickrMasonry.getPhotos = function() {
 	}
 };
 
-FlickrMasonry.getFavoritePhotos = function() {
-  debugConsole( 'using ajax call to flickr for photos retrieval', 'debug' );
-
-  var getURL = this.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + FlickrMasonry.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
-
-  jQuery('#loader').center().show().fadeTo(1, 1);
-
-  var self = this;
-  jQuery.getJSON( getURL,
-    function(data) {
-      localStorage.setItem('flickr_masonry_time_retrieved_at', new Date().getTime() );
-      localStorage.setItem('flickrPhotos', JSON.stringify( data ) );
-      self.flickrPhotos = data;
-      self.displayPhotos(data);
-    }
-  );
-};
 
 FlickrMasonry.getPhotosByTag = function(tag) {
 	var getURL = this.baseUrl + "/?method=flickr.tags.getClusterPhotos";
@@ -337,11 +390,6 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 };
 
 
-// sometimes the large image size isn't available. fall back onto other versions.
-FlickrMasonry.getLargestImageSizeAvailable = function(item) {
-	return item.url_l || item.url_m || item.url_s || item.url_t;
-};
-
 FlickrMasonry.clearAllTooltips = function() {
   jQuery('.flickrFaveItem img').each( function() {
     jQuery(this).qtip('api').destroy();  
@@ -450,18 +498,6 @@ FlickrMasonry.hyperlinkTags = function(tags) {
     }
 	}
 	return linkedTags.join(' ');
-};
-
-FlickrMasonry.setupMoreButton = function() {
-	var $button = jQuery('#moreButton'),
-    self = this;
-	    
-	$button.click( function() {
-		logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
-		
-    // $button.fadeTo(1, 0);
-		self.displayPhotos(self.flickrPhotos);
-	});
 };
 
 

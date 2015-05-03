@@ -1,10 +1,12 @@
-<div id="photosContainer" ng-controller="PhotosController as fCtrl">
-  <ul>
-    <li class='photo' ng-repeat="photo in faves" on-finish-render="ngRepeatFinished">
-      <a class='flickrFaveItem' href="{{fCtrl.largestHREFSizeAvailable(photo)}}" target='_blank' rel="lightbox['flickr']">
-        <img src="{{photo.url_s}}" data-title="{{photo.title}}" data-flickr-url="http://www.flickr.com/{{photo.owner}}/{{photo.id}}/lightbox/" width="{{photo.width_s}}"/>
-      </a>
-    </li>
-  </ul>
+<div ng-controller="PhotosController as fCtrl">
+  <div id="photosContainer">
+    <ul>
+      <li class='photo' ng-repeat="photo in photosToShow" on-finish-render="ngRepeatFinished">
+        <a class='flickrFaveItem' href="{{fCtrl.largestHREFSizeAvailable(photo)}}" target='_blank' rel="lightbox['flickr']">
+          <img src="{{photo.url_s}}" data-title="{{photo.title}}" data-flickr-url="http://www.flickr.com/{{photo.owner}}/{{photo.id}}/lightbox/" width="{{photo.width_s}}"/>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <button type="button" class="btn btn-default" id="moreButton" ng-show="morePhotosToShow" ng-click="fCtrl.showMorePhotos()">More pics</button>
 </div>
-<div id="moreButton">More pics</div>

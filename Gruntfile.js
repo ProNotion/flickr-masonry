@@ -11,18 +11,18 @@ module.exports = function(grunt) {
         dest: 'dist/stylesheets/<%= pkg.name %>.min.css'
       }
     },
-    uglify: {
-      options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
-        compress: { drop_debugger: false },
-        mangle: false // mangling, well, *mangles* injected angular vars such as "$scope" and breaks shite
-      },
-      dist: {
-        files: {
-          'dist/javascripts/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
-        }
-      }
-    },
+    // uglify: {
+    //   options: {
+    //     banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
+    //     compress: { drop_debugger: false },
+    //     mangle: false // mangling, well, *mangles* injected angular vars such as "$scope" and breaks shite
+    //   },
+    //   dist: {
+    //     files: {
+    //       'dist/javascripts/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
+    //     }
+    //   }
+    // },
     jshint: {
       files: ['Gruntfile.js', 'src/javascripts/*.js'],
       options: {
@@ -39,7 +39,7 @@ module.exports = function(grunt) {
     },
     watch: {
       files: ['<%= jshint.files %>', 'src/stylesheets/flickr-masonry.sass'],
-      tasks: ['jshint', 'sass', 'concat', 'uglify']
+      tasks: ['jshint', 'sass', 'concat']
     },
     sass: {
       dist: {
@@ -53,12 +53,12 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-contrib-uglify');
+  // grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
 
   grunt.registerTask('test', ['jshint']);
-  grunt.registerTask('default', ['jshint', 'sass', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'sass', 'concat']);
 };
