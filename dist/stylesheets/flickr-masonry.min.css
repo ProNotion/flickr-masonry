@@ -546,10 +546,6 @@ a:link:hover, a:visited:hover { text-decoration: underline; }
 #photosContainer { margin: 0 auto; }
 #photosContainer ul.disabled { pointer-events: none; }
 
-.italic { font-style: italic; }
-
-.bold { font-weight: bold; }
-
 h1, h2, h3, h4 { font-family: "Lato", sans-serif; font-weight: 300; }
 
 .headerText, header, header a, #tagLimit, #noTagsFound { color: #dedede; text-shadow: 0px 1px 1px black; font-size: 23px; letter-spacing: 2px; word-spacing: 9px; }
