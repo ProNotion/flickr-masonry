@@ -1499,7 +1499,6 @@ var FlickrMasonry = {
 	initialize: function() {
     // this.setupTagForm();
     // this.setupAnalytics();
-    // this.setupAddToFavorites();
     // 
 	}
 };
@@ -1886,31 +1885,6 @@ FlickrMasonry.setupPopularTags = function() {
 			.val(jQuery(this).text())
 			.end()
 			.submit();
-	});
-};
-
-FlickrMasonry.setupAddToFavorites = function() {
-  var self = this;
-	jQuery(document).delegate( '.addToFavorites', 'click', function() {
-		var photoId = jQuery(this).data('photoId');
-		self.addPhotoToFavorites(photoId);
-	});
-};
-
-
-FlickrMasonry.addPhotoToFavorites = function(photoId) {
-	// TODO: need to go through oAuth flow to get an auth token for this post
-	jQuery.ajax({
-    type: 'POST',
-    url: FlickrMasonry.baseUrl + '?method=flickr.favorites.add&format=json&jsoncallback=?',
-    data: { 'api_key' : FlickrMasonry.apiKey, 'photo_id' : photoId },
-    success: function(data) {
-			console.log(data);
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			console.log('error');
-			console.log(errorThrown);
-		}
 	});
 };
 
