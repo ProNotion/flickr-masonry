@@ -61,10 +61,9 @@ App.controller('TagsController', function() {
 
 App.initTooltipsOnControllerEmit = function($scope) {
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
-    console.log('ngRepeatFinished');
     // FlickrMasonry.setupImageTooltips();
-    // setup pretty photo gallery
     FlickrMasonry.setupPrettyPhoto();
+    FlickrMasonry.runMasonry(300);
   });
 };
 
@@ -113,6 +112,18 @@ var FlickrMasonry = {
     //   FlickrMasonry.getPhotos();
     // };
 	}
+};
+
+FlickrMasonry.runMasonry = function(delay) {
+  var $container = jQuery('#photosContainer ul');
+  
+  setTimeout( function(){
+    $container.masonry({
+      itemSelector : '.photo',
+      columnWidth : 260,
+      isFitWidth: true
+    });
+  }, delay || 10);
 };
 
 
@@ -470,7 +481,7 @@ FlickrMasonry.setupPrettyPhoto = function() {
 		deeplinking: false,
 		social_tools: false,
 		changepicturecallback: function() {
-			self.hideTooltips(); // hide all image tooltips
+      // self.hideTooltips(); // hide all image tooltips
 		}
 	});
 };
