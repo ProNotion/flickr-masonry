@@ -1,0 +1,14 @@
+<section ng-controller="PhotosController as fCtrl" ng-show="page === 'faves'">
+  <div id="favePhotosContainer" class='photosContainer'>
+    <ul class='clearfix'>
+      <li class='photo' ng-repeat="photo in photosToShow" on-finish-render="ngRepeatFinished">
+        <a class='flickrPhotoLink' href="{{fCtrl.largestHREFSizeAvailable(photo)}}" target='_blank' rel="lightbox['flickr']">
+          <img class='img-circle' src="{{photo.url_sq}}" data-title="{{photo.title}}" data-flickr-url="http://www.flickr.com/{{photo.owner}}/{{photo.id}}/lightbox/" />
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="container moreButtonWrapper text-center">
+    <button type="button" class="btn btn-default" ng-show="morePhotosToShow" ng-click="fCtrl.showMorePhotos()">More...</button>
+  </div>
+</section>

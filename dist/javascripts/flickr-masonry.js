@@ -1196,6 +1196,18 @@ var pp_alreadyInitialized = false; // Used for the deep linking to make sure not
 
 var App = angular.module('flickrApp', []);
 
+// http://stackoverflow.com/questions/9293423/can-one-controller-call-another#comment15870834_11847277
+// http://jsfiddle.net/VxafF/
+App.run(function($rootScope) {
+  /*
+  Receive emitted message and broadcast it.
+  Event names must be distinct or browser will blow up!
+  */
+  $rootScope.$on('handleEmit', function(event, args) {
+    $rootScope.$broadcast('handleBroadcast', args);
+  });
+});
+
 App.factory('myCache', function($cacheFactory) {
  return $cacheFactory('flickrData');
 });
@@ -1236,14 +1248,38 @@ App.service('localStorageService', function () {
     setFaves: function(data) {
       faves = JSON.stringify(data);
       localStorage.setItem('flickrPhotos', faves);
+    },
+    
+    getTagged: function(tag) {
+      return JSON.parse(localStorage.getItem('tagged:' + tag));
+    },
+    
+    setTagged: function(tag, data) {
+      localStorage.setItem('tagged:' + tag, JSON.stringify(data));
     }
   };
 });
 
 
-App.controller('MainController', function() {
-})
-.directive("credits", ["$timeout", function($timeout) {
+App.controller('MainController', ['$scope', function($scope) {
+  $scope.page = "faves";
+  
+  this.backToMine = function() {
+    $scope.page = "faves";
+    $scope.$emit('handleEmit', {page: "faves", show: true});
+  };
+  
+  $scope.$on('handleBroadcast', function(event, args) {
+    if (args.page) {
+      $scope.page = args.page;
+    }
+    if (args.searchTerm) {
+      $scope.searchTerm = args.searchTerm;
+    }
+  });
+}]);
+
+App.directive("credits", ["$timeout", function($timeout) {
   return {
     restrict: "E",
     templateUrl: "templates/credits.html",
@@ -1259,13 +1295,24 @@ App.controller('PhotosController', ["$scope", "$http", "myCache", "localStorageS
   var cachedData = myCache.get('faves') || localStorageService.getFaves();
   var photosAtATime = 50;
   var photosLoaded = 0;
+  var controller = this;
   
-  var getUrl = FlickrMasonry.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + FlickrMasonry.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_o&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
+  $scope.page = "faves";
+  
+  $scope.$on('handleBroadcast', function(event, args) {
+    if (args.page) {
+      $scope.page = args.page;
+    }
+    
+    if (args.show) {
+      controller.display();
+    }
+  });
   
   this.freshPhotosFetched = function(data) {
     $scope.faves = data.photos.photo;
-    $scope.photosToShow = $scope.faves.slice(0, photosLoaded + photosAtATime);
-    photosLoaded = photosLoaded + photosAtATime;
+    $scope.photosToShow = $scope.faves.slice(0, photosAtATime);
+    photosLoaded = photosAtATime;
     $scope.morePhotosToShow = $scope.faves.length > $scope.photosToShow.length;
     myCache.put('faves', $scope.faves); // 'session' cache
     localStorageService.setTimeSinceLastPhotoGet(); // longterm storage
@@ -1277,17 +1324,21 @@ App.controller('PhotosController', ["$scope", "$http", "myCache", "localStorageS
     console.log('using cached data! yay!');
     $scope.faves = cachedData;
     $scope.photosToShow = $scope.faves.slice(0, photosLoaded + photosAtATime);
-    photosLoaded = photosLoaded + photosAtATime;
+    photosLoaded = photosAtATime;
     $scope.morePhotosToShow = $scope.faves.length > $scope.photosToShow.length;
     App.postRenderOnControllerEmit($scope);
   };
-  
-  if (cachedData) { // If there’s something in the cache, use it!
-    this.showCachedPhotos();
-  } else {
-    $http.jsonp(getUrl)
-      .success(this.freshPhotosFetched(data));
-  }
+
+  this.display = function() {
+    if (cachedData) { // If there’s something in the cache, use it!
+      this.showCachedPhotos();
+    } else {
+      var getUrl = FlickrMasonry.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + FlickrMasonry.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_sq&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
+
+      $http.jsonp(getUrl)
+        .success(this.freshPhotosFetched);
+    }
+  };
 
   // sometimes the large image size isn't available. fall back onto other versions.
   this.largestHREFSizeAvailable = function(photo) {
@@ -1295,31 +1346,113 @@ App.controller('PhotosController', ["$scope", "$http", "myCache", "localStorageS
   };
   
   this.showMorePhotos = function() {
-    analyticsService.logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
-    
-    App.destroyMasonry();
+    // analyticsService.logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
+    // App.destroyMasonry();
 
     $scope.photosToShow = $scope.faves.slice(0, photosLoaded + photosAtATime);
     photosLoaded = photosLoaded + photosAtATime;
     $scope.morePhotosToShow = $scope.faves.length > $scope.photosToShow.length;
     App.postPhotosRender();
   };
-}])
-.directive("photos", function() {
+  
+  this.display();
+}]);
+
+App.directive("favePhotos", function() {
   return {
     restrict: "E",
-    templateUrl: "templates/photos.html"
+    templateUrl: "templates/fave-photos.html",
+    controller: "PhotosController",
+    controllerAs: "fCtrl"
   };
 });
 
-App.controller('TagsController', function() {
+App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageService', function($scope, $http, myCache, localStorageService) {
+  var cachedData;
+  var photosAtATime = 50;
+  var photosLoaded = 0;
+  var tag = "";
+
+  this.search = { term: "" };
   
-  this.showTagLimit = false;
+  this.tagSearch = function() {
+    $scope.page = "tagged";
+    tag = encodeURIComponent(this.search.term);
+    $scope.$emit('handleEmit', {page: "tagged", searchTerm: tag});
+    this.getPhotosByTag(tag);
+    // this.setSearchQueryParam(tag);
+  };
   
-}).directive('tagLimit', function() {
+  this.freshPhotosFetched = function(data) {
+    $scope.tagged = data.photos.photo;
+    $scope.photosToShow = $scope.tagged.slice(0, photosLoaded + photosAtATime);
+    photosLoaded = photosAtATime;
+    $scope.morePhotosToShow = $scope.tagged.length > $scope.photosToShow.length;
+    myCache.put('tagged:' + tag, $scope.tagged); // 'session' cache
+    // localStorageService.setTimeSinceLastPhotoGet(); // longterm storage
+    localStorageService.setTagged(tag, $scope.tagged); // longterm storage
+    App.postRenderOnControllerEmit($scope);
+
+      // //TODO display message if no photos were found with the tag
+      // if (data.photos.photo.length > 0 ) {
+      //  self.displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });
+      // } else {
+      //  // todo - make sure to guard against security vulnerabilities here
+      //  self.noTaggedImagesResult(tag);
+      // }
+      // 
+  };
+
+  this.showCachedPhotos = function() {
+    console.log('using cached __tagged__ data! yay!');
+    $scope.tagged = cachedData;
+    $scope.photosToShow = $scope.tagged.slice(0, photosLoaded + photosAtATime);
+    photosLoaded = photosAtATime;
+    $scope.morePhotosToShow = $scope.tagged.length > $scope.photosToShow.length;
+    App.postRenderOnControllerEmit($scope);
+  };
+  
+  this.getPhotosByTag = function(tag) {
+    cachedData = myCache.get('tagged:' + tag) || localStorageService.getTagged(tag);
+    
+    if (cachedData) { // If there’s something in the cache, use it!
+      this.showCachedPhotos();
+    } else {
+      var getURL = FlickrMasonry.baseUrl + "/?method=flickr.tags.getClusterPhotos";
+        getURL += "&tag=" + tag;
+        getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey + "&extras=url_t,url_s,url_m,url_z,url_l,url_sq";
+        getURL += "&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
+      
+      $http.jsonp(getURL)
+        .success(this.freshPhotosFetched);
+    }
+  };
+  
+  // this.showTagLimit = false;
+}]);
+
+App.directive('taggedPhotos', function() {
   return {
     restrict: "E",
-    templateUrl: "templates/tag-limit.html"
+    templateUrl: "templates/tagged-photos.html"
+  };
+});
+
+App.directive('tagLimit', function() {
+  return {
+    restrict: "E",
+    templateUrl: "templates/tag-limit.html",
+    controller: "TagsController",
+    controllerAs: 'tCtrl'
+  };
+});
+
+App.directive('tagSearch', function() {
+  return {
+    restrict: "E",
+    templateUrl: "templates/tag-search.html",
+    controller: "TagsController",
+    controllerAs: 'tCtrl'
   };
 });
 
@@ -1332,7 +1465,7 @@ App.postRenderOnControllerEmit = function($scope) {
 App.postPhotosRender = function() {
   // FlickrMasonry.setupImageTooltips();
   FlickrMasonry.setupPrettyPhoto();
-  FlickrMasonry.runMasonry(300);
+  // FlickrMasonry.runMasonry(300);
 };
 
 App.directive('onFinishRender', function ($timeout) {
@@ -1380,10 +1513,10 @@ App.destroyMasonry = function() {
 
 
 FlickrMasonry.runMasonry = function(delay) {
-  var $container = jQuery('#photosContainer ul');
+  var $containers = jQuery('.photosContainer ul');
   
   setTimeout( function(){
-    $container.masonry({
+    $containers.masonry({
       itemSelector : '.photo',
       columnWidth : 260,
       isFitWidth: true
@@ -1404,7 +1537,6 @@ FlickrMasonry.setupAnalytics = function () {
 
 
 FlickrMasonry.getPhotos = function() {
-	this.hideCommonElements();
 	var searchTerm = gup('search');
 	
 	// allow search by tag to be done via a query string
@@ -1419,35 +1551,6 @@ FlickrMasonry.getPhotos = function() {
 	}
 };
 
-
-FlickrMasonry.getPhotosByTag = function(tag) {
-	var getURL = this.baseUrl + "/?method=flickr.tags.getClusterPhotos";
-    getURL += "&tag=" + tag;
-    getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey + "&extras=url_t,url_s,url_m,url_z,url_l,url_o";
-    getURL += "&per_page=" + this.maxPhotosToRequest + "&format=json&jsoncallback=?";
-
-	this.hideCommonElements();
-	this.updateTitleForTag(tag);
-	
-	jQuery('#loader').center().show().fadeTo(1, 1);
-
-	var self = this;
-	jQuery.getJSON( getURL,
-		function(data) {
-			self.flickrPhotos = data;
-			
-			//TODO display message if no photos were found with the tag
-			if (data.photos.photo.length > 0 ) {
-				self.displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });
-			} else {
-				// todo - make sure to guard against security vulnerabilities here
-				self.noTaggedImagesResult(tag);
-			}
-			
-			self.setupBackToMine();
-		}
-	);
-};
 
 // no images with the user-input tag were found; show something a message and some suggestions
 FlickrMasonry.noTaggedImagesResult = function(tag) {
@@ -1467,7 +1570,6 @@ FlickrMasonry.noTaggedImagesResult = function(tag) {
 		.fadeIn();
 		
 	$tagsILikeMarkup.before("<p>some tags i suggest:</p>");
-			
 };
 
 
@@ -1585,7 +1687,7 @@ FlickrMasonry.displayPhotos = function(jsonData, options) {
 
 
 FlickrMasonry.clearAllTooltips = function() {
-  jQuery('.flickrFaveItem img').each( function() {
+  jQuery('.flickrPhotoLink img').each( function() {
     jQuery(this).qtip('api').destroy();  
   });
 };
@@ -1593,7 +1695,7 @@ FlickrMasonry.clearAllTooltips = function() {
 FlickrMasonry.setupImageTooltips = function() {
   var self = this;
 	// TODO might be able to optimize this; possible to only run qtip on the images that haven't had it run on yet?
-	jQuery('.flickrFaveItem img').each(function() {
+	jQuery('.flickrPhotoLink img').each(function() {
 		
 		var $image = jQuery(this),
 				userId = $image.data('authorId'),
@@ -1795,22 +1897,9 @@ FlickrMasonry.clearPhotos = function() {
 
 // hides any open tooltips, for the sake of UX
 FlickrMasonry.hideTooltips = function () {
-	jQuery('.flickrFaveItem img').qtip('hide');
+	jQuery('.flickrPhotoLink img').qtip('hide');
 };
 
-
-FlickrMasonry.setupBackToMine = function() {
-  var self = this;
-	jQuery('#backToMine').fadeIn()
-		.click(function() {
-			self.clearPhotos();
-			jQuery('header .title').text(FlickrMasonry.originalTitle);
-			jQuery('#tagForm input').val('');
-			// TODO gotta be a better way to clear this out...
-			history.pushState(null, null, "?");
-			self.getPhotos();
-		});
-};
 
 FlickrMasonry.setupPopularTags = function() {
 	jQuery(document).delegate( '.suggestionTag', 'click', function(event) {

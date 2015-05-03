@@ -8,16 +8,18 @@
 </head>
 <body ng-app="flickrApp">
 	<header>
-		<span id='backToMine'>my faves</span>
-		<h1 class='title'>my favorite items from flickr</h1>
-		<span id='searchArea'>
-			<form name='tagForm' id='tagForm'>
-				<input type='text' placeholder='search flickr by tag'>
-			</form>
-		</span>
+	  <div ng-controller="MainController as mCtrl">
+  		<h1 class='title' ng-show="page === 'faves'">My favorite items from flickr</h1>
+  		<div class="">
+  		  <h1 class='title' ng-show="page === 'tagged'">search results for {{searchTerm}}</h1>
+  		  <button class='btn btn-primary' id='backToMine' ng-show="page === 'tagged'" ng-click='mCtrl.backToMine()'>back to my faves</button>
+  		</div>
+		</div>
+		<tag-search></tag-search>
 	</header>
-	
-	<photos></photos>
+
+	<fave-photos></fave-photos>
+	<tagged-photos></tagged-photos>
 	<tag-limit ng-controller="TagsController as tCtrl" ng-show="tCtrl.showTagLimit"></tag-limit>
   <credits></credits>
 	

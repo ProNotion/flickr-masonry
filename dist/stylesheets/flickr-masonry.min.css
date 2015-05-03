@@ -562,7 +562,7 @@ header a:hover { color: white; }
 #credits { -moz-transition: opacity 1000ms; -webkit-transition: opacity 1000ms; -o-transition: opacity 1000ms; -ms-transition: opacity 1000ms; transition: opacity 1000ms; text-align: center; font-size: 1em; padding-bottom: 20px; margin-top: 130px; }
 #credits span { color: #4f4f4f; }
 
-.photo { width: 238px; margin: 10px; float: left; list-style: none; text-align: center; }
+.photo { width: 77px; margin: 10px; float: left; list-style: none; text-align: center; }
 .photo img { border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 0 7px rgba(255, 255, 255, 0.24); }
 .photo img:hover { opacity: 0.78 !important; -moz-transition: opacity 250ms; -webkit-transition: opacity 250ms; -o-transition: opacity 250ms; -ms-transition: opacity 250ms; transition: opacity 250ms; }
 
@@ -598,7 +598,7 @@ header a:hover { color: white; }
 
 #tagLimit p { text-align: center; margin: 0; }
 
-#backToMine { display: none; position: relative; float: left; font-size: 14px; top: 8px; left: 10px; word-spacing: 0; }
+#backToMine { position: relative; float: left; font-size: 14px; top: 8px; left: 10px; word-spacing: 0; }
 #backToMine:hover { cursor: pointer; }
 
 .suggestionTags { list-style: none; line-height: 1.8em; }
