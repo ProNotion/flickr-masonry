@@ -191,22 +191,15 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
   
   this.freshPhotosFetched = function(data) {
     $scope.tagged = data.photos.photo;
-    $scope.photosToShow = $scope.tagged.slice(0, photosLoaded + photosAtATime);
-    photosLoaded = photosAtATime;
-    $scope.morePhotosToShow = $scope.tagged.length > $scope.photosToShow.length;
-    myCache.put('tagged:' + tag, $scope.tagged); // 'session' cache
-    // localStorageService.setTimeSinceLastPhotoGet(); // longterm storage
-    localStorageService.setTagged(tag, $scope.tagged); // longterm storage
-    App.postRenderOnControllerEmit($scope);
-
-      // //TODO display message if no photos were found with the tag
-      // if (data.photos.photo.length > 0 ) {
-      //  self.displayPhotos(data, {'taggedPhotos' : true, 'searchedTag' : tag });
-      // } else {
-      //  // todo - make sure to guard against security vulnerabilities here
-      //  self.noTaggedImagesResult(tag);
-      // }
-      // 
+    if ($scope.tagged.length > 0) {
+      $scope.photosToShow = $scope.tagged.slice(0, photosLoaded + photosAtATime);
+      photosLoaded = photosAtATime;
+      $scope.morePhotosToShow = $scope.tagged.length > $scope.photosToShow.length;
+      myCache.put('tagged:' + tag, $scope.tagged); // 'session' cache
+      // localStorageService.setTimeSinceLastPhotoGet(); // longterm storage
+      localStorageService.setTagged(tag, $scope.tagged); // longterm storage
+      App.postRenderOnControllerEmit($scope);
+    }
   };
 
   this.showCachedPhotos = function() {
@@ -360,27 +353,6 @@ FlickrMasonry.getPhotos = function() {
     this.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));
     this.displayPhotos(this.flickrPhotos);
 	}
-};
-
-
-// no images with the user-input tag were found; show something a message and some suggestions
-FlickrMasonry.noTaggedImagesResult = function(tag) {
-	var $tagsILikeMarkup = jQuery('<ul class="suggestionTags tagsILike group" />'),
-			tagsILike = "colors fractal grafitti skyline complex pattern texture cute repetition urban decay spiral mandala nostalgia";
-
-	// todo use jQuery.tmpl for this
-	jQuery(tagsILike.split(' ')).each(function(item, elem) {
-		$tagsILikeMarkup.append("<li class='suggestionTag tagsILikeTag'>" + elem + "</li>");
-	});
-			
-	jQuery('#loader').hide();
-	
-	jQuery('#noTagsFound')
-		.html('<h3>no photos tagged <span class="bold italic">' + tag + "</span></h3>")
-		.append($tagsILikeMarkup)
-		.fadeIn();
-		
-	$tagsILikeMarkup.before("<p>some tags i suggest:</p>");
 };
 
 
