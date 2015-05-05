@@ -1380,12 +1380,13 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
   var photosLoaded = 0;
   var tag = "";
 
-  this.search = { term: "" };
+  $.suggestedTags = [];
+  $scope.search = { term: "" };
   
   this.tagSearch = function() {
     $scope.page = "tagged";
     tag = encodeURIComponent($scope.search.term);
-    this.search.term = tag;
+    $scope.search.term = tag;
     $scope.$emit('handleEmit', {page: "tagged", searchTerm: tag});
     this.getPhotosByTag(tag);
     // this.setSearchQueryParam(tag);
@@ -1400,9 +1401,11 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
       localStorageService.setTagged(tag, $scope.tagged); // longterm storage
       App.postRenderOnControllerEmit($scope);
       $scope.showTagLimit = true;
+      this.getSimilarTags();
     } else {
       $scope.photosToShow = [];
       $scope.showTagLimit = false;
+      $scope.similarTags = [];
     }
   };
 
@@ -1411,9 +1414,22 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
     $scope.tagged = cachedData;
     $scope.photosToShow = $scope.tagged.slice(0, photosLoaded + photosAtATime);
     photosLoaded = photosAtATime;
+    this.getSimilarTags();
     App.postRenderOnControllerEmit($scope);
   };
   
+  this.getSimilarTags = function () {
+    var getURL = FlickrMasonry.baseUrl + "?method=flickr.tags.getRelated";
+      getURL += "&tag=" + tag;
+      getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey;
+      getURL += "&format=json&jsoncallback=JSON_CALLBACK";
+
+    $http.jsonp(getURL)
+      .success(function (data) {
+        $scope.similarTags = data.tags.tag;
+      });
+  };
+
   // sometimes the large image size isn't available. fall back onto other versions.
   this.largestHREFSizeAvailable = function(photo) {
     return photo.url_l || photo.url_m || photo.url_s || photo.url_t;
@@ -1425,13 +1441,13 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
     if (cachedData) { // If there’s something in the cache, use it!
       this.showCachedPhotos();
     } else {
-      var getURL = FlickrMasonry.baseUrl + "/?method=flickr.tags.getClusterPhotos";
+      var getURL = FlickrMasonry.baseUrl + "?method=flickr.tags.getClusterPhotos";
         getURL += "&tag=" + tag;
         getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey + "&extras=url_t,url_s,url_m,url_z,url_l,url_sq";
         getURL += "&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
-      
+
       $http.jsonp(getURL)
-        .success(this.freshPhotosFetched);
+        .success(angular.bind(this, this.freshPhotosFetched));
     }
   };
 }]);
@@ -1445,25 +1461,11 @@ App.controller( 'TagsILikeController', function($scope) {
   };
 });
 
-// App.controller( 'SimilarTagsController', ['$scope', '$http', function($scope, $http) {
-//   $scope.tags = [];
-//
-//   var getURL = FlickrMasonry.baseUrl + "/?method=flickr.tags.getRelated";
-//     getURL += "&tag=" + $scope.searchTerm;
-//     getURL += "&format=json&jsoncallback=JSON_CALLBACK";
-//
-//   $http.jsonp(getURL)
-//     .success(function (data) {
-//       $scope.tags = data.tags.tag;
-//     });
-// }]);
 
 App.directive('similarTags', function() {
   return {
     restrict: "E",
-    templateUrl: "templates/similar-tags.html",
-    controller: "SimilarTagsController",
-    controllerAs: 'sCtrl'
+    templateUrl: "templates/similar-tags.html"
   };
 });
 
@@ -1514,18 +1516,6 @@ App.postPhotosRender = function() {
   // FlickrMasonry.runMasonry(300);
 };
 
-// sets up the lightbox for images
-FlickrMasonry.setupPrettyPhoto = function() {
-  var self = this;
-	jQuery("a[rel^='lightbox']").prettyPhoto({
-		overlay_gallery : false,
-		deeplinking: false,
-		social_tools: false,
-		changepicturecallback: function() {
-      // self.hideTooltips(); // hide all image tooltips
-		}
-	});
-};
 
 App.directive('onFinishRender', function ($timeout) {
   return {
@@ -1555,13 +1545,20 @@ var FlickrMasonry = {
 		if (milliseconds) {
 			this.timeSinceLastPhotoGet = parseInt(milliseconds, 10);
 		}
-	},
-	
-	initialize: function() {
-    // this.setupTagForm();
-    // this.setupAnalytics();
-    // 
 	}
+};
+
+// sets up the lightbox for images
+FlickrMasonry.setupPrettyPhoto = function() {
+  var self = this;
+	jQuery("a[rel^='lightbox']").prettyPhoto({
+		overlay_gallery : false,
+		deeplinking: false,
+		social_tools: false,
+		changepicturecallback: function() {
+      // self.hideTooltips(); // hide all image tooltips
+		}
+	});
 };
 
 // App.destroyMasonry = function() {
