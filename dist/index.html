@@ -11,7 +11,7 @@
   	<header>
   	  <div ng-controller="MainController as mCtrl">
     		<h1 class='title' ng-show="page === 'faves'">My favorite items from flickr</h1>
-    		<div class="">
+    		<div>
     		  <h1 class='title' ng-show="page === 'tagged'">search results for <strong><em>{{searchTerm}}</em></strong></h1>
     		  <button class='btn btn-primary' id='backToMine' ng-show="page === 'tagged'" ng-click='mCtrl.backToMine()'>back to my faves</button>
     		</div>

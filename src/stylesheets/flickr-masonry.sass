@@ -31,13 +31,6 @@ a:visited
   &:hover
     text-decoration: underline
   
-.stealthLink
-  color: $headerText !important
-
-  #photosContainer
-  margin: 0 auto
-  ul.disabled
-    pointer-events: none
 
 h1, h2, h3, h4
   @include Lato
@@ -46,13 +39,12 @@ h1, h2, h3, h4
 .headerText
   color: $headerText
   text-shadow: 0px 1px 1px black
-  font-size: 23px
-  
   letter-spacing: 2px
   word-spacing: 9px
 
 header
-  @extend .headerText
+  .title
+    @extend .headerText
   
   text-align: center
   margin: 0 auto 11px

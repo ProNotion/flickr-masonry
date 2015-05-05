@@ -1878,11 +1878,6 @@ FlickrMasonry.setSearchQueryParam = function(tag) {
   history.pushState(null, null, "?search=" + tag);
 };
 
-FlickrMasonry.updateTitleForTag = function(tag) {
-	jQuery('header .title')
-		.html('<a href="http://www.flickr.com" class="stealthLink" target="_blank">flickr</a> photos tagged <a href="http://www.flickr.com/photos/tags/' + tag + '/show/" class="bold italic stealthLink" target="_blank">' + tag + '</span>');
-};
-
 // clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
 FlickrMasonry.clearPhotos = function() {
   this.flickrPhotos = null;
