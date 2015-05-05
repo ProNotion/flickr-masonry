@@ -7,21 +7,24 @@
 	<link rel='stylesheet' type='text/css' href='stylesheets/flickr-masonry.min.css'/>
 </head>
 <body ng-app="flickrApp">
-	<header>
-	  <div ng-controller="MainController as mCtrl">
-  		<h1 class='title' ng-show="page === 'faves'">My favorite items from flickr</h1>
-  		<div class="">
-  		  <h1 class='title' ng-show="page === 'tagged'">search results for <strong><em>{{searchTerm}}</em></strong></h1>
-  		  <button class='btn btn-primary' id='backToMine' ng-show="page === 'tagged'" ng-click='mCtrl.backToMine()'>back to my faves</button>
+  <div id='wrapper'>
+  	<header>
+  	  <div ng-controller="MainController as mCtrl">
+    		<h1 class='title' ng-show="page === 'faves'">My favorite items from flickr</h1>
+    		<div class="">
+    		  <h1 class='title' ng-show="page === 'tagged'">search results for <strong><em>{{searchTerm}}</em></strong></h1>
+    		  <button class='btn btn-primary' id='backToMine' ng-show="page === 'tagged'" ng-click='mCtrl.backToMine()'>back to my faves</button>
+    		</div>
   		</div>
-		</div>
-		<tag-search></tag-search>
-	</header>
+  		<tag-search></tag-search>
+  	</header>
 
-	<fave-photos></fave-photos>
-	<tagged-photos></tagged-photos>
-  <credits></credits>
-	
+    <div id='content'>
+    	<fave-photos></fave-photos>
+    	<tagged-photos></tagged-photos>
+    </div>
+    <credits></credits>
+	</div>
 	<script type="text/javascript">
 	  var _gaq = _gaq || [];
 	  _gaq.push(['_setAccount', 'UA-25733533-1']);
