@@ -1,7 +1,7 @@
 <section class='container well' ng-show="photosToShow.length === 0">
   <h3>No photos tagged <strong><em>{{search.term}}</em></strong>.</h3>
   <p>Sample tags:</p>
-  <ul class="suggestionTags tagsILike group">
+  <ul class="suggestionTags tagsILike clearfix">
     <li class='suggestionTag' ng-repeat='tag in tilCtrl.tags track by $index'>
       <button type='button' class='btn btn-link' ng-click='tilCtrl.searchTag(search.term, tag)'>{{tag}}</button>
     </li>

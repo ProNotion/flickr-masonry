@@ -1,0 +1,9 @@
+<div id='similarTags' ng-controller="SimilarTagsController as sCtrl">
+  <h4 class='title'>Similar tags:</h4>
+  <ul class="suggestionTags clearfix">
+    <li class='suggestionTag' ng-repeat='tag in suggestedTags track by $index | limitTo: 10'>
+      <button type='button' class='btn btn-link' ng-click='tCtrl.searchTag(search.term, tag)'>{{tag._content}}</button>
+    </li>
+  </ul>
+  </ul>
+</div>

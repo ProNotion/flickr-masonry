@@ -244,6 +244,28 @@ App.controller( 'TagsILikeController', function($scope) {
   };
 });
 
+// App.controller( 'SimilarTagsController', ['$scope', '$http', function($scope, $http) {
+//   $scope.tags = [];
+//
+//   var getURL = FlickrMasonry.baseUrl + "/?method=flickr.tags.getRelated";
+//     getURL += "&tag=" + $scope.searchTerm;
+//     getURL += "&format=json&jsoncallback=JSON_CALLBACK";
+//
+//   $http.jsonp(getURL)
+//     .success(function (data) {
+//       $scope.tags = data.tags.tag;
+//     });
+// }]);
+
+App.directive('similarTags', function() {
+  return {
+    restrict: "E",
+    templateUrl: "templates/similar-tags.html",
+    controller: "SimilarTagsController",
+    controllerAs: 'sCtrl'
+  };
+});
+
 App.directive('taggedPhotos', function() {
   return {
     restrict: "E",
@@ -291,6 +313,19 @@ App.postPhotosRender = function() {
   // FlickrMasonry.runMasonry(300);
 };
 
+// sets up the lightbox for images
+FlickrMasonry.setupPrettyPhoto = function() {
+  var self = this;
+	jQuery("a[rel^='lightbox']").prettyPhoto({
+		overlay_gallery : false,
+		deeplinking: false,
+		social_tools: false,
+		changepicturecallback: function() {
+      // self.hideTooltips(); // hide all image tooltips
+		}
+	});
+};
+
 App.directive('onFinishRender', function ($timeout) {
   return {
     restrict: 'A',
@@ -328,382 +363,79 @@ var FlickrMasonry = {
 	}
 };
 
-App.destroyMasonry = function() {
-  var $container = jQuery('#photosContainer ul');
-  $container.masonry( 'destroy' );
-};
+// App.destroyMasonry = function() {
+//   var $container = jQuery('#photosContainer ul');
+//   $container.masonry( 'destroy' );
+// };
+//
+//
+// FlickrMasonry.runMasonry = function(delay) {
+//   var $containers = jQuery('.photosContainer ul');
+//
+//   setTimeout( function(){
+//     $containers.masonry({
+//       itemSelector : '.photo',
+//       columnWidth : 260,
+//       isFitWidth: true
+//     });
+//   }, delay || 10);
+// };
 
 
-FlickrMasonry.runMasonry = function(delay) {
-  var $containers = jQuery('.photosContainer ul');
-  
-  setTimeout( function(){
-    $containers.masonry({
-      itemSelector : '.photo',
-      columnWidth : 260,
-      isFitWidth: true
-    });
-  }, delay || 10);
-};
+// FlickrMasonry.setupAnalytics = function () {
+//   jQuery('#seeTagsLink').click( function() {
+//     logAnalytics(['_trackEvent', 'view', 'flick masonry see all images with tag', jQuery('#seeTagsName').text() ]);
+//   });
+//
+//   jQuery('.suggestionTag').click( function() {
+//     logAnalytics(['_trackEvent', 'view', 'flick masonry click suggested tag', jQuery(this).text() ]);
+//   });
+// };
 
 
-FlickrMasonry.setupAnalytics = function () {
-	jQuery('#seeTagsLink').click( function() {
-		logAnalytics(['_trackEvent', 'view', 'flick masonry see all images with tag', jQuery('#seeTagsName').text() ]);
-	});
-	
-	jQuery('.suggestionTag').click( function() {
-		logAnalytics(['_trackEvent', 'view', 'flick masonry click suggested tag', jQuery(this).text() ]);
-	});
-};
+//
+// // return real name of the photo's owner if it exists
+// FlickrMasonry.fetchRealName = function(data) {
+//   var realname;
+//   try{
+//     realname = " (" + data.person.realname._content + ")";
+//   }  catch(e) {
+//     realname = '';
+//   }
+//   return realname;
+// };
+//
+// // return username of the photo's owner if it exists
+// FlickrMasonry.fetchUserName = function(data) {
+//   var username;
+//   try{
+//     username = data.person.username._content;
+//   }  catch(e) {
+//     username = '';
+//   }
+//   return username;
+// };
+//
+// FlickrMasonry.hyperlinkAuthorREST = function(authorId) {
+//   return "<a href='http://www.flickr.com/photos/" + authorId + "' target='_blank'>" + authorId + "</a>";
+// };
+//
+// FlickrMasonry.hyperlinkAuthor = function(authorId, authorName) {
+//   return "<a href='http://www.flickr.com/photos/" + authorId + "' target='_blank'>" + authorName + "</a>";
+// };
 
 
-FlickrMasonry.getPhotos = function() {
-	var searchTerm = gup('search');
-	
-	// allow search by tag to be done via a query string
-	if (searchTerm) {
-		this.getPhotosByTag(encodeURIComponent(searchTerm));
-	}	else if (this.timeForFreshAJAXRequest()) {
-    this.getFavoritePhotos();
-	}	else {
-    console.log( 'using local storage for photos retrieval' );
-    this.flickrPhotos = JSON.parse(localStorage.getItem('flickrPhotos'));
-    this.displayPhotos(this.flickrPhotos);
-	}
-};
 
 
-FlickrMasonry.displayPhotos = function(jsonData, options) {
-	options = options || {};
-	
-	var elems = [];
-	var self = this;
-	
-	var $container = self.$masonryContainer,
-			// for RSS feed
-			// photos = jsonData.items.slice(this.photosLoaded, this.photosLoaded + this.photosAtATime ),
-			// for REST API
-			photos = jsonData.photos.photo.slice(self.photosLoaded, self.photosLoaded + self.photosAtATime ), // crude way of achieving offset
-			newPhoto,
-			$listItem,
-			$photoLink,
-			$ajaxLoader = jQuery('#loader');
+// FlickrMasonry.updateCredits = function(tag) {
+//   jQuery('#seeTagsName').text(tag);
+//   jQuery('#seeTagsLink').attr('href', 'http://www.flickr.com/photos/tags/' + tag + '/show/');
+//   this.showSimilarTags(tag);
+// };
 
-  // only show this loader on initial load
-  if (!self.photosLoaded) {
-    $ajaxLoader.center().show().fadeTo(1, 1);
-    $container.addClass('disabled').fadeTo(0, 0);
-  }
-	
-	jQuery.each(photos, function(i, item) {
-		var itemTitle;
-		
-		// if the photo's index is above the quoto per fetch, then return
-		if ( i >= self.photosAtATime ) { return; }
-		
-		newPhoto = new Image();
-		$listItem = jQuery('<li>', { "class" : "photo" } );
+//
+// FlickrMasonry.setSearchQueryParam = function(tag) {
+//   tag = encodeURIComponent(tag);
+//   history.pushState(null, null, "?search=" + tag);
+// };
 
-		// for REST API
-		$photoLink = jQuery('<a>',
-										{ "target": "_blank",
-											"class": "flickrFaveItem",
-											"href" :  FlickrMasonry.getLargestImageSizeAvailable(item),
-											"rel" : "lightbox['flickr']"
-											// "data-time": item.date_taken,
-											// "data-tags": hyperlinkTags(item.tags)
-											});
-		
-		newPhoto.src = item.url_s;
-		
-		itemTitle = item.title || "[untitled]";
-		
-		jQuery(newPhoto).attr({
-      "data-flickr-url" : "http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/",
-      "data-author-url": FlickrMasonry.hyperlinkAuthorREST(item.owner),
-      "data-author-id" : item.owner,
-      "data-title": itemTitle,
-      "data-photo-id" : item.id,
-      "alt" : "<a href='http://www.flickr.com/" + item.owner + "/" + item.id + "/lightbox/' target='_blank'>" + itemTitle + "</a>",
-      "width": item.width_s
-		});
-		
-		$photoLink.append(newPhoto);
-		$listItem.append($photoLink);
-		
-    $container.append($listItem);
-    elems.push($listItem[0]);
-	});
-	
-	if (self.photosLoaded) {
-    $container.append(elems);
-    FlickrMasonry.$masonryContainer.masonry('appended', elems);
-	}
-	
-  // run the masonry plugin
-	$container.imagesLoaded(function() {
-    // TODO not sure why this is necessary; should only be run once initially, but run into masonry layout issues
-    // if i don't run it each time.
-    $container.masonry({
-      itemSelector : '.photo',
-      columnWidth : 260,
-      isFitWidth: true
-    });
-    
-    var imagesCallback = function() {
-			// only fade the 'more' button back in if there are still images remaining to be shown
-      if ( !options.taggedPhotos && self.photosLoaded < self.flickrPhotos.photos.photo.length ) {
-       jQuery('#moreButton').fadeTo( 650, 1, 'swing');
-      }
-			if ( options.taggedPhotos ) {
-				jQuery('#tagLimit').show();
-			}
-
-			self.photosLoaded = self.photosLoaded + self.photosAtATime;
-
-			// Setup tooltips for each image
-      self.setupImageTooltips();
-      // setup pretty photo gallery
-      self.setupPrettyPhoto();
-
-			if (options.taggedPhotos) {
-				self.updateCredits(options.searchedTag);
-			}
-
-			// temp off
-			// jQuery('img:even').statick({opacity: 0.06, timing:{baseTime: 140}});
-    };
-
-    if (!self.photosLoaded) {
-      $ajaxLoader.fadeTo(200, 0, function() {
-        $ajaxLoader.hide();
-        $container.removeClass('disabled').fadeTo(570, 1, imagesCallback);
-      });
-    } else {
-      imagesCallback();
-    }
-	});
-};
-
-
-FlickrMasonry.clearAllTooltips = function() {
-  jQuery('.flickrPhotoLink img').each( function() {
-    jQuery(this).qtip('api').destroy();  
-  });
-};
-
-FlickrMasonry.setupImageTooltips = function() {
-  var self = this;
-	// TODO might be able to optimize this; possible to only run qtip on the images that haven't had it run on yet?
-	jQuery('.flickrPhotoLink img').each(function() {
-		
-		var $image = jQuery(this),
-				userId = $image.data('authorId'),
-				flickrUrl = $image.data('flickrUrl'),
-				title = $image.data('title');
-		
-		$image.qtip({
-			content: {
-				text: "<div class='loading'><span>loading...</span></div>",
-				ajax: {
-          url: FlickrMasonry.baseUrl + "/?method=flickr.people.getInfo&api_key=" + FlickrMasonry.apiKey + "&user_id=" + userId + "&format=json&jsoncallback=?",
-          type: 'GET', // POST or GET,
-          dataType: "json",
-          success: function(data) {
-						var realname = self.fetchRealName(data),
-                username = self.fetchUserName(data),
-								photoId = self.fetchPhotoId($image),
-                markup = "<p class='photoTitle'><a href='" + flickrUrl + "' target='_blank'>" + title + "</a></p><p>by: <a class='authorName' href='http://www.flickr.com/photos/" + userId + "' target='_blank'>" + username + realname + "</a></p><a href='#' class='addToFavorites' data-photo-id='" + photoId + "'>add to favorites</a>";
-
-						// TODO: don't really like this, try and clean it up
-            jQuery(jQuery(this)[0].elements.content[0]).find('.loading').html(markup);
-          }
-        }
-			},
-      position:{
-        my: 'left center',
-        at: 'right center',
-        viewport: self.$masonryContainer
-      },
-      show: {
-        delay: 260,
-        effect: function() {
-          jQuery(this).fadeIn(300); // "this" refers to the tooltip
-        }
-      },
-      hide: {
-        delay: 50,
-        fixed: true,
-        effect: function() {
-          jQuery(this).fadeOut(220); // "this" refers to the tooltip
-        }
-      },
-      style: {
-        tip:{
-          width: 7,
-          height: 19
-        },
-        classes: "flickrTip"
-      }
-    });
-	});
-};
-
-// todo
-FlickrMasonry.fetchPhotoId = function($photo) {
-	return $photo.data('photoId');
-};
-
-// return real name of the photo's owner if it exists
-FlickrMasonry.fetchRealName = function(data) {
-	var realname;
-	try{
-		realname = " (" + data.person.realname._content + ")";
-	}	catch(e) {
-		realname = '';
-	}
-	return realname;
-};
-
-// return username of the photo's owner if it exists
-FlickrMasonry.fetchUserName = function(data) {
-	var username;
-	try{
-		username = data.person.username._content;
-	}	catch(e) {
-		username = '';
-	}
-	return username;
-};
-
-FlickrMasonry.hyperlinkAuthorREST = function(authorId) {
-	return "<a href='http://www.flickr.com/photos/" + authorId + "' target='_blank'>" + authorId + "</a>";
-};
-
-FlickrMasonry.hyperlinkAuthor = function(authorId, authorName) {
-	return "<a href='http://www.flickr.com/photos/" + authorId + "' target='_blank'>" + authorName + "</a>";
-};
-
-FlickrMasonry.hyperlinkTags = function(tags) {
-	var tagsArray = tags.split(' '),
-			linkedTags = [];
-	
-	for (var tag in tagsArray) {
-    if ( tagsArray.hasOwnProperty(tag) ) {
-      linkedTags.push("<a class='tag' href='http://www.flickr.com/photos/tags/" + tagsArray[tag] + "' target='_blank'>" + tagsArray[tag] + "</span>");
-    }
-	}
-	return linkedTags.join(' ');
-};
-
-
-// only make an ajax call to flickr if it's been over a day
-FlickrMasonry.timeForFreshAJAXRequest = function() {
-  // if the last time we made an ajax call was over a day ago
-  // or if we want to force an ajax retrieval
-	return this.timeSinceLastPhotoGet === null || ((new Date().getTime() - this.timeSinceLastPhotoGet) / (1000 * 60 * 60 * 24)) > 1 || this.forcePatternAJAXGet;
-};
-
-
-// sets up the lightbox for images
-FlickrMasonry.setupPrettyPhoto = function() {
-  var self = this;
-	jQuery("a[rel^='lightbox']").prettyPhoto({
-		overlay_gallery : false,
-		deeplinking: false,
-		social_tools: false,
-		changepicturecallback: function() {
-      // self.hideTooltips(); // hide all image tooltips
-		}
-	});
-};
-
-
-FlickrMasonry.updateCredits = function(tag) {
-	jQuery('#seeTagsName').text(tag);
-	jQuery('#seeTagsLink').attr('href', 'http://www.flickr.com/photos/tags/' + tag + '/show/');
-	this.showSimilarTags(tag);
-};
-
-FlickrMasonry.showSimilarTags = function(tag) {
-	var getURL = this.baseUrl + "/?method=flickr.tags.getRelated";
-    getURL += "&tag=" + tag;
-    getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey;
-    getURL += "&format=json&jsoncallback=?";
-	
-	jQuery.getJSON( getURL,
-		function(data) {
-			try{
-				for( var item in data.tags.tag ) {
-          if (data.tags.tag.hasOwnProperty(item)) {
-            if ( item > 10 ) { break;}
-
-            var tagName = data.tags.tag[item]._content,
-              $link = jQuery('<a>', {"text" : tagName, 'class' : 'suggestionTag', href: "#" });
-              
-            jQuery('#seeSimilarTags ul').append(jQuery('<li></li>').append($link));
-          }
-				}
-			} catch(e) {
-				debugConsole( 'error in showSimilarTags: ' + e.message, "error");
-			}
-		}
-	);
-};
-
-
-FlickrMasonry.setupTagForm = function() {
-  var self = this;
-	jQuery('#tagForm').submit(function(event) {
-		var tag = jQuery.trim(jQuery(this).find('input').val());
-		event.preventDefault();
-		
-		logAnalytics(['_trackEvent', 'search', 'flickr masonry search', tag ]);
-
-		self.hideTooltips();
-		self.clearPhotos();
-    self.setSearchQueryParam(tag);
-		self.getPhotosByTag(tag);
-		return false;
-	});
-  
-  this.setupPopularTags();
-};
-
-
-FlickrMasonry.setSearchQueryParam = function(tag) {
-  tag = encodeURIComponent(tag);
-  history.pushState(null, null, "?search=" + tag);
-};
-
-// clears existing photos, destroys masonry setup. for use with a completely new set of photos to be loaded in
-FlickrMasonry.clearPhotos = function() {
-  this.flickrPhotos = null;
-	this.photosLoaded = 0;
-
-	try{
-		this.$masonryContainer.masonry( 'destroy' ).empty();
-		jQuery('.suggestionTags').empty();
-		jQuery('#noTagsFound').hide();
-	} catch(e) {
-    // debugConsole( 'error in clearPhotos(): ' + e.message, "debug");
-	}
-};
-
-// hides any open tooltips, for the sake of UX
-FlickrMasonry.hideTooltips = function () {
-	jQuery('.flickrPhotoLink img').qtip('hide');
-};
-
-
-FlickrMasonry.setupPopularTags = function() {
-	jQuery(document).delegate( '.suggestionTag', 'click', function(event) {
-    event.preventDefault();
-		jQuery('#tagForm')
-			.find('input')
-			.val(jQuery(this).text())
-			.end()
-			.submit();
-	});
-};
