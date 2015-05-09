@@ -1203,6 +1203,12 @@ var pp_alreadyInitialized = false; // Used for the deep linking to make sure not
 
 var App = angular.module('flickrApp', []);
 
+App.constant('appConstants', {
+  "apiKey": "79f2e11b6b4e3213f8971bed7f17b4c4",
+  'baseUrl': 'https://api.flickr.com/services/rest/',
+  'maxPhotosToRequest' : 400
+});
+
 // http://stackoverflow.com/questions/9293423/can-one-controller-call-another#comment15870834_11847277
 // http://jsfiddle.net/VxafF/
 App.run(function($rootScope) {
@@ -1298,7 +1304,7 @@ App.directive("credits", ["$timeout", function($timeout) {
   };
 }]);
 
-App.controller('PhotosController', ["$scope", "$http", "myCache", "localStorageService", "analyticsService", function($scope, $http, myCache, localStorageService, analyticsService) {
+App.controller('PhotosController', ["$scope", "$http", "myCache", "localStorageService", "analyticsService", 'appConstants', function($scope, $http, myCache, localStorageService, analyticsService, appConstants) {
   var cachedData = myCache.get('faves') || localStorageService.getFaves();
   var photosAtATime = 50;
   var photosLoaded = 0;
@@ -1340,7 +1346,7 @@ App.controller('PhotosController', ["$scope", "$http", "myCache", "localStorageS
     if (cachedData) { // If there’s something in the cache, use it!
       this.showCachedPhotos();
     } else {
-      var getUrl = FlickrMasonry.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + FlickrMasonry.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_sq&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
+      var getUrl = appConstants.baseUrl + "?method=flickr.favorites.getPublicList&api_key=" + appConstants.apiKey + "&user_id=49782305@N02&extras=url_t,url_s,url_m,url_z,url_l,url_sq&per_page=" + appConstants.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
 
       $http.jsonp(getUrl)
         .success(this.freshPhotosFetched);
@@ -1374,7 +1380,7 @@ App.directive("favePhotos", function() {
   };
 });
 
-App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageService', function($scope, $http, myCache, localStorageService) {
+App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageService', 'appConstants', function($scope, $http, myCache, localStorageService, appConstants) {
   var cachedData;
   var photosAtATime = 50;
   var photosLoaded = 0;
@@ -1419,9 +1425,9 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
   };
   
   this.getSimilarTags = function () {
-    var getURL = FlickrMasonry.baseUrl + "?method=flickr.tags.getRelated";
+    var getURL = appConstants.baseUrl + "?method=flickr.tags.getRelated";
       getURL += "&tag=" + tag;
-      getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey;
+      getURL += "&cluster_id=&api_key=" + appConstants.apiKey;
       getURL += "&format=json&jsoncallback=JSON_CALLBACK";
 
     $http.jsonp(getURL)
@@ -1441,10 +1447,10 @@ App.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageSer
     if (cachedData) { // If there’s something in the cache, use it!
       this.showCachedPhotos();
     } else {
-      var getURL = FlickrMasonry.baseUrl + "?method=flickr.tags.getClusterPhotos";
+      var getURL = appConstants.baseUrl + "?method=flickr.tags.getClusterPhotos";
         getURL += "&tag=" + tag;
-        getURL += "&cluster_id=&api_key=" + FlickrMasonry.apiKey + "&extras=url_t,url_s,url_m,url_z,url_l,url_sq";
-        getURL += "&per_page=" + FlickrMasonry.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
+        getURL += "&cluster_id=&api_key=" + appConstants.apiKey + "&extras=url_t,url_s,url_m,url_z,url_l,url_sq";
+        getURL += "&per_page=" + appConstants.maxPhotosToRequest + "&format=json&jsoncallback=JSON_CALLBACK";
 
       $http.jsonp(getURL)
         .success(angular.bind(this, this.freshPhotosFetched));
@@ -1510,10 +1516,17 @@ App.postRenderOnControllerEmit = function($scope) {
 };
 
 App.postPhotosRender = function() {
-  // FlickrMasonry.setupImageTooltips();
   $('[data-toggle="tooltip"]').tooltip();
-  FlickrMasonry.setupPrettyPhoto();
-  // FlickrMasonry.runMasonry(300);
+  
+  // sets up the lightbox for images
+  (function setupPrettyPhoto() {
+  	jQuery("a[rel^='lightbox']").prettyPhoto({
+  		overlay_gallery : false,
+  		deeplinking: false,
+  		social_tools: false
+  	});
+  })();
+  
 };
 
 
@@ -1529,37 +1542,6 @@ App.directive('onFinishRender', function ($timeout) {
     }
 };});
 
-
-var FlickrMasonry = {
-	apiKey: "79f2e11b6b4e3213f8971bed7f17b4c4",
-	baseUrl: 'https://api.flickr.com/services/rest/',
-	timeSinceLastPhotoGet : null,
-	forcePatternAJAXGet : false,
-	maxPhotosToRequest : 400,
-	flickrPhotos: null,
-	photosAtATime: 48,
-	photosLoaded: 0,
-	
-	loadLocalStorage: function() {
-		var milliseconds = localStorage.getItem('flickr_masonry_time_retrieved_at');
-		if (milliseconds) {
-			this.timeSinceLastPhotoGet = parseInt(milliseconds, 10);
-		}
-	}
-};
-
-// sets up the lightbox for images
-FlickrMasonry.setupPrettyPhoto = function() {
-  var self = this;
-	jQuery("a[rel^='lightbox']").prettyPhoto({
-		overlay_gallery : false,
-		deeplinking: false,
-		social_tools: false,
-		changepicturecallback: function() {
-      // self.hideTooltips(); // hide all image tooltips
-		}
-	});
-};
 
 // App.destroyMasonry = function() {
 //   var $container = jQuery('#photosContainer ul');
@@ -1621,8 +1603,6 @@ FlickrMasonry.setupPrettyPhoto = function() {
 // FlickrMasonry.hyperlinkAuthor = function(authorId, authorName) {
 //   return "<a href='http://www.flickr.com/photos/" + authorId + "' target='_blank'>" + authorName + "</a>";
 // };
-
-
 
 
 // FlickrMasonry.updateCredits = function(tag) {
