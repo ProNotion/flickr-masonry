@@ -16,6 +16,14 @@ body
   height: 100%
   background: black
 
+h1
+  font-size: 2.5rem
+h2
+  font-size: 2rem
+h3
+  font-size: 1.75rem
+
+
 #wrapper
   display: -webkit-box
   -webkit-box-orient: vertical
@@ -46,12 +54,13 @@ h1, h2, h3, h4
 header
   .title
     @extend .headerText
-  
+    margin-bottom: $standardSpacing
+    
   text-align: center
   margin: 0 auto 11px
   position: relative
   width: 90%
-  padding: 7px 2px 14px
+  padding: $standardSpacing
 
   a
     @extend .headerText

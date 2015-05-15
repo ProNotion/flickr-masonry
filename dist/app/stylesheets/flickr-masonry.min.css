@@ -553,6 +553,12 @@ html { height: 100%; }
 
 body { height: 100%; background: black; }
 
+h1 { font-size: 2.5rem; }
+
+h2 { font-size: 2rem; }
+
+h3 { font-size: 1.75rem; }
+
 #wrapper { display: -webkit-box; -webkit-box-orient: vertical; min-height: 100%; }
 
 #content { -webkit-box-flex: 1; }
@@ -564,7 +570,8 @@ h1, h2, h3, h4 { font-family: "Lato", sans-serif; font-weight: 300; }
 
 .headerText, header .title, header a, #tagLimit, #noTagsFound { color: #dedede; text-shadow: 0px 1px 1px black; letter-spacing: 2px; word-spacing: 9px; }
 
-header { text-align: center; margin: 0 auto 11px; position: relative; width: 90%; padding: 7px 2px 14px; }
+header { text-align: center; margin: 0 auto 11px; position: relative; width: 90%; padding: 12px; }
+header .title { margin-bottom: 12px; }
 header a:hover { color: white; }
 
 .opacityZero { opacity: 0; }
