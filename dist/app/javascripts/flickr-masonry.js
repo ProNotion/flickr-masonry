@@ -27405,7 +27405,7 @@ angular.module('flickrApp')
 })
 .filter('hyperlinkAuthor', function() {
   return function(input) {
-    return input ? "<a href='http://www.flickr.com/photos/" + input + "' target='_blank'>" + input + "</a>" : "";
+    return input ? "<a href='http://www.flickr.com/photos/" + encodeURIComponent(input) + "' target='_blank'>" + input + "</a>" : "";
   };
 });
 
