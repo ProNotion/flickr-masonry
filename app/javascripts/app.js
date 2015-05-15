@@ -1,4 +1,4 @@
-/*global gup, logAnalytics, debugConsole, console */
+/*global logAnalytics, debugConsole, console */
 
 var App = angular.module('flickrApp', []);
 

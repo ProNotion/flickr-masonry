@@ -1,5 +1,5 @@
 angular.module('flickrApp')
-.controller('PhotosController', ["$scope", "$http", "myCache", "localStorageService", "analyticsService", 'appConstants', function($scope, $http, myCache, localStorageService, analyticsService, appConstants) {
+.controller('PhotosController', ["$scope", "$http", "myCache", "localStorageService", "analyticsService", 'utilitiesService', 'appConstants', function($scope, $http, myCache, localStorageService, analyticsService, utilitiesService, appConstants) {
   var cachedData = myCache.get('faves') || localStorageService.getFaves();
   var photosAtATime = 50;
   var photosLoaded = 0;
@@ -29,7 +29,7 @@ angular.module('flickrApp')
   };
   
   this.showCachedPhotos = function() {
-    console.log('using cached data! yay!');
+    utilitiesService.debugConsole('using cached data! yay!');
     $scope.faves = cachedData;
     $scope.photosToShow = $scope.faves.slice(0, photosLoaded + photosAtATime);
     photosLoaded = photosAtATime;

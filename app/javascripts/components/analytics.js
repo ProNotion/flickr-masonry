@@ -1,5 +1,5 @@
 angular.module('flickrApp')
-.service('analyticsService', function () {
+.service('analyticsService', function (utilitiesService) {
   return {
     logAnalytics: function(valArray){
     	try{
@@ -7,12 +7,12 @@ angular.module('flickrApp')
     			_gaq.push(valArray);
     			// for debugging
     			if( location.search.indexOf( "analytics=1" ) > 0 ){
-    				debugConsole( 'analytics event:', "debug");
-    				debugConsole( valArray, "debug");
+    				utilitiesService.debugConsole( 'analytics event:', "debug");
+    				utilitiesService.debugConsole( valArray, "debug");
     			}
     		}
     	}catch(e){
-    		debugConsole( 'problem in logAnalytics: ' + e.message, "debug");
+    		utilitiesService.debugConsole( 'problem in logAnalytics: ' + e.message, "debug");
     	}
     }
   };

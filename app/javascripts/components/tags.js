@@ -35,7 +35,7 @@ angular.module('flickrApp')
   };
 
   this.showCachedPhotos = function() {
-    console.log('using cached __tagged__ data! yay!');
+    utilitiesService.debugConsole('using cached __tagged__ data! yay!');
     $scope.tagged = cachedData;
     $scope.photosToShow = $scope.tagged.slice(0, photosLoaded + photosAtATime);
     photosLoaded = photosAtATime;
