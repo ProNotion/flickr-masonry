@@ -94,7 +94,7 @@ App.controller('MainController', ['$scope', function($scope) {
 App.directive("credits", ["$timeout", function($timeout) {
   return {
     restrict: "E",
-    templateUrl: "templates/credits.html",
+    templateUrl: "partials/credits.html",
     link: function(scope, elem, attrs) {
       $timeout(function() {
         elem.find("footer").removeClass('opacityZero');
@@ -173,7 +173,7 @@ App.controller('PhotosController', ["$scope", "$http", "myCache", "localStorageS
 App.directive("favePhotos", function() {
   return {
     restrict: "E",
-    templateUrl: "templates/fave-photos.html",
+    templateUrl: "partials/fave-photos.html",
     controller: "PhotosController",
     controllerAs: "fCtrl"
   };
@@ -270,21 +270,21 @@ App.controller( 'TagsILikeController', function($scope) {
 App.directive('similarTags', function() {
   return {
     restrict: "E",
-    templateUrl: "templates/similar-tags.html"
+    templateUrl: "partials/similar-tags.html"
   };
 });
 
 App.directive('taggedPhotos', function() {
   return {
     restrict: "E",
-    templateUrl: "templates/tagged-photos.html"
+    templateUrl: "partials/tagged-photos.html"
   };
 });
 
 App.directive('tagsILike', function() {
   return {
     restrict: "E",
-    templateUrl: "templates/tags-i-like.html",
+    templateUrl: "partials/tags-i-like.html",
     controller: "TagsILikeController",
     controllerAs: 'tilCtrl'
   };
@@ -293,7 +293,7 @@ App.directive('tagsILike', function() {
 App.directive('tagLimit', function() {
   return {
     restrict: "E",
-    templateUrl: "templates/tag-limit.html",
+    templateUrl: "partials/tag-limit.html",
     controller: "TagsController",
     controllerAs: 'tCtrl'
   };
@@ -302,7 +302,7 @@ App.directive('tagLimit', function() {
 App.directive('tagSearch', function() {
   return {
     restrict: "E",
-    templateUrl: "templates/tag-search.html",
+    templateUrl: "partials/tag-search.html",
     controller: "TagsController",
     controllerAs: 'tCtrl'
   };

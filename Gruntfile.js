@@ -3,28 +3,16 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       dist: {
-        src: ['bower_components/jquery/dist/jquery.min.js', 'bower_components/angular/angular.min.js', 'bower_components/angular-route/angular-route.min.js', 'bower_components/bootstrap/dist/js/bootstrap.min.js', 'bower_components/jquery-prettyPhoto/js/jquery.prettyPhoto.js', 'bower_components/jquery-masonry/dist/masonry.pkgd.min.js', 'src/javascripts/*.js'],
-        dest: 'dist/javascripts/<%= pkg.name %>.js'
+        src: ['app/bower_components/jquery/dist/jquery.min.js', 'app/bower_components/angular/angular.min.js', 'app/bower_components/angular-route/angular-route.min.js', 'app/bower_components/bootstrap/dist/js/bootstrap.min.js', 'app/bower_components/jquery-prettyPhoto/js/jquery.prettyPhoto.js', 'app/bower_components/jquery-masonry/dist/masonry.pkgd.min.js', 'app/javascripts/*.js'],
+        dest: 'dist/app/javascripts/<%= pkg.name %>.js'
       },
       css: {
-        src: ['bower_components/jquery-prettyPhoto/css/prettyPhoto.css', 'bower_components/bootstrap/dist/css/bootstrap.min.css',   'src/stylesheets/<%= pkg.name %>.css'],
-        dest: 'dist/stylesheets/<%= pkg.name %>.min.css'
+        src: ['app/bower_components/jquery-prettyPhoto/css/prettyPhoto.css', 'app/bower_components/bootstrap/dist/css/bootstrap.min.css',   'app/stylesheets/<%= pkg.name %>.css'],
+        dest: 'dist/app/stylesheets/<%= pkg.name %>.min.css'
       }
     },
-    // uglify: {
-    //   options: {
-    //     banner: '/*! <%= pkg.name %> <%= grunt.template.today("dd-mm-yyyy") %> */\n',
-    //     compress: { drop_debugger: false },
-    //     mangle: false // mangling, well, *mangles* injected angular vars such as "$scope" and breaks shite
-    //   },
-    //   dist: {
-    //     files: {
-    //       'dist/javascripts/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
-    //     }
-    //   }
-    // },
     jshint: {
-      files: ['Gruntfile.js', 'src/javascripts/*.js'],
+      files: ['Gruntfile.js', 'app/javascripts/*.js'],
       options: {
         // options here to override JSHint defaults
         globals: {
@@ -37,9 +25,18 @@ module.exports = function(grunt) {
         expr: true // prevent chai syntax from triggering "Expected an assignment or function call and instead saw an expression."
       }
     },
+    copy: {
+      main: {
+        files: [
+          {src: ['app/index.html'], dest: 'dist/', filter: 'isFile', expand: true},
+          {src: ['app/components/*.html'], dest: 'dist/', filter: 'isFile', expand: true},
+          {src: ['app/partials/*.html'], dest: 'dist/', filter: 'isFile', expand: true}
+        ],
+      }
+    },
     watch: {
-      files: ['<%= jshint.files %>', 'src/stylesheets/**/*.sass'],
-      tasks: ['jshint', 'sass', 'concat']
+      files: ['<%= jshint.files %>', 'app/stylesheets/**/*.sass'],
+      tasks: ['jshint', 'sass', 'concat', 'copy']
     },
     sass: {
       dist: {
@@ -47,7 +44,7 @@ module.exports = function(grunt) {
           style: 'compact'
         },
         files: {
-          'src/stylesheets/<%= pkg.name %>.css': 'src/stylesheets/<%= pkg.name %>.sass'
+          'app/stylesheets/<%= pkg.name %>.css': 'app/stylesheets/<%= pkg.name %>.sass'
         }
       }
     }
@@ -57,8 +54,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-sass');
 
   grunt.registerTask('test', ['jshint']);
-  grunt.registerTask('default', ['jshint', 'sass', 'concat']);
+  grunt.registerTask('default', ['jshint', 'sass', 'concat', 'copy']);
 };

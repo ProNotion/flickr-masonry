@@ -1,0 +1,13 @@
+<section ng-controller="TagsController as tCtrl" ng-show="page === 'tagged'">
+  <div id="taggedPhotosContainer" class='photosContainer'>
+    <ul class='clearfix'>
+      <li class='photo' ng-repeat="photo in photosToShow" on-finish-render="ngRepeatFinished">
+        <a class='flickrPhotoLink' href="{{tCtrl.largestHREFSizeAvailable(photo)}}" target='_blank' rel="lightbox['flickr']" title="{{photo.title}}" data-toggle="tooltip" data-placement="top">
+          <img class='img-circle' ng-src="{{photo.url_sq}}" data-flickr-url="http://www.flickr.com/{{photo.owner}}/{{photo.id}}/lightbox/"/>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <tag-limit></tag-limit>
+  <tags-i-like></tags-i-like>
+</section>

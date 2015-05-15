@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name='viewport' content='width:device-width'></meta>
+	<title>Flickr Masonry -- A Photo Browser For Flickr</title>
+	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic' rel='stylesheet' type='text/css'>
+	<link rel='stylesheet' type='text/css' href='stylesheets/flickr-masonry.min.css'/>
+</head>
+<body ng-app="flickrApp">
+  <div id='wrapper'>
+  	<header>
+  	  <div ng-controller="MainController as mCtrl">
+    		<h1 class='title' ng-show="page === 'faves'">My favorite items from flickr</h1>
+    		<div>
+    		  <h1 class='title' ng-show="page === 'tagged'">search results for <strong><em>{{searchTerm}}</em></strong></h1>
+    		  <button class='btn btn-primary' id='backToMine' ng-show="page === 'tagged'" ng-click='mCtrl.backToMine()'>back to my faves</button>
+    		</div>
+  		</div>
+  		<tag-search></tag-search>
+  	</header>
+
+    <div id='content'>
+    	<fave-photos></fave-photos>
+    	<tagged-photos></tagged-photos>
+    </div>
+    <credits></credits>
+	</div>
+	<script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-25733533-1']);
+	  _gaq.push(['_trackPageview']);
+
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+
+	<script src="javascripts/flickr-masonry.js"></script>
+	</script>
+</body>
+</html>
