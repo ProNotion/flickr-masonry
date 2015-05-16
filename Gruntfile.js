@@ -30,7 +30,8 @@ module.exports = function(grunt) {
         files: [
           {src: ['app/index.html'], dest: 'dist/', filter: 'isFile', expand: true},
           {src: ['app/components/*.html'], dest: 'dist/', filter: 'isFile', expand: true},
-          {src: ['app/partials/*.html'], dest: 'dist/', filter: 'isFile', expand: true}
+          {src: ['app/partials/*.html'], dest: 'dist/', filter: 'isFile', expand: true},
+          {src: ['app/images/**'], dest: 'dist/', expand: true}
         ],
       }
     },
