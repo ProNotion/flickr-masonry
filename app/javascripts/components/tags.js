@@ -1,5 +1,5 @@
 angular.module('flickrApp')
-.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageService', 'appConstants', function($scope, $http, myCache, localStorageService, appConstants) {
+.controller('TagsController', ['$scope', '$http', 'myCache', 'localStorageService', 'appConstants', 'utilitiesService', function($scope, $http, myCache, localStorageService, appConstants, utilitiesService) {
   var cachedData;
   var photosAtATime = 50;
   var photosLoaded = 0;
@@ -23,8 +23,8 @@ angular.module('flickrApp')
       $scope.photosToShow = $scope.tagged.slice(0, photosLoaded + photosAtATime);
       photosLoaded = photosAtATime;
       myCache.put('tagged:' + tag, $scope.tagged); // 'session' cache
-      localStorageService.setTagged(tag, $scope.tagged); // longterm storage
-      App.postRenderOnControllerEmit($scope);
+      localStorageService.set("tagged:" + tag, $scope.tagged); // longterm storage
+      angular.module('flickrApp').postRenderOnControllerEmit($scope);
       $scope.showTagLimit = true;
       this.getSimilarTags();
     } else {
@@ -40,7 +40,7 @@ angular.module('flickrApp')
     $scope.photosToShow = $scope.tagged.slice(0, photosLoaded + photosAtATime);
     photosLoaded = photosAtATime;
     this.getSimilarTags();
-    App.postRenderOnControllerEmit($scope);
+    angular.module('flickrApp').postRenderOnControllerEmit($scope);
   };
   
   this.getSimilarTags = function () {
@@ -56,7 +56,7 @@ angular.module('flickrApp')
   };
 
   this.getPhotosByTag = function(tag) {
-    cachedData = myCache.get('tagged:' + tag) || localStorageService.getTagged(tag);
+    cachedData = myCache.get('tagged:' + tag) || localStorageService.get("tagged:" + tag);
     
     if (cachedData) { // If there’s something in the cache, use it!
       this.showCachedPhotos();

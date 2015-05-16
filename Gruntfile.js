@@ -3,7 +3,7 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     concat: {
       dist: {
-        src: ['app/bower_components/jquery/dist/jquery.min.js', 'app/bower_components/angular/angular.js', 'app/bower_components/angular-route/angular-route.min.js', 'app/bower_components/bootstrap/dist/js/bootstrap.min.js', 'app/bower_components/jquery-prettyPhoto/js/jquery.prettyPhoto.js', 'app/bower_components/jquery-masonry/dist/masonry.pkgd.min.js', 'app/javascripts/app.js', 'app/javascripts/components/*.js', '!app/javascripts/components/*_test.js'],
+        src: ['app/bower_components/jquery/dist/jquery.min.js', 'app/bower_components/angular/angular.js', 'app/bower_components/angular-route/angular-route.min.js', 'app/bower_components/angular-local-storage/dist/angular-local-storage.min.js', 'app/bower_components/bootstrap/dist/js/bootstrap.min.js', 'app/bower_components/jquery-prettyPhoto/js/jquery.prettyPhoto.js', 'app/bower_components/jquery-masonry/dist/masonry.pkgd.min.js', 'app/javascripts/app.js', 'app/javascripts/components/*.js', '!app/javascripts/components/*_test.js'],
         dest: 'dist/app/javascripts/<%= pkg.name %>.js'
       },
       css: {

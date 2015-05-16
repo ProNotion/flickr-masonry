@@ -1,6 +1,6 @@
 angular.module('flickrApp')
 .controller('PhotosController', ["$scope", "$http", "myCache", "localStorageService", "analyticsService", 'utilitiesService', 'appConstants', function($scope, $http, myCache, localStorageService, analyticsService, utilitiesService, appConstants) {
-  var cachedData = myCache.get('faves') || localStorageService.getFaves();
+  var cachedData = myCache.get('faves') || localStorageService.get('faves');
   var photosAtATime = 50;
   var photosLoaded = 0;
   var controller = this;
@@ -23,9 +23,8 @@ angular.module('flickrApp')
     photosLoaded = photosAtATime;
     $scope.morePhotosToShow = $scope.faves.length > $scope.photosToShow.length;
     myCache.put('faves', $scope.faves); // 'session' cache
-    localStorageService.setTimeSinceLastPhotoGet(); // longterm storage
-    localStorageService.setFaves($scope.faves); // longterm storage
-    App.postRenderOnControllerEmit($scope);
+    localStorageService.set('faves', $scope.faves); // longterm storage
+    angular.module('flickrApp').postRenderOnControllerEmit($scope);
   };
   
   this.showCachedPhotos = function() {
@@ -34,7 +33,7 @@ angular.module('flickrApp')
     $scope.photosToShow = $scope.faves.slice(0, photosLoaded + photosAtATime);
     photosLoaded = photosAtATime;
     $scope.morePhotosToShow = $scope.faves.length > $scope.photosToShow.length;
-    App.postRenderOnControllerEmit($scope);
+    angular.module('flickrApp').postRenderOnControllerEmit($scope);
   };
 
   this.display = function() {
@@ -55,7 +54,7 @@ angular.module('flickrApp')
     $scope.photosToShow = $scope.faves.slice(0, photosLoaded + photosAtATime);
     photosLoaded = photosLoaded + photosAtATime;
     $scope.morePhotosToShow = $scope.faves.length > $scope.photosToShow.length;
-    App.postPhotosRender();
+    angular.module('flickrApp').postPhotosRender();
   };
   
   this.display();

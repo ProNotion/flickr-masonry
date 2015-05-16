@@ -1,10 +1,13 @@
 /*global logAnalytics, debugConsole, console */
 
-var App = angular.module('flickrApp', []);
-
+angular.module('flickrApp', ['LocalStorageModule'])
+.config(['localStorageServiceProvider', function(localStorageServiceProvider) {
+  localStorageServiceProvider
+    .setPrefix('flickr');
+}])
 // http://stackoverflow.com/questions/9293423/can-one-controller-call-another#comment15870834_11847277
 // http://jsfiddle.net/VxafF/
-App.run(function($rootScope) {
+.run(function($rootScope) {
   /*
   Receive emitted message and broadcast it.
   Event names must be distinct or browser will blow up!
@@ -15,13 +18,15 @@ App.run(function($rootScope) {
 });
 
 
-App.postRenderOnControllerEmit = function($scope) {
+
+// TODO should be a service
+angular.module('flickrApp').postRenderOnControllerEmit = function($scope) {
   $scope.$on('ngRepeatFinished', function(ngRepeatFinishedEvent) {
-    App.postPhotosRender();
+    angular.module('flickrApp').postPhotosRender();
   });
 };
 
-App.postPhotosRender = function() {
+angular.module('flickrApp').postPhotosRender = function() {
   $('[data-toggle="tooltip"]').tooltip();
   
   // sets up the lightbox for images
@@ -35,7 +40,7 @@ App.postPhotosRender = function() {
 };
 
 
-App.directive('onFinishRender', function ($timeout) {
+angular.module('flickrApp').directive('onFinishRender', function ($timeout) {
   return {
     restrict: 'A',
     link: function (scope, element, attr) {

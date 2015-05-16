@@ -59,35 +59,51 @@ describe( "filters", function() {
   });
   
   describe('largestHREFSizeAvailable filter', function() {
-    var largestHREFSizeAvailableFilter;
+    var largestHREFSizeAvailableFilter, samplePhotoData;
   
     beforeEach(module('flickrApp'));
+    
     beforeEach(inject(function(_$filter_){
       $filter= _$filter_;
       largestHREFSizeAvailableFilter = $filter('largestHREFSizeAvailable');
+      samplePhotoData = {
+             "url_l": "https://farm3.staticflickr.com/2561/3792473469_927cae5898_b.jpg",
+             "url_m": "https://farm3.staticflickr.com/2561/3792473469_927cae5898.jpg",
+             "url_s": "https://farm3.staticflickr.com/2561/3792473469_927cae5898_m.jpg",
+             "url_sq": "https://farm3.staticflickr.com/2561/3792473469_927cae5898_s.jpg",
+             "url_t": "https://farm3.staticflickr.com/2561/3792473469_927cae5898_t.jpg",
+             "url_z": "https://farm3.staticflickr.com/2561/3792473469_927cae5898_z.jpg"
+             };
     }));
 
     it('returns largest if possible', function() {
-      expect(hyperlinkAuthorFilter()).toEqual("");
+      expect(largestHREFSizeAvailableFilter(samplePhotoData)).toEqual("https://farm3.staticflickr.com/2561/3792473469_927cae5898_b.jpg");
     });
 
     it('returns medium if possible', function() {
-      expect(hyperlinkAuthorFilter()).toEqual("");
+      delete samplePhotoData.url_l;
+      expect(largestHREFSizeAvailableFilter(samplePhotoData)).toEqual("https://farm3.staticflickr.com/2561/3792473469_927cae5898.jpg");
     });
 
     it('returns small if possible', function() {
-      expect(hyperlinkAuthorFilter()).toEqual("");
+      delete samplePhotoData.url_l;
+      delete samplePhotoData.url_m;
+      expect(largestHREFSizeAvailableFilter(samplePhotoData)).toEqual("https://farm3.staticflickr.com/2561/3792473469_927cae5898_m.jpg");
     });
 
     it('returns thumbnail if possible', function() {
-      expect(hyperlinkAuthorFilter()).toEqual("");
+      delete samplePhotoData.url_l;
+      delete samplePhotoData.url_m;
+      delete samplePhotoData.url_s;
+      
+      expect(largestHREFSizeAvailableFilter(samplePhotoData)).toEqual("https://farm3.staticflickr.com/2561/3792473469_927cae5898_t.jpg");
     });
 
     it('returns undefined if large, medium, small, nor thumbnail size are found', function() {
-      expect(hyperlinkAuthorFilter()).toEqual("");
+      samplePhotoData = {};
+      expect(largestHREFSizeAvailableFilter(samplePhotoData)).toBeUndefined();
     });
 
   });
-  
-  
 });
+

@@ -7,6 +7,7 @@ module.exports = function(config){
       'app/bower_components/angular/angular.js',
       'app/bower_components/angular-route/angular-route.js',
       'app/bower_components/angular-mocks/angular-mocks.js',
+      'app/bower_components/angular-local-storage/dist/angular-local-storage.min.js',
       'app/javascripts/app.js',
       'app/javascripts/components/**/*.js'
     ],
