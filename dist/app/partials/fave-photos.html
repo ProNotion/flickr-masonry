@@ -2,7 +2,7 @@
   <div id="favePhotosContainer" class='photosContainer'>
     <ul class='clearfix'>
       <li class='photo' ng-repeat="photo in photosToShow" on-finish-render="ngRepeatFinished">
-        <a class='flickrPhotoLink' href="{{largestHREFSizeAvailable(photo)}}" target='_blank' rel="lightbox['flickr']" title="{{photo.title}}" data-toggle="tooltip" data-placement="top">
+        <a class='flickrPhotoLink' ng-href="{{photo | largestHREFSizeAvailable}}" target='_blank' rel="lightbox['flickr']" title="{{photo.title}}" data-toggle="tooltip" data-placement="top">
           <img class='img-circle' ng-src="{{photo.url_sq}}" data-flickr-url="http://www.flickr.com/{{photo.owner}}/{{photo.id}}/lightbox/" />
         </a>
       </li>

@@ -48,11 +48,6 @@ angular.module('flickrApp')
     }
   };
 
-  // sometimes the large image size isn't available. fall back onto other versions.
-  this.largestHREFSizeAvailable = function(photo) {
-    return photo.url_l || photo.url_m || photo.url_s || photo.url_t;
-  };
-  
   this.showMorePhotos = function() {
     // analyticsService.logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
     // App.destroyMasonry();

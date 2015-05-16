@@ -55,11 +55,6 @@ angular.module('flickrApp')
       });
   };
 
-  // sometimes the large image size isn't available. fall back onto other versions.
-  this.largestHREFSizeAvailable = function(photo) {
-    return photo.url_l || photo.url_m || photo.url_s || photo.url_t;
-  };
-  
   this.getPhotosByTag = function(tag) {
     cachedData = myCache.get('tagged:' + tag) || localStorageService.getTagged(tag);
     

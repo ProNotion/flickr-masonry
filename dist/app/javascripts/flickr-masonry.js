@@ -27407,7 +27407,14 @@ angular.module('flickrApp')
   return function(input) {
     return input ? "<a href='http://www.flickr.com/photos/" + encodeURIComponent(input) + "' target='_blank'>" + input + "</a>" : "";
   };
+})
+// sometimes the large image size isn't available. fall back onto other versions.
+.filter('largestHREFSizeAvailable', function() {
+  return function(photo) {
+    return photo.url_l || photo.url_m || photo.url_s || photo.url_t;
+  };
 });
+
 
 angular.module('flickrApp')
 .service('localStorageService', function () {
@@ -27513,11 +27520,6 @@ angular.module('flickrApp')
     }
   };
 
-  // sometimes the large image size isn't available. fall back onto other versions.
-  this.largestHREFSizeAvailable = function(photo) {
-    return photo.url_l || photo.url_m || photo.url_s || photo.url_t;
-  };
-  
   this.showMorePhotos = function() {
     // analyticsService.logAnalytics(['_trackEvent', 'flickr masonry nav', 'more button clicked' ]);
     // App.destroyMasonry();
@@ -27611,11 +27613,6 @@ angular.module('flickrApp')
       });
   };
 
-  // sometimes the large image size isn't available. fall back onto other versions.
-  this.largestHREFSizeAvailable = function(photo) {
-    return photo.url_l || photo.url_m || photo.url_s || photo.url_t;
-  };
-  
   this.getPhotosByTag = function(tag) {
     cachedData = myCache.get('tagged:' + tag) || localStorageService.getTagged(tag);
     
